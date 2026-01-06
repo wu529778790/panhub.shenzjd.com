@@ -311,16 +311,6 @@ function visibleSorted(items: any[]) {
   overflow: hidden;
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  opacity: 0.5;
-}
 
 .hero-content {
   position: relative;
