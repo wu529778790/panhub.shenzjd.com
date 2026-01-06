@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 
@@ -193,5 +193,3 @@ function parseLinks(
   return links;
 }
 
-// 注册
-registerGlobalPlugin(new ZhizhenPlugin());

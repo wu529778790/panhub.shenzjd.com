@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 
@@ -149,4 +149,3 @@ export class HubanPlugin extends BaseAsyncPlugin {
   }
 }
 
-registerGlobalPlugin(new HubanPlugin());

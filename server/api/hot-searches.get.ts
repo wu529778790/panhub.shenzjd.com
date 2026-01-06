@@ -1,13 +1,32 @@
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler, getQuery, sendError } from 'h3';
 import { getOrCreateHotSearchSQLiteService } from '../core/services/hotSearchSQLite';
+import { GetHotSearchesSchema } from '../core/types/hot-search';
+import { AppError } from '../core/errors/app-error';
+import { handleError, createErrorResponse } from '../core/utils/error-handler';
+import { MESSAGES, HOT_SEARCH } from '../core/constants';
 
 export default defineEventHandler(async (event) => {
   try {
-    const service = getOrCreateHotSearchSQLiteService();
-
-    // 获取limit参数，默认30
     const query = getQuery(event);
-    const limit = parseInt((query.limit as string) || '30', 10);
+
+    // 使用 Zod Schema 验证查询参数
+    const validationResult = GetHotSearchesSchema.safeParse({
+      limit: query.limit ? Number(query.limit) : undefined,
+    });
+
+    if (!validationResult.success) {
+      throw AppError.badRequest(
+        'VALIDATION_ERROR',
+        '参数验证失败',
+        validationResult.error.errors.map((err) => ({
+          field: err.path.join('.'),
+          message: err.message,
+        }))
+      );
+    }
+
+    const { limit = HOT_SEARCH.DEFAULT_LIMIT } = validationResult.data;
+    const service = getOrCreateHotSearchSQLiteService();
 
     console.log(`[GET /api/hot-searches] 请求 limit=${limit}`);
     const hotSearches = await service.getHotSearches(limit);
@@ -15,19 +34,14 @@ export default defineEventHandler(async (event) => {
 
     return {
       code: 0,
-      message: 'success',
+      message: MESSAGES.SUCCESS,
       data: {
         hotSearches,
       },
     };
   } catch (error) {
-    console.error('[GET /api/hot-searches] ❌ 错误:', error);
-    return {
-      code: -1,
-      message: '获取热搜失败',
-      data: {
-        hotSearches: [],
-      },
-    };
+    const appError = handleError(error);
+    event.node.res.statusCode = appError.statusCode;
+    return createErrorResponse(appError);
   }
 });

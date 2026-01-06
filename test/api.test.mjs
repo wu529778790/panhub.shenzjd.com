@@ -1,8 +1,8 @@
-// Simple API smoke tests for Nitro endpoints
-// Usage:
-//   API_BASE=http://localhost:3000/api pnpm run test:api
-// or
-//   pnpm run dev  (in another shell) then: pnpm run test:api
+// API 集成测试套件
+// 使用方法:
+//   1. 启动开发服务器: npm run dev
+//   2. 运行测试: npm run test:api
+//   3. 或者: API_BASE=http://localhost:3000/api node ./test/api.test.mjs
 
 import { ofetch } from "ofetch";
 
@@ -167,17 +167,190 @@ async function testSearchPostTG() {
   }
 }
 
+// 测试输入验证
+async function testInputValidation() {
+  log("=== 测试输入验证 ===");
+
+  // 测试 1: GET /search 缺少参数
+  log("测试: GET /search (缺少 kw 参数)");
+  try {
+    const data = await ofetch(`${API_BASE}/search`, { retry: 0, timeout: 5000 });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      const data = await e.response.json();
+      if (data.code === 'VALIDATION_ERROR') {
+        log("✓ 正确返回验证错误");
+      } else {
+        err(`错误码不正确: ${data.code}`);
+        failures++;
+      }
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 2: GET /search 空关键词
+  log("测试: GET /search (空关键词)");
+  try {
+    const data = await ofetch(`${API_BASE}/search?kw=`, { retry: 0, timeout: 5000 });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      log("✓ 正确返回验证错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 3: GET /search 无效字符
+  log("测试: GET /search (无效字符)");
+  try {
+    const data = await ofetch(`${API_BASE}/search?kw=<>`, { retry: 0, timeout: 5000 });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      log("✓ 正确返回验证错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 4: GET /search 并发数过大
+  log("测试: GET /search (并发数过大)");
+  try {
+    const data = await ofetch(`${API_BASE}/search?kw=test&concurrency=100`, { retry: 0, timeout: 5000 });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      log("✓ 正确返回验证错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 5: POST /search 无效 JSON
+  log("测试: POST /search (无效 JSON)");
+  try {
+    const data = await ofetch(`${API_BASE}/search`, {
+      method: "POST",
+      body: "invalid json",
+      retry: 0,
+      timeout: 5000
+    });
+    err("应该返回错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400 || e.response?.status === 500) {
+      log("✓ 正确返回错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 6: GET /hot-searches limit 过大
+  log("测试: GET /hot-searches (limit 过大)");
+  try {
+    const data = await ofetch(`${API_BASE}/hot-searches?limit=1000`, { retry: 0, timeout: 5000 });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      log("✓ 正确返回验证错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  // 测试 7: POST /hot-searches 缺少 term
+  log("测试: POST /hot-searches (缺少 term)");
+  try {
+    const data = await ofetch(`${API_BASE}/hot-searches`, {
+      method: "POST",
+      body: {},
+      retry: 0,
+      timeout: 5000
+    });
+    err("应该返回验证错误，但请求成功了");
+    failures++;
+  } catch (e) {
+    if (e.response?.status === 400) {
+      log("✓ 正确返回验证错误");
+    } else {
+      err(`状态码不正确: ${e.response?.status}`);
+      failures++;
+    }
+  }
+
+  log("=== 输入验证测试完成 ===\n");
+}
+
+// 测试错误响应格式
+async function testErrorFormat() {
+  log("=== 测试错误响应格式 ===");
+
+  try {
+    const data = await ofetch(`${API_BASE}/search?kw=<>`, { retry: 0, timeout: 5000 });
+    err("应该返回错误");
+    failures++;
+  } catch (e) {
+    if (e.response) {
+      const data = await e.response.json();
+
+      // 验证标准错误格式
+      const checks = [
+        ["code 字段存在", !!data.code],
+        ["message 字段存在", !!data.message],
+        ["data 字段存在", data.hasOwnProperty('data')],
+        ["error 字段存在", !!data.error],
+        ["error.statusCode 存在", !!data.error?.statusCode],
+      ];
+
+      for (const [name, pass] of checks) {
+        if (pass) {
+          log(`✓ ${name}`);
+        } else {
+          err(`✗ ${name}`);
+          failures++;
+        }
+      }
+    } else {
+      err("无法获取错误响应");
+      failures++;
+    }
+  }
+
+  log("=== 错误格式测试完成 ===\n");
+}
+
 async function main() {
   log("API_BASE =", API_BASE);
+
+  // 基础功能测试
   await testHealth();
   await testSearchGetPlugin();
   await testSearchGetAll();
   await testSearchPostTG();
+
+  // 新增验证测试
+  await testInputValidation();
+  await testErrorFormat();
+
   if (failures > 0) {
     err(`Completed with ${failures} failure(s)`);
     process.exit(1);
   } else {
-    log("All tests passed");
+    log("All tests passed ✓");
   }
 }
 

@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { fetchWithRetry } from "../utils/fetch";
 import { createLogger } from "../utils/logger";
@@ -123,4 +123,3 @@ function mapType(url: string): string {
   return "others";
 }
 
-registerGlobalPlugin(new PansearchPlugin());

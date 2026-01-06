@@ -8,6 +8,7 @@ import type {
   SearchResult,
 } from "../types/models";
 import { PluginManager, type AsyncSearchPlugin } from "../plugins/manager";
+import { metrics } from "../monitoring/metrics";
 
 export interface SearchServiceOptions {
   priorityChannels: string[];

@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 import { load } from "cheerio";
@@ -203,4 +203,3 @@ function formatBytes(bytes: number): string {
   return `${n.toFixed(1)} ${units[i]}`;
 }
 
-registerGlobalPlugin(new SolidTorrentsPlugin());

@@ -5,6 +5,7 @@
 
 import { ofetch } from "ofetch";
 import type { $Fetch } from "ofetch";
+import { createLogger } from "./logger";
 
 export interface FetchWithRetryOptions {
   /** 最大重试次数，默认 3 */
@@ -111,11 +112,14 @@ export async function fetchWithRetry<T = any>(
 export async function safeExecute<T>(
   operation: () => Promise<T>,
   fallback: T,
-  _errorLogger?: ReturnType<typeof createLogger>
+  errorLogger?: ReturnType<typeof createLogger>
 ): Promise<T> {
   try {
     return await operation();
-  } catch (_error) {
+  } catch (error) {
+    if (errorLogger) {
+      errorLogger.error("Operation failed", error);
+    }
     return fallback;
   }
 }
@@ -139,9 +143,9 @@ export async function safeExecute<T>(
 export async function safeExecuteAll<T>(
   operations: Array<() => Promise<T>>,
   fallback: T,
-  _logger?: ReturnType<typeof createLogger>
+  logger?: ReturnType<typeof createLogger>
 ): Promise<T[]> {
-  const promises = operations.map((op) => safeExecute(op, fallback));
+  const promises = operations.map((op) => safeExecute(op, fallback, logger));
   return Promise.all(promises);
 }
 

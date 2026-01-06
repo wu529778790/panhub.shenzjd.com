@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 import { load } from "cheerio";
@@ -58,4 +58,3 @@ export class ThePirateBayPlugin extends BaseAsyncPlugin {
   }
 }
 
-registerGlobalPlugin(new ThePirateBayPlugin());

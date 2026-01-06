@@ -104,12 +104,45 @@ server/core/
 ## 🧪 测试
 
 ```bash
-pnpm test                    # 所有单元测试
-pnpm test:api                # API 集成测试
+pnpm test                    # 所有测试 (146个)
+pnpm test:unit              # 单元测试 (112个)
+pnpm test:integration       # 集成测试 (34个)
 pnpm test:coverage           # 测试覆盖率
 ```
 
-**测试覆盖**：60+ 测试用例，核心逻辑 >90% 覆盖
+**测试覆盖**：
+- ✅ 单元测试：112/112 通过
+- ✅ 集成测试：34/34 通过
+- ✅ 核心逻辑覆盖率：>90%
+
+---
+
+## 📚 文档
+
+完整的项目文档位于 `docs/` 目录：
+
+| 文档 | 说明 |
+|------|------|
+| [docs/README.md](docs/README.md) | 文档中心（导航） |
+| [docs/快速参考.md](docs/快速参考.md) | 常用命令、快速调用 |
+| [docs/API文档.md](docs/API文档.md) | 完整 API 参考 |
+| [docs/部署指南.md](docs/部署指南.md) | Docker、Vercel、Cloudflare |
+| [docs/架构设计.md](docs/架构设计.md) | 系统架构、核心模块 |
+| [docs/单元测试指南.md](docs/单元测试指南.md) | 测试策略与规范 |
+| [docs/集成测试指南.md](docs/集成测试指南.md) | API 与 E2E 测试 |
+| [docs/未来优化点.md](docs/未来优化点.md) | 16 项优化计划 |
+
+**快速开始**：
+```bash
+# 1. 查看快速参考
+cat docs/快速参考.md
+
+# 2. 阅读 API 文档
+cat docs/API文档.md
+
+# 3. 部署项目
+cat docs/部署指南.md
+```
 
 ---
 

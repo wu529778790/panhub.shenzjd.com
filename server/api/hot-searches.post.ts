@@ -1,43 +1,40 @@
-import { defineEventHandler, readBody } from 'h3';
+import { defineEventHandler, readBody, sendError } from 'h3';
 import { getOrCreateHotSearchSQLiteService } from '../core/services/hotSearchSQLite';
-
-interface RequestBody {
-  term: string;
-}
+import { HotSearchRecordSchema } from '../core/types/search';
+import { AppError } from '../core/errors/app-error';
+import { handleError, createErrorResponse } from '../core/utils/error-handler';
+import { MESSAGES } from '../core/constants';
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody<RequestBody>(event);
+    const body = await readBody(event);
 
-    if (!body || !body.term) {
-      console.log('[POST /api/hot-searches] ❌ 缺少搜索词参数');
-      return {
-        code: -1,
-        message: '缺少搜索词参数',
-        data: null,
-      };
+    // 使用 Zod Schema 验证请求体
+    const validationResult = HotSearchRecordSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      throw AppError.badRequest(
+        'VALIDATION_ERROR',
+        '参数验证失败',
+        validationResult.error.errors.map((err) => ({
+          field: err.path.join('.'),
+          message: err.message,
+        }))
+      );
     }
 
-    console.log('[POST /api/hot-searches] 收到搜索词:', body.term);
-    const service = getOrCreateHotSearchSQLiteService();
-    await service.recordSearch(body.term);
-    console.log('[POST /api/hot-searches] ✅ 记录成功:', body.term);
+    const { term } = validationResult.data;
 
-    // 验证记录是否真的写入了
-    const afterRecord = await service.getHotSearches(5);
-    console.log('[POST /api/hot-searches] 📊 验证 - 最近5条:', afterRecord.map(s => `${s.term}(score:${s.score})`).join(', '));
+    const service = getOrCreateHotSearchSQLiteService();
+    await service.recordSearch(term);
 
     return {
       code: 0,
-      message: 'success',
+      message: MESSAGES.SUCCESS,
       data: null,
     };
   } catch (error) {
-    console.error('[POST /api/hot-searches] ❌ 错误:', error);
-    return {
-      code: -1,
-      message: '记录搜索词失败',
-      data: null,
-    };
+    const appError = handleError(error);
+    return sendError(event, createErrorResponse(appError));
   }
 });

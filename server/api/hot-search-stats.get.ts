@@ -1,6 +1,8 @@
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, sendError } from 'h3';
 import { getOrCreateHotSearchSQLiteService } from '../core/services/hotSearchSQLite';
 import { existsSync } from 'fs';
+import { handleError, createErrorResponse } from '../core/utils/error-handler';
+import { MESSAGES } from '../core/constants';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -18,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       code: 0,
-      message: 'success',
+      message: MESSAGES.SUCCESS,
       data: {
         stats,
         dbSizeMB: dbSize,
@@ -29,12 +31,7 @@ export default defineEventHandler(async (event) => {
       }
     };
   } catch (error) {
-    return {
-      code: -1,
-      message: '获取统计信息失败',
-      data: {
-        error: error instanceof Error ? error.message : String(error)
-      }
-    };
+    const appError = handleError(error);
+    return sendError(event, createErrorResponse(appError));
   }
 });

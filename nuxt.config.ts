@@ -49,6 +49,14 @@ export default defineNuxtConfig({
     pluginTimeoutMs: channelsConfig.pluginTimeoutMs,
     cacheEnabled: true,
     cacheTtlMinutes: channelsConfig.cacheTtlMinutes,
+    // 速率限制配置
+    rateLimit: {
+      windowMs: 60 * 1000,  // 1 分钟
+      maxRequests: 60,      // 每分钟 60 次
+      skipPaths: ['/api/health', '/api/hot-search-stats', '/api/metrics'],
+    },
+    // 管理员令牌（用于 metrics API）
+    adminToken: process.env.ADMIN_TOKEN || '',
     public: {
       apiBase: "/api",
       siteUrl: "https://panhub.shenzjd.com",

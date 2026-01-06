@@ -3,12 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import {
-  BaseAsyncPlugin,
-  PluginManager,
-  registerGlobalPlugin,
-  getRegisteredPlugins,
-} from "../../server/core/plugins/manager";
+import { BaseAsyncPlugin, PluginManager } from "../../server/core/plugins/manager";
 import type { SearchResult } from "../../server/core/types/models";
 
 // 测试插件类
@@ -102,51 +97,61 @@ describe("PluginManager", () => {
     expect(plugins).toHaveLength(2);
   });
 
-  it("应该支持注册全局插件", () => {
-    // 清除之前的全局注册
-    const globalPlugins = getRegisteredPlugins();
-    globalPlugins.forEach(() => {
-      // 注意：无法直接清除全局注册表，这里测试注册功能
-    });
-
-    const plugin = new TestPlugin1();
-    registerGlobalPlugin(plugin);
-
-    const registered = getRegisteredPlugins();
-    expect(registered.some((p) => p.name() === "test1")).toBe(true);
-  });
-
-  it("应该支持批量注册全局插件", () => {
-    const plugin1 = new TestPlugin1();
-    const plugin2 = new TestPlugin2();
-    registerGlobalPlugin(plugin1);
-    registerGlobalPlugin(plugin2);
-
-    const manager = new PluginManager();
-    manager.registerAllGlobalPlugins();
+  it("应该按优先级排序插件", () => {
+    const plugin1 = new TestPlugin1(); // priority 3
+    const plugin2 = new TestPlugin2(); // priority 1
+    manager.registerPlugin(plugin1);
+    manager.registerPlugin(plugin2);
     const plugins = manager.getPlugins();
 
-    expect(plugins.length).toBeGreaterThanOrEqual(2);
-  });
-});
-
-describe("Global Plugin Registry", () => {
-  it("应该防止注册空插件", () => {
-    registerGlobalPlugin(null as any);
-    registerGlobalPlugin(undefined as any);
-    // 不应该抛出错误
+    // 优先级数字越小越靠前
+    expect(plugins[0].name()).toBe("test2");
+    expect(plugins[1].name()).toBe("test1");
   });
 
-  it("应该防止注册无名称的插件", () => {
-    const invalidPlugin = {
-      name: () => "",
-      priority: () => 1,
-      search: async () => [],
-      setMainCacheKey: () => {},
-      setCurrentKeyword: () => {},
-      skipServiceFilter: () => false,
-    };
-    registerGlobalPlugin(invalidPlugin as any);
-    // 不应该抛出错误
+  it("应该能获取指定名称的插件", () => {
+    const plugin1 = new TestPlugin1();
+    const plugin2 = new TestPlugin2();
+    manager.registerPlugin(plugin1);
+    manager.registerPlugin(plugin2);
+
+    expect(manager.getPlugin("test1")).toBe(plugin1);
+    expect(manager.getPlugin("test2")).toBe(plugin2);
+    expect(manager.getPlugin("nonexistent")).toBeUndefined();
+  });
+
+  it("应该正确返回插件数量", () => {
+    expect(manager.size).toBe(0);
+
+    manager.registerPlugin(new TestPlugin1());
+    expect(manager.size).toBe(1);
+
+    manager.registerPlugin(new TestPlugin2());
+    expect(manager.size).toBe(2);
+  });
+
+  it("应该能清空所有插件", () => {
+    manager.registerPlugin(new TestPlugin1());
+    manager.registerPlugin(new TestPlugin2());
+    expect(manager.size).toBe(2);
+
+    manager.clear();
+    expect(manager.size).toBe(0);
+    expect(manager.getPlugins()).toEqual([]);
+  });
+
+  it("应该正确批量注册插件", () => {
+    const plugins = [new TestPlugin1(), new TestPlugin2()];
+    manager.registerPlugins(plugins);
+
+    expect(manager.size).toBe(2);
+    expect(manager.getPlugin("test1")).toBe(plugins[0]);
+    expect(manager.getPlugin("test2")).toBe(plugins[1]);
+  });
+
+  it("应该处理空值注册", () => {
+    manager.registerPlugin(null as any);
+    manager.registerPlugin(undefined as any);
+    expect(manager.size).toBe(0);
   });
 });

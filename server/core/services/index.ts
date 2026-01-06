@@ -1,5 +1,5 @@
 import { SearchService, type SearchServiceOptions } from "./searchService";
-import { PluginManager, registerGlobalPlugin } from "../plugins/manager";
+import { PluginManager } from "../plugins/manager";
 import { HunhepanPlugin } from "../plugins/example/hunhepan";
 // import { ZhizhenPlugin } from "../plugins/zhizhen";
 // import { OugePlugin } from "../plugins/ouge";
@@ -27,6 +27,37 @@ import { NyaaPlugin } from "../plugins/nyaa";
 
 let singleton: SearchService | undefined;
 
+/**
+ * 创建插件管理器 - 使用依赖注入方式
+ *
+ * 重构说明：
+ * - 移除全局注册表（registerGlobalPlugin）
+ * - 直接创建插件实例并注入到 PluginManager
+ * - 通过配置控制启用的插件
+ */
+export function createPluginManager(): PluginManager {
+  const pm = new PluginManager();
+
+  // 使用依赖注入方式注册插件
+  pm.registerPlugins([
+    new HunhepanPlugin(),
+    new LabiPlugin(),
+    new PantaPlugin(),
+    new JikepanPlugin(),
+    new QupansouPlugin(),
+    new ThePirateBayPlugin(),
+    new DuoduoPlugin(),
+    new XuexizhinanPlugin(),
+    new PansearchPlugin(),
+    new NyaaPlugin(),
+  ]);
+
+  // 下线未通过单测的插件，待后续适配稳定后再恢复：
+  // Zhizhen, Ouge, Wanou, Susu, Fox4k, Hdr4k, Muou, Pan666, Huban, Panyq, Shandian, SolidTorrents, 1337x, TorrentGalaxy
+
+  return pm;
+}
+
 export function getOrCreateSearchService(runtimeConfig: any): SearchService {
   if (singleton) return singleton;
   const options: SearchServiceOptions = {
@@ -38,23 +69,7 @@ export function getOrCreateSearchService(runtimeConfig: any): SearchService {
     cacheTtlMinutes: runtimeConfig.cacheTtlMinutes || 30,
   };
 
-  const pm = new PluginManager();
-  // 直接注册内置插件（避免使用 Nitro 插件 impound 机制）
-  // 仅注册稳定可用的插件；其余暂时禁用，待适配后再启用
-  registerGlobalPlugin(new HunhepanPlugin());
-  // zhizhen 暂时下线，待稳定后再恢复
-  registerGlobalPlugin(new LabiPlugin());
-  registerGlobalPlugin(new PantaPlugin());
-  registerGlobalPlugin(new JikepanPlugin());
-  registerGlobalPlugin(new QupansouPlugin());
-  registerGlobalPlugin(new ThePirateBayPlugin());
-  registerGlobalPlugin(new DuoduoPlugin());
-  registerGlobalPlugin(new XuexizhinanPlugin());
-  registerGlobalPlugin(new PansearchPlugin());
-  registerGlobalPlugin(new NyaaPlugin());
-  // 下线未通过单测的插件，待后续适配稳定后再恢复：
-  // Zhizhen, Ouge, Wanou, Susu, Fox4k, Hdr4k, Muou, Pan666, Huban, Panyq, Shandian, SolidTorrents, 1337x, TorrentGalaxy
-  pm.registerAllGlobalPlugins();
+  const pm = createPluginManager();
 
   singleton = new SearchService(options, pm);
   return singleton;

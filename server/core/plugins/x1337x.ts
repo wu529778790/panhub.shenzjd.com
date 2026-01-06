@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 import { load } from "cheerio";
@@ -114,4 +114,3 @@ export class X1337xPlugin extends BaseAsyncPlugin {
   }
 }
 
-registerGlobalPlugin(new X1337xPlugin());

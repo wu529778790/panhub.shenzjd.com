@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 import { load } from "cheerio";
@@ -80,4 +80,3 @@ export class LabiPlugin extends BaseAsyncPlugin {
   }
 }
 
-registerGlobalPlugin(new LabiPlugin());

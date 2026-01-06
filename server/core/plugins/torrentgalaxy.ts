@@ -1,4 +1,4 @@
-import { BaseAsyncPlugin, registerGlobalPlugin } from "./manager";
+import { BaseAsyncPlugin } from "./manager";
 import type { SearchResult } from "../types/models";
 import { ofetch } from "ofetch";
 import { load } from "cheerio";
@@ -110,4 +110,3 @@ export class TorrentGalaxyPlugin extends BaseAsyncPlugin {
   }
 }
 
-registerGlobalPlugin(new TorrentGalaxyPlugin());
