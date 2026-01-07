@@ -40,7 +40,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "better-sqlite3": "^11.6.0",
     "vitest": "^2.1.9"
   },
   "license": "MIT",
