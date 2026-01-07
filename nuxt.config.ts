@@ -33,10 +33,8 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    // 根据环境变量动态选择部署预设
-    preset: process.env.VERCEL
-      ? "vercel"
-      : process.env.NITRO_PRESET || "cloudflare-module",
+    // Vercel 部署预设
+    preset: process.env.VERCEL ? "vercel" : process.env.NITRO_PRESET || "node-server",
   },
   routeRules: {
     "/**": { swr: 3600 },
