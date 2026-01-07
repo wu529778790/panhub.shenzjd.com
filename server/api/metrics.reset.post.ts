@@ -6,6 +6,7 @@
  * 需要管理员权限
  */
 
+import { defineEventHandler, readBody } from 'h3';
 import { metrics } from '../core/monitoring/metrics';
 import { AppError } from '../core/errors/app-error';
 import { handleError, createErrorResponse } from '../core/utils/error-handler';

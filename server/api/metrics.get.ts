@@ -6,6 +6,7 @@
  * 需要管理员权限（通过 API 密钥或 token）
  */
 
+import { defineEventHandler, getQuery } from 'h3';
 import { metrics } from '../core/monitoring/metrics';
 import { AppError } from '../core/errors/app-error';
 import { handleError, createErrorResponse } from '../core/utils/error-handler';

@@ -4,6 +4,7 @@
  * 自动收集 API 请求的性能指标和统计信息
  */
 
+import { defineEventHandler } from 'h3';
 import { metrics } from '../core/monitoring/metrics';
 import { createLogger } from '../core/utils/logger';
 
