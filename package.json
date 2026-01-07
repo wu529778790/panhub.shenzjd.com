@@ -31,7 +31,6 @@
     "deploy:cf": "wrangler deploy"
   },
   "dependencies": {
-    "better-sqlite3": "^11.6.0",
     "cheerio": "^1.0.0",
     "nuxt": "^4.0.3",
     "ofetch": "^1.4.1",
@@ -41,6 +40,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "better-sqlite3": "^11.6.0",
     "vitest": "^2.1.9"
   },
   "license": "MIT",
