@@ -31,7 +31,7 @@
     "deploy:cf": "wrangler deploy"
   },
   "dependencies": {
-    "better-sqlite3": "^11.10.0",
+    "better-sqlite3": "^11.6.0",
     "cheerio": "^1.0.0",
     "nuxt": "^4.0.3",
     "ofetch": "^1.4.1",
