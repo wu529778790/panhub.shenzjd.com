@@ -3,8 +3,6 @@
   <div v-if="!loading && searches.length === 0" class="hidden"></div>
 
   <div v-else class="hot-search-section">
-    <h2 class="section-title">其他用户在搜</h2>
-
     <div class="cloud-container">
       <!-- 加载状态 -->
       <div v-if="loading" class="loading-state">
