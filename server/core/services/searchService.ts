@@ -9,6 +9,7 @@ import type {
 } from "../types/models";
 import { PluginManager, type AsyncSearchPlugin } from "../plugins/manager";
 import { PluginHealthChecker, createPluginHealthChecker } from "../plugins/pluginHealth";
+import { ErrorCollector, classifyError, ErrorType } from "../utils/errors";
 
 export interface SearchServiceOptions {
   priorityChannels: string[];
@@ -23,6 +24,7 @@ export class SearchService {
   private options: SearchServiceOptions;
   private pluginManager: PluginManager;
   private cache: UnifiedCache;
+  private errorCollector: ErrorCollector;
   private healthChecker: PluginHealthChecker;
 
   constructor(options: SearchServiceOptions, pluginManager: PluginManager) {
@@ -36,7 +38,8 @@ export class SearchService {
       "search"
     );
 
-    this.healthChecker = createPluginHealthChecker();    this.pluginManager = pluginManager;
+    this.healthChecker = createPluginHealthChecker();
+    this.errorCollector = new ErrorCollector();    this.pluginManager = pluginManager;
 
   getPluginManager() {
     return this.pluginManager;
@@ -330,10 +333,15 @@ export class SearchService {
     // 使用并发控制执行，同时利用 safeExecuteAll 提供统一错误处理
     const resultsByPlugin = await this.runWithConcurrency(
       pluginPromises.map((promiseFactory) => async () => {
-        return await safeExecute(
-          promiseFactory,
-          []
-        );
+        try {
+      const result = await promiseFactory();
+      return result;
+    } catch (error) {
+      // 记录错误
+      const errorDetail = classifyError(error, "plugin_search");
+      this.errorCollector.record(errorDetail);
+      return [];
+    }
       }),
       concurrency
     );
@@ -453,6 +461,14 @@ export class SearchService {
 
   getPluginHealthStatus() {
     return this.healthChecker.getAllStatus();
+  }
+
+  getWarnings() {
+    return this.errorCollector.getWarnings();
+  }
+
+  clearErrors(source?: string) {
+    this.errorCollector.clear(source);
   }
 
   resetPluginHealth(pluginName?: string) {

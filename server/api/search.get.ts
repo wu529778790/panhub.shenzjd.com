@@ -74,8 +74,18 @@ export default defineEventHandler(async (event) => {
 
   const resp: GenericResponse<typeof result> = {
     code: 0,
-    message: "success",
+    message: warnings.length > 0 ? "partial_success" : "success",
     data: result,
+  };
+  
+  // 获取警告信息
+  const warnings = service.getWarnings();
+  
+  // 如果有警告，添加到响应中
+  if (warnings.length > 0) {
+    (resp as any).warnings = warnings;
+    resp.message = "partial_success";
+  }
   };
   return resp;
 });
