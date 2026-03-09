@@ -92,6 +92,10 @@ const availableCategories = computed(() => {
     { id: "douban-movie", label: "电影", type: "新片榜" },
     { id: "douban-weekly", label: "电影", type: "口碑榜" },
     { id: "douban-us-box", label: "电影", type: "北美票房" },
+    { id: "douban-tv-hot", label: "电视剧", type: "热度榜" },
+    { id: "douban-tv-weekly", label: "电视剧", type: "口碑榜" },
+    { id: "douban-variety-hot", label: "综艺", type: "热度榜" },
+    { id: "douban-variety-weekly", label: "综艺", type: "口碑榜" },
   ];
 });
 

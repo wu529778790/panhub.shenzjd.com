@@ -308,11 +308,207 @@ async function scrapeDoubanUsBox(): Promise<DoubanHotItem[]> {
   return items;
 }
 
+async function scrapeDoubanTvHot(): Promise<DoubanHotItem[]> {
+  const url = "https://movie.douban.com/tv/";
+  const html = await ofetch<string>(url, {
+    headers: { "user-agent": UA },
+    timeout: 10000,
+  });
+  const $ = load(html);
+  const items: DoubanHotItem[] = [];
+
+  $(".article tr.item").each((_, el) => {
+    const dom = $(el);
+    const href = dom.find("a").attr("href") || "";
+    const id = getNumbers(href);
+    const rawTitle = dom.find("a").attr("title") || "";
+    const scoreDom = dom.find(".rating_nums");
+    const score = scoreDom.length ? scoreDom.text() : "0.0";
+    const title = rawTitle ? `【${score}】${rawTitle}` : "";
+    if (!title) return;
+
+    const img = dom.find("img");
+    const cover =
+      img.attr("data-src") ||
+      img.attr("data-original") ||
+      img.attr("src") ||
+      undefined;
+
+    const coverUrl = cover
+      ? fixDoubanCoverUrl(cover.startsWith("//") ? "https:" + cover : cover)
+      : undefined;
+    items.push({
+      id: id || undefined,
+      title,
+      cover: coverUrl,
+      desc: dom.find("p.pl").text().trim(),
+      hot: getNumbers(dom.find("span.pl").text()),
+      url: href || `https://movie.douban.com/subject/${id}/`,
+    });
+  });
+
+  return items;
+}
+
+async function scrapeDoubanTvWeekly(): Promise<DoubanHotItem[]> {
+  const url = "https://movie.douban.com/tv/";
+  const html = await ofetch<string>(url, {
+    headers: { "user-agent": UA },
+    timeout: 10000,
+  });
+  const $ = load(html);
+  const items: DoubanHotItem[] = [];
+  const idsWithoutCover: number[] = [];
+
+  // 找到包含"电视剧口碑榜"或类似标题的 h2
+  $("h2").each((_, h2) => {
+    const h2Text = $(h2).text();
+    if (h2Text.includes("口碑") && !h2Text.includes("电影")) {
+      const list = $(h2).next("ul");
+      if (list.length) {
+        list.find("li").each((_, el) => {
+          const dom = $(el);
+          const rank = dom.find(".no").text().trim();
+          const href = dom.find(".name a").attr("href") || "";
+          const id = getNumbers(href);
+          const rawTitle = dom.find(".name a").text().trim();
+          const title = rawTitle ? `#${rank} ${rawTitle}` : "";
+          if (!title) return;
+
+          const scoreDom = dom.find(".rating_nums");
+          const score = scoreDom.length ? scoreDom.text().trim() : "";
+          const desc = score ? `评分 ${score}` : "";
+
+          items.push({
+            id: id || undefined,
+            title,
+            desc,
+            url: href || `https://movie.douban.com/subject/${id}/`,
+          });
+          if (id) idsWithoutCover.push(id);
+        });
+      }
+    }
+  });
+
+  // 批量获取封面
+  if (idsWithoutCover.length > 0) {
+    const coverMap = await fetchMovieCovers(idsWithoutCover);
+    for (const item of items) {
+      if (item.id && coverMap.has(item.id)) {
+        item.cover = coverMap.get(item.id);
+      }
+    }
+  }
+
+  return items;
+}
+
+async function scrapeDoubanVarietyHot(): Promise<DoubanHotItem[]> {
+  const url = "https://movie.douban.com/tv/?style=variety";
+  const html = await ofetch<string>(url, {
+    headers: { "user-agent": UA },
+    timeout: 10000,
+  });
+  const $ = load(html);
+  const items: DoubanHotItem[] = [];
+
+  $(".article tr.item").each((_, el) => {
+    const dom = $(el);
+    const href = dom.find("a").attr("href") || "";
+    const id = getNumbers(href);
+    const rawTitle = dom.find("a").attr("title") || "";
+    const scoreDom = dom.find(".rating_nums");
+    const score = scoreDom.length ? scoreDom.text() : "0.0";
+    const title = rawTitle ? `【${score}】${rawTitle}` : "";
+    if (!title) return;
+
+    const img = dom.find("img");
+    const cover =
+      img.attr("data-src") ||
+      img.attr("data-original") ||
+      img.attr("src") ||
+      undefined;
+
+    const coverUrl = cover
+      ? fixDoubanCoverUrl(cover.startsWith("//") ? "https:" + cover : cover)
+      : undefined;
+    items.push({
+      id: id || undefined,
+      title,
+      cover: coverUrl,
+      desc: dom.find("p.pl").text().trim(),
+      hot: getNumbers(dom.find("span.pl").text()),
+      url: href || `https://movie.douban.com/subject/${id}/`,
+    });
+  });
+
+  return items;
+}
+
+async function scrapeDoubanVarietyWeekly(): Promise<DoubanHotItem[]> {
+  const url = "https://movie.douban.com/tv/?style=variety";
+  const html = await ofetch<string>(url, {
+    headers: { "user-agent": UA },
+    timeout: 10000,
+  });
+  const $ = load(html);
+  const items: DoubanHotItem[] = [];
+  const idsWithoutCover: number[] = [];
+
+  // 找到包含"口碑"的 h2
+  $("h2").each((_, h2) => {
+    const h2Text = $(h2).text();
+    if (h2Text.includes("口碑")) {
+      const list = $(h2).next("ul");
+      if (list.length) {
+        list.find("li").each((_, el) => {
+          const dom = $(el);
+          const rank = dom.find(".no").text().trim();
+          const href = dom.find(".name a").attr("href") || "";
+          const id = getNumbers(href);
+          const rawTitle = dom.find(".name a").text().trim();
+          const title = rawTitle ? `#${rank} ${rawTitle}` : "";
+          if (!title) return;
+
+          const scoreDom = dom.find(".rating_nums");
+          const score = scoreDom.length ? scoreDom.text().trim() : "";
+          const desc = score ? `评分 ${score}` : "";
+
+          items.push({
+            id: id || undefined,
+            title,
+            desc,
+            url: href || `https://movie.douban.com/subject/${id}/`,
+          });
+          if (id) idsWithoutCover.push(id);
+        });
+      }
+    }
+  });
+
+  // 批量获取封面
+  if (idsWithoutCover.length > 0) {
+    const coverMap = await fetchMovieCovers(idsWithoutCover);
+    for (const item of items) {
+      if (item.id && coverMap.has(item.id)) {
+        item.cover = coverMap.get(item.id);
+      }
+    }
+  }
+
+  return items;
+}
+
 const scrapers: Record<string, () => Promise<DoubanHotItem[]>> = {
   "douban-movie": scrapeDoubanMovie,
   "douban-top250": scrapeDoubanTop250,
   "douban-weekly": scrapeDoubanWeekly,
   "douban-us-box": scrapeDoubanUsBox,
+  "douban-tv-hot": scrapeDoubanTvHot,
+  "douban-tv-weekly": scrapeDoubanTvWeekly,
+  "douban-variety-hot": scrapeDoubanVarietyHot,
+  "douban-variety-weekly": scrapeDoubanVarietyWeekly,
 };
 
 export async function fetchDoubanHot(
