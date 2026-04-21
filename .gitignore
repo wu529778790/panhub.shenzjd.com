@@ -25,3 +25,4 @@ logs
 
 # Runtime data (hot-searches.json)
 data/hot-searches.json
+.playwright-mcp

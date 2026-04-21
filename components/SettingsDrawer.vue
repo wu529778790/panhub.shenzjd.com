@@ -549,70 +549,125 @@ function onDrawerScroll() {
 }
 
 @media (prefers-color-scheme: dark) {
+  .drawer-mask {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
   .drawer {
-    background: rgba(17, 24, 39, 0.92);
-    border-left-color: rgba(75, 85, 99, 0.8);
+    background: rgba(13, 17, 23, 0.96);
+    border-left-color: var(--border-light);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .drawer__header {
+    border-bottom-color: var(--border-light);
+  }
+
+  .drawer__header strong {
+    color: var(--text-primary);
+  }
+
+  .header-subtitle {
+    color: var(--text-tertiary);
   }
 
   .nav-link {
-    background: rgba(30, 41, 59, 0.55);
-    border-color: rgba(100, 116, 139, 0.35);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
     color: var(--text-secondary);
   }
 
   .nav-link:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.55);
-    color: #ccfbf1;
-  }
-
-  .nav-link.active {
-    border-color: rgba(45, 212, 191, 0.45);
-    background: rgba(15, 118, 110, 0.25);
-    color: #ccfbf1;
-  }
-
-  .drawer__section {
-    background: rgba(15, 23, 42, 0.36);
-    border-color: rgba(100, 116, 139, 0.42);
-  }
-
-  .plugin-item {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
-  }
-
-  .plugin-item:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.5);
-  }
-
-  .input {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
     color: var(--text-primary);
   }
 
+  .nav-link.active {
+    border-color: rgba(45, 212, 191, 0.35);
+    background: rgba(13, 148, 136, 0.15);
+    color: var(--primary);
+  }
+
+  .drawer__section {
+    background: rgba(22, 27, 34, 0.5);
+    border-color: var(--border-light);
+  }
+
+  .section__title strong {
+    color: var(--text-primary);
+  }
+
+  .plugin-item {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+  }
+
+  .plugin-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+  }
+
+  .plugin-item input[type="checkbox"] {
+    accent-color: var(--primary);
+  }
+
+  .plugin-item span {
+    color: var(--text-secondary);
+  }
+
+  .label {
+    color: var(--text-secondary);
+  }
+
+  .input {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+  }
+
+  .input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  }
+
+  .input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .hint {
+    color: var(--text-tertiary);
+  }
+
   .btn {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-primary);
   }
 
   .btn:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+  }
+
+  .btn--close {
+    color: var(--text-secondary);
   }
 
   .btn--subtle {
     color: var(--text-secondary);
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.45);
+    background: var(--bg-secondary);
+    border-color: var(--border-medium);
   }
 
   .btn--subtle:hover {
-    color: #ccfbf1;
-    border-color: rgba(45, 212, 191, 0.45);
-    background: rgba(15, 118, 110, 0.18);
+    color: var(--primary);
+    border-color: rgba(45, 212, 191, 0.35);
+    background: rgba(13, 148, 136, 0.1);
+  }
+
+  .drawer__footer {
+    border-top-color: var(--border-light);
   }
 }
 

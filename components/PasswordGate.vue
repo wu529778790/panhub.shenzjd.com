@@ -63,7 +63,7 @@ function onSubmit() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
 }
 

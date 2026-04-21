@@ -517,51 +517,109 @@ button {
   }
 }
 
-/* 深色模式支持 */
+/* 深色模式 - Obsidian Tide 主题 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #111827;
-    --bg-secondary: #1f2937;
-    --bg-glass: rgba(17, 24, 39, 0.76);
-    --text-primary: #f3f4f6;
-    --text-secondary: #d1d5db;
-    --text-tertiary: #6b7280;
-    --border-light: #374151;
-    --border-medium: #4b5563;
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-glass: rgba(13, 17, 23, 0.82);
+    --text-primary: #e6edf3;
+    --text-secondary: #9198a1;
+    --text-tertiary: #545d68;
+    --border-light: #21262d;
+    --border-medium: #30363d;
+    --primary: #2dd4bf;
+    --primary-dark: #14b8a6;
+    --secondary: #fbbf24;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
   }
 
   body {
-    background: radial-gradient(circle at 12% -10%, #0f3d37 0%, transparent 42%),
-      radial-gradient(circle at 90% 8%, #4a2d08 0%, transparent 35%),
-      #0b1220;
+    background:
+      radial-gradient(ellipse at 10% 0%, rgba(13, 148, 136, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 5%, rgba(217, 119, 6, 0.08) 0%, transparent 40%),
+      #0a0e14;
+  }
+
+  .blob {
+    opacity: 0.12;
+  }
+
+  .blob-1 {
+    background: linear-gradient(135deg, #0d9488, #2dd4bf);
+  }
+
+  .blob-2 {
+    background: linear-gradient(135deg, #d97706, #fbbf24);
+  }
+
+  .blob-3 {
+    background: linear-gradient(135deg, #0891b2, #2dd4bf);
   }
 
   .header {
-    background: rgba(17, 24, 39, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(13, 17, 23, 0.78);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .brand-text {
+    background: linear-gradient(135deg, #2dd4bf, #fbbf24);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
 
   .btn-icon {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
   }
 
   .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   .github-btn {
-    color: rgba(148, 163, 184, 0.6);
+    color: var(--text-tertiary);
   }
 
   .github-btn:hover {
-    color: var(--primary);
-    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
   }
 
   .toast {
     background: var(--bg-secondary);
     border-color: var(--border-light);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .toast.info {
+    color: var(--primary);
+    border-left-color: var(--primary);
+  }
+
+  .toast.success {
+    color: #34d399;
+    border-left-color: #34d399;
+  }
+
+  .toast.error {
+    color: #f87171;
+    border-left-color: #f87171;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
   }
 }
 

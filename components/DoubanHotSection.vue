@@ -680,66 +680,95 @@ defineExpose({ init, refresh });
 /* 深色模式 */
 @media (prefers-color-scheme: dark) {
   .tab-button {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(100, 116, 139, 0.3);
-    color: var(--text-secondary, #9ca3af);
+    background: rgba(22, 27, 34, 0.6);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
+  }
+
+  .tab-button::before {
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(251, 191, 36, 0.04) 100%);
   }
 
   .tab-button:hover {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(100, 116, 139, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
   }
 
   .tab-button.is-active {
-    background: rgba(15, 118, 110, 0.15);
-    border-color: var(--primary, #0f766e);
-    color: #5eead4;
+    background: rgba(13, 148, 136, 0.12);
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2);
   }
 
   .skeleton-card {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(75, 85, 99, 0.4);
+    background: rgba(22, 27, 34, 0.7);
+    border-color: var(--border-light);
   }
 
   .skeleton-cover {
-    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background: linear-gradient(90deg, #161b22 25%, #21262d 50%, #161b22 75%);
+    background-size: 200% 100%;
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 50%,
+      transparent 100%
+    );
   }
 
   .skeleton-title {
-    background: linear-gradient(90deg, #4b5563 25%, #6b7280 50%, #4b5563 75%);
+    background: linear-gradient(90deg, #21262d 25%, #30363d 50%, #21262d 75%);
+    background-size: 200% 100%;
   }
 
   .skeleton-desc {
-    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background: linear-gradient(90deg, #1a1f26 25%, #262c34 50%, #1a1f26 75%);
+    background-size: 200% 100%;
   }
 
   .movie-card {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(75, 85, 99, 0.4);
+    background: rgba(22, 27, 34, 0.7);
+    border-color: var(--border-light);
   }
 
   .card-cover {
-    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
   }
 
   .cover-placeholder {
-    background: rgba(15, 118, 110, 0.1);
+    background: rgba(13, 148, 136, 0.08);
   }
 
   .movie-card:hover {
-    box-shadow: 0 8px 20px rgba(15, 118, 110, 0.2);
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15);
+  }
+
+  .card-info {
+    background: transparent;
   }
 
   .card-title {
-    color: var(--text-primary, #f9fafb);
+    color: var(--text-primary);
   }
 
   .card-desc {
-    color: var(--text-tertiary, #6b7280);
+    color: var(--text-tertiary);
+  }
+
+  .loading-more {
+    color: var(--text-secondary);
+  }
+
+  .spinner-dots span {
+    background: var(--primary);
   }
 
   .end-message {
-    color: var(--text-tertiary, #6b7280);
+    color: var(--text-tertiary);
   }
 }
 
@@ -772,12 +801,12 @@ defineExpose({ init, refresh });
   }
 
   .skeleton-cover {
-    background: #f0f0f0;
+    background: var(--bg-secondary);
   }
 
   .skeleton-title,
   .skeleton-desc {
-    background: #e5e7eb;
+    background: var(--border-light);
     animation: none;
   }
 

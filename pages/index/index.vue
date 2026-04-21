@@ -901,68 +901,137 @@ function visibleSorted(items: any[]) {
 /* 深色模式支持 */
 @media (prefers-color-scheme: dark) {
   .hero-row {
-    background: linear-gradient(160deg, rgba(15, 118, 110, 0.16), rgba(245, 158, 11, 0.14));
-    border-color: rgba(45, 212, 191, 0.24);
+    background: linear-gradient(160deg, rgba(13, 148, 136, 0.14) 0%, rgba(13, 148, 136, 0.04) 40%, rgba(217, 119, 6, 0.08) 80%, rgba(13, 148, 136, 0.06) 100%);
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-light);
   }
 
+  .hero-accent {
+    background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 50%, var(--primary) 100%);
+  }
 
   .hero-badge {
-    background: rgba(15, 118, 110, 0.25);
-    color: #5eead4;
-    border-color: rgba(45, 212, 191, 0.3);
+    background: rgba(13, 148, 136, 0.2);
+    color: var(--primary);
+    border-color: rgba(45, 212, 191, 0.2);
+  }
+
+  .hero-title-line--accent {
+    background: linear-gradient(120deg, #2dd4bf 0%, #14b8a6 40%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .hero-description {
+    color: var(--text-secondary);
   }
 
   .hero-feature {
-    color: #99f6e4;
-    background: rgba(15, 118, 110, 0.2);
-    border-color: rgba(45, 212, 191, 0.25);
+    color: var(--primary);
+    background: rgba(13, 148, 136, 0.1);
+    border-color: rgba(45, 212, 191, 0.15);
   }
 
   .hero-feature:hover {
-    border-color: rgba(45, 212, 191, 0.45);
+    background: rgba(13, 148, 136, 0.16);
+    border-color: rgba(45, 212, 191, 0.3);
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15);
+  }
+
+  .hero-shape {
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(217, 119, 6, 0.06) 100%);
+  }
+
+  .hero-noise {
+    opacity: 0.03;
+  }
+
+  .stats-bar {
+    background: var(--bg-glass);
+    border-color: var(--border-light);
+    box-shadow: var(--shadow-md);
   }
 
   .stat-item {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+  }
+
+  .stat-value {
+    color: var(--primary);
   }
 
   .loading-indicator {
-    background: rgba(15, 118, 110, 0.18);
-    border-color: rgba(15, 118, 110, 0.3);
+    background: rgba(13, 148, 136, 0.12);
+    border-color: rgba(13, 148, 136, 0.2);
+  }
+
+  .loading-text {
+    color: var(--primary);
+  }
+
+  .paused-indicator-bar {
+    background: rgba(217, 119, 6, 0.1);
+    border-color: rgba(217, 119, 6, 0.25);
+    color: #fbbf24;
   }
 
   .filter-pill {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
   }
 
   .filter-pill:hover {
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  .filter-pill.active {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: #042f2e;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
   }
 
   .sort-select {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
     color: var(--text-primary);
   }
 
   .sort-select:hover {
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+  }
+
+  .sort-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
   }
 
   .empty-card {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: var(--bg-glass);
+    border-color: var(--border-light);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .empty-card h3 {
+    color: var(--text-primary);
+  }
+
+  .empty-card p {
+    color: var(--text-secondary);
   }
 
   .error-alert {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.25);
+    color: #f87171;
   }
 
   .hot-search-section {
-    /* HotSearchSection 组件内部已支持深色模式 */
+    /* HotSearchSection 组件内部已处理 */
   }
 }
 

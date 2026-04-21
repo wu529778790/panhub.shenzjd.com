@@ -252,22 +252,32 @@ defineExpose({ init, refresh });
 
 @media (prefers-color-scheme: dark) {
   .tag-cloud-wrap {
-    background: rgba(17, 24, 39, 0.5);
-    border-color: rgba(75, 85, 99, 0.4);
+    background: rgba(22, 27, 34, 0.5);
+    border-color: var(--border-light);
   }
 
   .tag-cloud-wrap :deep(.hot-tagcloud-item) {
-    color: #99f6e4 !important;
+    color: var(--primary) !important;
+  }
+
+  .tag-cloud-wrap :deep(.hot-tagcloud-item:hover) {
+    color: #fbbf24 !important;
   }
 
   .tag-cloud-placeholder {
-    background: rgba(17, 24, 39, 0.5);
-    border-color: rgba(75, 85, 99, 0.4);
+    background: rgba(22, 27, 34, 0.5);
+    border-color: var(--border-light);
   }
 
   .loading-state {
-    background: rgba(17, 24, 39, 0.5);
-    border-color: rgba(75, 85, 99, 0.4);
+    background: rgba(22, 27, 34, 0.5);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
+  }
+
+  .spinner {
+    border-color: rgba(13, 148, 136, 0.2);
+    border-top-color: var(--primary);
   }
 }
 

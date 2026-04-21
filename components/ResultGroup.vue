@@ -478,49 +478,104 @@ function formatDate(d?: string) {
 /* 深色模式支持 */
 @media (prefers-color-scheme: dark) {
   .result-card {
-    background: rgba(15, 23, 42, 0.5);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(22, 27, 34, 0.7);
+    border-color: var(--border-light);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .result-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 
   .card-header {
-    background: rgba(15, 23, 42, 0.6);
-    border-bottom-color: rgba(100, 116, 139, 0.3);
+    background: rgba(22, 27, 34, 0.5);
+    border-bottom-color: var(--border-light);
+  }
+
+  .card-header::after {
+    background: linear-gradient(90deg, var(--primary), transparent 70%);
+    opacity: 0.2;
+  }
+
+  .platform-badge {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .resource-item {
+    border-bottom-color: var(--border-light);
   }
 
   .resource-item:hover {
-    background: rgba(99, 102, 241, 0.08);
+    background: rgba(13, 148, 136, 0.06);
+  }
+
+  .resource-link {
+    color: var(--primary);
+  }
+
+  .resource-link:hover {
+    color: var(--primary-dark);
   }
 
   .meta-tag {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
   }
 
   .meta-tag.date {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.25);
+    background: rgba(13, 148, 136, 0.1);
+    border-color: rgba(13, 148, 136, 0.18);
+    color: var(--primary);
   }
 
   .meta-tag.password {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.25);
+    background: rgba(52, 211, 153, 0.1);
+    border-color: rgba(52, 211, 153, 0.18);
+    color: #34d399;
   }
 
-  .copy-btn,
   .expand-btn {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
   }
 
-  .copy-btn:hover,
   .expand-btn:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  .copy-btn {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
+  }
+
+  .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
   }
 
   .card-footer {
-    background: rgba(15, 23, 42, 0.6);
-    border-top-color: rgba(100, 116, 139, 0.3);
+    background: rgba(22, 27, 34, 0.4);
+    border-top-color: var(--border-light);
+  }
+
+  .load-more-btn {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: #042f2e;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+  }
+
+  .load-more-btn:hover {
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.45);
+  }
+
+  .resource-list::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
   }
 }
 

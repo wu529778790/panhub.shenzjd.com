@@ -326,41 +326,69 @@ const currentSort = computed(() =>
 /* 深色模式支持 */
 @media (prefers-color-scheme: dark) {
   .result-header {
-    background: rgba(17, 24, 39, 0.5);
-    border-color: rgba(75, 85, 99, 0.42);
+    background: rgba(22, 27, 34, 0.65);
+    border-color: var(--border-light);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .filter-pill {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
   }
 
   .filter-pill:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  .filter-pill.active {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: #042f2e;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
   }
 
   .loading-indicator {
-    background: rgba(15, 118, 110, 0.2);
-    border-color: rgba(15, 118, 110, 0.32);
+    background: rgba(13, 148, 136, 0.12);
+    border-color: rgba(13, 148, 136, 0.2);
+    color: var(--primary);
+  }
+
+  .pulse-dot {
+    background: var(--primary);
   }
 
   .stat-item {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+  }
+
+  .stat-value {
+    color: var(--primary);
   }
 
   .sort-wrapper {
-    background: rgba(30, 41, 59, 0.5);
-    border-color: rgba(100, 116, 139, 0.3);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
   }
 
   .sort-wrapper:hover {
-    background: rgba(15, 23, 42, 0.7);
-    border-color: rgba(100, 116, 139, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-medium);
+  }
+
+  .sort-wrapper svg {
+    color: var(--text-tertiary);
   }
 
   .sort-select {
+    color: var(--text-primary);
+  }
+
+  .sort-select option {
+    background: var(--bg-secondary);
     color: var(--text-primary);
   }
 }
