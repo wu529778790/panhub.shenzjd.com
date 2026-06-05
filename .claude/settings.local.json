@@ -69,7 +69,16 @@
       "Bash(pnpm remove *)",
       "Bash(git rm *)",
       "Bash(xargs kill)",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "Bash(kill -9 31802 3920 52243 55517 57499)",
+      "Bash(rm -rf /var/folders/kn/rnt85kp12vg048rrbf3hdzc00000gn/T/nuxt-vite-node-B4GZDk/)",
+      "Bash(nvm ls *)",
+      "WebSearch",
+      "Bash(nvm install *)",
+      "Bash(nvm alias *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/)",
+      "Read(//var/folders/kn/rnt85kp12vg048rrbf3hdzc00000gn/T/**)",
+      "Read(//private/var/folders/kn/rnt85kp12vg048rrbf3hdzc00000gn/T/**)"
     ]
   }
 }
