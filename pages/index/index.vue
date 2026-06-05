@@ -68,14 +68,14 @@
           <button
             :class="['filter-pill', { active: filterPlatform === 'all' }]"
             @click="filterPlatform = 'all'">
-            全部
+            全部 ({{ searchState.total }})
           </button>
           <button
             v-for="p in platforms"
             :key="p"
             :class="['filter-pill', { active: filterPlatform === p }]"
             @click="filterPlatform = p">
-            {{ platformName(p) }}
+            {{ platformName(p) }} ({{ searchState.merged[p]?.length || 0 }})
           </button>
         </div>
 
