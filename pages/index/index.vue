@@ -141,6 +141,8 @@ import { PLATFORM_INFO } from "~/config/plugins";
 const config = useRuntimeConfig();
 const apiBase = (config.public?.apiBase as string) || "/api";
 const siteUrl = (config.public?.siteUrl as string) || "";
+const route = useRoute();
+const router = useRouter();
 
 // 热搜组件引用
 const hotSearchRef = ref<InstanceType<typeof HotSearchSection> | null>(null);
@@ -149,6 +151,12 @@ const doubanHotRef = ref<InstanceType<typeof DoubanHotSection> | null>(null);
 // 页面加载时初始化热搜数据
 onMounted(async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));
+  // 从 URL 读取搜索关键词
+  const q = route.query.q;
+  if (q && typeof q === "string") {
+    kw.value = q;
+    await doSearch();
+  }
   if (doubanHotRef.value) await doubanHotRef.value.init();
   if (hotSearchRef.value) await hotSearchRef.value.init();
 });
@@ -223,6 +231,7 @@ const {
 const { settings, loadSettings } = useSettings();
 const auth = useAuth();
 const requestUnlock = inject<(onSuccess?: () => void) => void>("requestUnlock");
+const { addHistory } = useSearchHistory();
 
 // 获取搜索选项（使用最新的用户设置）
 function getSearchOptions() {
@@ -253,6 +262,11 @@ async function doSearch() {
   loadSettings();
   const keyword = kw.value.trim();
   recordHotSearch(keyword);
+  addHistory(keyword);
+  // 同步搜索词到 URL
+  if (router) {
+    router.replace({ query: { q: keyword } });
+  }
   await performSearch({
     ...getSearchOptions(),
     onAuthRequired: requestUnlock ?? undefined,
@@ -303,6 +317,10 @@ async function fullReset() {
   filterPlatform.value = "all";
   expandedSet.value = new Set();
   resetSearch();
+  // 清除 URL 参数
+  if (router) {
+    router.replace({ query: {} });
+  }
   // 刷新页面以恢复初始状态（包括豆瓣电影）
   await nextTick();
   if (doubanHotRef.value) await doubanHotRef.value.init();
