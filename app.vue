@@ -161,11 +161,12 @@ onMounted(() => {
 <style scoped>
 /* 主布局 */
 .layout {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* 背景装饰 - 玻璃拟态效果 */

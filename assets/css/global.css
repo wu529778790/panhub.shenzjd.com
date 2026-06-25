@@ -74,11 +74,12 @@ body {
   font-family: "Manrope", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background: var(--bg-body);
   color: var(--text-primary);
+  height: 100%;
+  overflow: hidden;
 
   /* iOS Safari兼容性 */
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* 滚动条美化 */
