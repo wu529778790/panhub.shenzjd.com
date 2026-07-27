@@ -97,7 +97,7 @@ export interface SearchResponse { ... }
 
 **目标**：修复 SSR 下设置串用户的风险。
 
-**方案**：参照 `useAuth` 的模式，用 Nuxt 的 `useState` 管理状态。
+**方案**：使用 Nuxt 的 `useState` 管理状态。
 
 **改动要点**：
 - 删除模块级 `settingsSingleton` 变量

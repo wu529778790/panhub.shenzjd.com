@@ -1,5 +1,7 @@
 User-Agent: *
-Disallow:
+Allow: /
+Disallow: /api/
+Disallow: /ios-test
 
-# 指定站点地图，帮助搜索引擎更快发现页面
-Sitemap: https://panhub.shenzjd.com/sitemap.xml
+Sitemap: https://haosouku.com/sitemap.xml
+Host: haosouku.com

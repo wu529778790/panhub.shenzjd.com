@@ -1,7 +1,12 @@
 import pLimit from "p-limit";
 import { UnifiedCache, CacheNamespace } from "../cache/unifiedCache";
 import { safeExecute } from "../utils/fetch";
-import type { MergedLinks, SearchResponse, SearchResult } from "../types/models";
+import type {
+  MergedLinks,
+  SearchMatchMode,
+  SearchResponse,
+  SearchResult,
+} from "../types/models";
 import { PluginManager, type AsyncSearchPlugin } from "../plugins/manager";
 import {
   PluginHealthChecker,
@@ -12,8 +17,22 @@ import {
   classifyError,
   type WarningInfo,
 } from "../utils/errors";
-import { buildSearchKeywordVariants } from "../utils/searchKeyword";
+import {
+  buildSearchKeywordVariants,
+  matchesExactSearchKeyword,
+} from "../utils/searchKeyword";
+import { buildSearchAliasVariants } from "../utils/searchAliases";
+import { sortMergedLinksByRelevance } from "./searchRanking";
 import { loggers } from "../utils/logger";
+import { isStrictTitleMatch } from "../../../utils/sourceContent";
+import type { SourceQualityPolicy } from "./searchQualityService";
+import { resolveMovieSearchAliases } from "./movieSearchAliases";
+import {
+  enrichTorrentMetadata,
+  mergeTorrentMetadata,
+  normalizeMagnetKey,
+  scoreTorrentResult,
+} from "../../../utils/torrentMetadata";
 
 export interface SearchServiceOptions {
   priorityChannels: string[];
@@ -24,11 +43,28 @@ export interface SearchServiceOptions {
   cacheTtlMinutes: number;
 }
 
+export interface SourceExecutionMetric {
+  sourceKey: string;
+  resultCount: number;
+  uniqueResultCount: number;
+  duplicateCount: number;
+  latencyMs: number;
+  success: boolean;
+  timedOut: boolean;
+  cached: boolean;
+}
+
+export interface SearchExecutionResult {
+  response: SearchResponse;
+  warnings: WarningInfo[];
+  sourceMetrics: SourceExecutionMetric[];
+}
+
 export class SearchService {
-  private static readonly TG_CHANNEL_LIMIT = 80;
-  private static readonly TG_DEEP_CHANNEL_LIMIT = 160;
-  private static readonly TG_DEEP_SEARCH_TRIGGER = 3;
+  private static readonly TG_PRIORITY_CHANNEL_LIMIT = 40;
+  private static readonly TG_CHANNEL_LIMIT = 20;
   private static readonly PLUGIN_VARIANT_TRIGGER = 5;
+  private static readonly MAX_PLUGIN_QUERY_VARIANTS = 3;
 
   private options: SearchServiceOptions;
   private pluginManager: PluginManager;
@@ -63,7 +99,8 @@ export class SearchService {
     plugins: string[] | undefined,
     cloudTypes: string[] | undefined,
     ext: Record<string, any> | undefined,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    matchMode: SearchMatchMode = "fuzzy"
   ): Promise<SearchResponse> {
     const { response } = await this.searchWithWarnings(
       keyword,
@@ -75,7 +112,8 @@ export class SearchService {
       plugins,
       cloudTypes,
       ext,
-      signal
+      signal,
+      matchMode
     );
 
     return response;
@@ -91,14 +129,16 @@ export class SearchService {
     plugins: string[] | undefined,
     cloudTypes: string[] | undefined,
     ext: Record<string, any> | undefined,
-    signal?: AbortSignal
-  ): Promise<{ response: SearchResponse; warnings: WarningInfo[] }> {
+    signal?: AbortSignal,
+    matchMode: SearchMatchMode = "fuzzy"
+  ): Promise<SearchExecutionResult> {
     // 客户端已断开，直接返回空结果
     if (signal?.aborted) {
-      return { response: { total: 0 }, warnings: [] };
+      return { response: { total: 0 }, warnings: [], sourceMetrics: [] };
     }
 
     const errorCollector = new ErrorCollector();
+    const sourceMetrics: SourceExecutionMetric[] = [];
     const requestStart = Date.now();
     const effChannels =
       channels && channels.length > 0 ? channels : this.options.defaultChannels;
@@ -109,6 +149,8 @@ export class SearchService {
     const effResultType =
       !resultType || resultType === "merge" ? "merged_by_type" : resultType;
     const effSourceType = sourceType ?? "all";
+    const effMatchMode: SearchMatchMode =
+      matchMode === "exact" ? "exact" : "fuzzy";
 
     let tgResults: SearchResult[] = [];
     let pluginResults: SearchResult[] = [];
@@ -117,6 +159,7 @@ export class SearchService {
 
     if (effSourceType === "all" || effSourceType === "tg") {
       tasks.push(async () => {
+        const startedAt = Date.now();
         const concOverride =
           typeof concurrency === "number" && concurrency > 0
             ? concurrency
@@ -129,6 +172,16 @@ export class SearchService {
           ext,
           signal
         );
+        sourceMetrics.push({
+          sourceKey: "tg",
+          resultCount: tgResults.length,
+          uniqueResultCount: tgResults.length,
+          duplicateCount: 0,
+          latencyMs: Date.now() - startedAt,
+          success: true,
+          timedOut: false,
+          cached: false,
+        });
       });
     }
     if (effSourceType === "all" || effSourceType === "plugin") {
@@ -138,9 +191,11 @@ export class SearchService {
           plugins,
           !!forceRefresh,
           effConcurrency,
-          ext ?? {},
+          { ...(ext ?? {}), __cloud_types: cloudTypes },
           errorCollector,
-          signal
+          sourceMetrics,
+          signal,
+          effMatchMode
         );
       });
     }
@@ -148,10 +203,16 @@ export class SearchService {
     await Promise.all(tasks.map((task) => task()));
 
     const allResults = this.mergeSearchResults(tgResults, pluginResults);
-    this.sortResultsByTimeDesc(allResults);
+    const matchedResults =
+      effMatchMode === "exact"
+        ? allResults.filter((result) =>
+            this.matchesExactResult(result, keyword)
+          )
+        : allResults;
+    this.sortResultsByTimeDesc(matchedResults);
 
     const filteredForResults: SearchResult[] = [];
-    for (const result of allResults) {
+    for (const result of matchedResults) {
       const hasTime = !!result.datetime;
       const hasLinks = Array.isArray(result.links) && result.links.length > 0;
       if (hasTime || hasLinks) {
@@ -160,7 +221,7 @@ export class SearchService {
     }
 
     const mergedLinks = this.mergeResultsByType(
-      allResults,
+      matchedResults,
       keyword,
       cloudTypes
     );
@@ -194,6 +255,8 @@ export class SearchService {
       sourceType: effSourceType,
       requestedPlugins: plugins ?? "all",
       requestedChannels: effChannels.length,
+      matchMode: effMatchMode,
+      exactFilteredCount: allResults.length - matchedResults.length,
       durationMs: requestMs,
       filteredResultCount: filteredForResults.length,
     });
@@ -201,6 +264,7 @@ export class SearchService {
     return {
       response,
       warnings: errorCollector.getWarnings(),
+      sourceMetrics,
     };
   }
 
@@ -233,8 +297,9 @@ export class SearchService {
     );
     const concurrency = Math.max(
       2,
-      Math.min(concurrencyOverride ?? this.options.defaultConcurrency, 5)
+      Math.min(concurrencyOverride ?? this.options.defaultConcurrency, 6)
     );
+    const batchDeadline = Date.now() + timeoutMs;
 
     const prioritySet = new Set(priorityChannels || []);
     const priorityList = chList.filter((channel) => prioritySet.has(channel));
@@ -244,6 +309,8 @@ export class SearchService {
       (channel: string, limitPerChannel: number) => async () => {
         // 客户端断开时跳过
         if (signal?.aborted) return [];
+        const remainingBudgetMs = batchDeadline - Date.now();
+        if (remainingBudgetMs <= 0) return [];
 
         const controller = new AbortController();
         // 将外部取消和超时合并：任一触发都会 abort
@@ -258,7 +325,7 @@ export class SearchService {
                 limitPerChannel,
                 signal: mergedSignal,
               }),
-              timeoutMs,
+              remainingBudgetMs,
               [],
               controller
             ),
@@ -277,27 +344,17 @@ export class SearchService {
       return flattened;
     };
 
-    const shallowTasks = [...priorityList, ...normalList].map((channel) =>
-      createChannelTask(channel, SearchService.TG_CHANNEL_LIMIT)
+    const channelTasks = [
+      ...priorityList.map((channel) =>
+        createChannelTask(channel, SearchService.TG_PRIORITY_CHANNEL_LIMIT)
+      ),
+      ...normalList.map((channel) =>
+        createChannelTask(channel, SearchService.TG_CHANNEL_LIMIT)
+      ),
+    ];
+    const results = flattenResults(
+      await this.runWithConcurrency(channelTasks, concurrency, signal)
     );
-    const shallowResults = flattenResults(
-      await this.runWithConcurrency(shallowTasks, concurrency, signal)
-    );
-
-    let results = shallowResults;
-    if (
-      results.length < SearchService.TG_DEEP_SEARCH_TRIGGER &&
-      keyword.trim().length > 1 &&
-      chList.length > 0
-    ) {
-      const deepTasks = [...priorityList, ...normalList].map((channel) =>
-        createChannelTask(channel, SearchService.TG_DEEP_CHANNEL_LIMIT)
-      );
-      const deepResults = flattenResults(
-        await this.runWithConcurrency(deepTasks, concurrency, signal)
-      );
-      results = this.mergeUniqueResults(results, deepResults);
-    }
 
     if (cacheEnabled && results.length > 0) {
       this.cache.set(CacheNamespace.TG_SEARCH, cacheKey, results);
@@ -308,9 +365,7 @@ export class SearchService {
       channelCount: chList.length,
       priorityCount: priorityList.length,
       normalCount: normalList.length,
-      shallow: shallowResults.length,
-      deep: results.length - shallowResults.length,
-      wentDeep: results.length > shallowResults.length,
+      resultCount: results.length,
     });
 
     return results;
@@ -323,9 +378,14 @@ export class SearchService {
     concurrency: number,
     ext: Record<string, any>,
     errorCollector: ErrorCollector,
-    signal?: AbortSignal
+    sourceMetrics: SourceExecutionMetric[],
+    signal?: AbortSignal,
+    matchMode: SearchMatchMode = "fuzzy"
   ): Promise<SearchResult[]> {
-    const cacheKey = `plugin:${keyword}:${(plugins ?? [])
+    const cloudTypeKey = Array.isArray(ext.__cloud_types)
+      ? ext.__cloud_types.map(String).filter(Boolean).sort().join(",")
+      : "all";
+    const cacheKey = `plugin:${matchMode}:${keyword}:${cloudTypeKey}:${(plugins ?? [])
       .map((plugin) => plugin?.toLowerCase())
       .filter(Boolean)
       .sort()
@@ -335,24 +395,81 @@ export class SearchService {
     if (!forceRefresh && cacheEnabled) {
       const cached = this.cache.get(CacheNamespace.PLUGIN_SEARCH, cacheKey);
       if (cached.hit && cached.value) {
+        if (plugins?.length === 1 && plugins[0]) {
+          sourceMetrics.push({
+            sourceKey: plugins[0],
+            resultCount: 0,
+            uniqueResultCount: 0,
+            duplicateCount: 0,
+            latencyMs: 0,
+            success: true,
+            timedOut: false,
+            cached: true,
+          });
+        }
         return cached.value;
       }
     }
 
     const allPlugins = this.pluginManager.getPlugins();
+    const policies = (ext.__source_quality_policies || {}) as Record<
+      string,
+      SourceQualityPolicy
+    >;
+    const policyFor = (pluginName: string) =>
+      policies[pluginName.trim().toLowerCase()];
+    const explicitlyRequested = Boolean(
+      plugins && plugins.length > 0 && plugins.some((plugin) => !!plugin)
+    );
     const healthyPlugins = allPlugins.filter((plugin) =>
       this.healthChecker.isHealthy(plugin.name())
     );
 
     let available: AsyncSearchPlugin[] = [];
-    if (plugins && plugins.length > 0 && plugins.some((plugin) => !!plugin)) {
-      const wanted = new Set(plugins.map((plugin) => plugin.toLowerCase()));
+    if (explicitlyRequested) {
+      const wanted = new Set(
+        (plugins || []).map((plugin) => plugin.toLowerCase())
+      );
       available = healthyPlugins.filter((plugin) =>
         wanted.has(plugin.name().toLowerCase())
       );
     } else {
       available = healthyPlugins;
     }
+    // The web client sends its enabled source list explicitly but opts into
+    // automatic quality controls. Direct API callers can still probe a
+    // specific disabled source by omitting this internal flag.
+    if (!explicitlyRequested || ext.__respect_source_quality === true) {
+      available = available.filter(
+        (plugin) => policyFor(plugin.name())?.state !== "disabled"
+      );
+    }
+    available.sort((left, right) => {
+      const scoreDelta =
+        (policyFor(right.name())?.score ?? 50) -
+        (policyFor(left.name())?.score ?? 50);
+      return scoreDelta || left.priority() - right.priority();
+    });
+
+    const staticAliases = buildSearchAliasVariants(keyword, 3);
+    const needsMovieAlias =
+      matchMode !== "exact" &&
+      available.some((plugin) => plugin.name() === "磁力索引") &&
+      !staticAliases.some((alias) => /^[\x00-\x7F]+$/.test(alias));
+    const remoteAliases = needsMovieAlias
+      ? await resolveMovieSearchAliases(
+          keyword,
+          ext.__resource_database,
+          signal
+        ).catch(() => [])
+      : [];
+    const sharedAliases = [...staticAliases, ...remoteAliases].filter(
+      (value, index, values) =>
+        values.findIndex(
+          (candidate) =>
+            candidate.trim().toLowerCase() === value.trim().toLowerCase()
+        ) === index
+    );
 
     const requestedTimeout = Number((ext as any)?.__plugin_timeout_ms) || 0;
     const timeoutMs = Math.max(
@@ -368,17 +485,76 @@ export class SearchService {
 
       const startTime = Date.now();
       const pluginName = plugin.name();
+      const sourcePolicy = policyFor(pluginName);
+      // A plugin may declare a tighter source-specific budget. This keeps slow
+      // supplemental sources from delaying faster catalog results, while the
+      // global setting remains the fallback for plugins without an override.
+      const declaredTimeoutMs = plugin.timeoutMs?.() || timeoutMs;
+      const pluginBudgetMs = Math.max(
+        1,
+        Math.min(
+          timeoutMs,
+          declaredTimeoutMs,
+          sourcePolicy?.timeoutMs || Number.POSITIVE_INFINITY
+        )
+      );
 
       try {
-        const queries =
-          (keyword || "").trim().length <= 1
-            ? [keyword, "电影", "movie", "1080p"]
-            : buildSearchKeywordVariants(keyword).slice(0, 3);
+        const aliases = sharedAliases.slice(0, 2);
+        const latinAlias = aliases.find((alias) =>
+          /^[\x00-\x7F]+$/.test(alias)
+        );
+        const curatedAliasQueries =
+          plugin.useKeywordVariants?.() === false &&
+          /[\u3400-\u9fff]/u.test(keyword) &&
+          latinAlias
+            ? [
+                latinAlias,
+                keyword,
+                ...aliases.filter((alias) => alias !== latinAlias),
+              ]
+            : [keyword, ...aliases];
+        const queries = matchMode === "exact"
+          ? [keyword]
+          : plugin.useKeywordVariants?.() === false
+            ? curatedAliasQueries.slice(
+                0,
+                SearchService.MAX_PLUGIN_QUERY_VARIANTS
+              )
+            : (keyword || "").trim().length <= 1
+              ? [keyword, "电影", "movie"]
+              : [
+                  keyword,
+                  ...aliases,
+                  ...buildSearchKeywordVariants(keyword).slice(1),
+                ].filter(
+                  (value, index, values) =>
+                    values.findIndex(
+                      (candidate) =>
+                        candidate.trim().toLowerCase() === value.trim().toLowerCase()
+                    ) === index
+                ).slice(
+                  0,
+                  Math.min(
+                    SearchService.MAX_PLUGIN_QUERY_VARIANTS,
+                    Math.max(1, sourcePolicy?.maxVariants || 3)
+                  )
+                );
 
         let results: SearchResult[] = [];
+        let rawResultCount = 0;
+        let duplicateCount = 0;
+        let timedOut = false;
+        let queryCount = 0;
+        let cachedQueryCount = 0;
         for (const [index, query] of queries.entries()) {
           // 客户端断开时跳过剩余查询
           if (signal?.aborted) break;
+          const remainingBudgetMs = pluginBudgetMs - (Date.now() - startTime);
+          if (remainingBudgetMs <= 0) {
+            timedOut = true;
+            break;
+          }
 
           // 为每次插件请求创建独立的 AbortController，
           // 超时后 withTimeout 会 abort，使底层请求有机会被真正取消（而非泄漏）
@@ -387,14 +563,53 @@ export class SearchService {
           const mergedSignal = signal
             ? AbortSignal.any([signal, controller.signal])
             : controller.signal;
+          let queryTimedOut = false;
+          const executionExt = {
+            ...ext,
+            __plugin_timeout_ms: remainingBudgetMs,
+            __source_cache_status: "miss",
+            signal: mergedSignal,
+          };
           const currentResults = await this.withTimeout<SearchResult[]>(
-            plugin.search(query, { ...ext, signal: mergedSignal }),
-            timeoutMs,
+            plugin.search(query, executionExt),
+            remainingBudgetMs,
             [],
-            controller
+            controller,
+            () => {
+              queryTimedOut = true;
+            }
           );
+          queryCount += 1;
+          if (executionExt.__source_cache_status === "hit") {
+            cachedQueryCount += 1;
+          }
 
-          results = this.mergeUniqueResults(results, currentResults || []);
+          const relevantResults = plugin.skipServiceFilter()
+            ? currentResults || []
+            : (currentResults || []).filter((result) => {
+                const hasMagnet = (result.links || []).some(
+                  (link) =>
+                    link.type?.toLowerCase() === "magnet" ||
+                    /^magnet:\?/i.test(link.url)
+                );
+                return !hasMagnet || isStrictTitleMatch(result.title, query);
+              });
+          const sourceName = this.pluginSourceName(pluginName);
+          const sourcedResults = relevantResults.map((result) => ({
+            ...result,
+            source: result.source || sourceName,
+          }));
+          rawResultCount += sourcedResults.length;
+          const beforeMergeCount = results.length;
+          results = this.mergeUniqueResults(results, sourcedResults);
+          duplicateCount += Math.max(
+            0,
+            beforeMergeCount + sourcedResults.length - results.length
+          );
+          if (queryTimedOut) {
+            timedOut = true;
+            break;
+          }
 
           if (
             results.length >= SearchService.PLUGIN_VARIANT_TRIGGER ||
@@ -405,12 +620,38 @@ export class SearchService {
         }
 
         const responseTime = Date.now() - startTime;
-        this.healthChecker.recordSuccess(pluginName, responseTime);
+        const fullyCached =
+          queryCount > 0 && cachedQueryCount === queryCount;
+        const success = !timedOut || results.length > 0;
+        if (!fullyCached) {
+          if (success) this.healthChecker.recordSuccess(pluginName, responseTime);
+          else this.healthChecker.recordFailure(pluginName);
+        }
+        sourceMetrics.push({
+          sourceKey: pluginName,
+          resultCount: rawResultCount,
+          uniqueResultCount: results.length,
+          duplicateCount,
+          latencyMs: responseTime,
+          success,
+          timedOut,
+          cached: fullyCached,
+        });
 
         return results;
       } catch (error) {
         const errorMs = Date.now() - startTime;
         this.healthChecker.recordFailure(pluginName);
+        sourceMetrics.push({
+          sourceKey: pluginName,
+          resultCount: 0,
+          uniqueResultCount: 0,
+          duplicateCount: 0,
+          latencyMs: errorMs,
+          success: false,
+          timedOut: false,
+          cached: false,
+        });
 
         loggers.search.debug("单插件失败", {
           plugin: pluginName,
@@ -455,12 +696,14 @@ export class SearchService {
     promise: Promise<T>,
     ms: number,
     fallback: T,
-    controller?: AbortController
+    controller?: AbortController,
+    onTimeout?: () => void
   ): Promise<T> {
     if (!ms || ms <= 0) return promise;
     let timeoutHandle: any;
     const timeoutPromise = new Promise<T>((resolve) => {
       timeoutHandle = setTimeout(() => {
+        onTimeout?.();
         // 超时后取消底层请求，避免 socket/内存泄漏
         if (controller && !controller.signal.aborted) {
           controller.abort();
@@ -485,17 +728,59 @@ export class SearchService {
     a: SearchResult[],
     b: SearchResult[]
   ): SearchResult[] {
-    const seen = new Set<string>();
+    const indexByKey = new Map<string, number>();
     const out: SearchResult[] = [];
     const pushUnique = (result: SearchResult) => {
       const firstLink = Array.isArray(result.links) ? result.links[0]?.url : "";
+      const firstMagnet = (result.links || []).find(
+        (link) => link.type?.toLowerCase() === "magnet" || /^magnet:\?/i.test(link.url)
+      );
       const key =
+        (firstMagnet ? normalizeMagnetKey(firstMagnet.url) : "") ||
         result.unique_id ||
         result.message_id ||
         firstLink ||
         `${result.title}|${result.channel}|${result.datetime || ""}`;
-      if (seen.has(key)) return;
-      seen.add(key);
+      const existingIndex = indexByKey.get(key);
+      if (existingIndex !== undefined) {
+        if (!firstMagnet) return;
+        const existing = out[existingIndex];
+        const existingMagnet = existing?.links.find(
+          (link) => link.type?.toLowerCase() === "magnet" || /^magnet:\?/i.test(link.url)
+        );
+        if (!existing || !existingMagnet) return;
+        const existingTime = Date.parse(existing.datetime || "");
+        const incomingTime = Date.parse(result.datetime || "");
+        const chosenMagnet =
+          firstMagnet.url.length > existingMagnet.url.length
+            ? firstMagnet
+            : existingMagnet;
+        const otherLinks = new Map<string, (typeof result.links)[number]>();
+        for (const link of [...existing.links, ...result.links]) {
+          if (link === existingMagnet || link === firstMagnet) continue;
+          otherLinks.set(`${link.type.toLowerCase()}:${link.url.trim()}`, link);
+        }
+        out[existingIndex] = {
+          ...existing,
+          title:
+            result.title.length > existing.title.length
+              ? result.title
+              : existing.title,
+          content:
+            result.content.length > existing.content.length
+              ? result.content
+              : existing.content,
+          datetime:
+            Number.isFinite(incomingTime) &&
+            (!Number.isFinite(existingTime) || incomingTime > existingTime)
+              ? result.datetime
+              : existing.datetime,
+          links: [chosenMagnet, ...otherLinks.values()],
+          metadata: mergeTorrentMetadata(existing.metadata, result.metadata),
+        };
+        return;
+      }
+      indexByKey.set(key, out.length);
       out.push(result);
     };
 
@@ -515,9 +800,38 @@ export class SearchService {
     arr.sort((x, y) => toTime(y.datetime) - toTime(x.datetime));
   }
 
+  private matchesExactResult(result: SearchResult, keyword: string): boolean {
+    const searchableFields = [
+      result.title,
+      result.content,
+      ...(result.tags || []),
+    ];
+
+    return searchableFields.some((value) =>
+      matchesExactSearchKeyword(value || "", keyword)
+    );
+  }
+
+  private pluginSourceName(name: string): string {
+    const sources: Record<string, string> = {
+      nyaa: "Nyaa",
+      solidtorrents: "BitSearch",
+      pansearch: "PanSearch",
+      "好搜聚合": "好搜聚合",
+      "精选资料库": "精选资料库",
+      "影视速搜": "影视速搜",
+      "影视直达": "影视直达",
+      "资源补充": "资源补充",
+      "磁力索引": "磁力索引",
+      "全网索引": "全网索引",
+      "网络资源索引": "网络资源索引",
+    };
+    return sources[name.toLowerCase()] || name;
+  }
+
   private mergeResultsByType(
     results: SearchResult[],
-    _keyword: string,
+    keyword: string,
     cloudTypes?: string[]
   ): MergedLinks {
     const allow =
@@ -525,19 +839,87 @@ export class SearchService {
         ? new Set(cloudTypes.map((value) => value.toLowerCase()))
         : undefined;
     const out: MergedLinks = {};
+    const indexesByType = new Map<string, Map<string, number>>();
     for (const result of results) {
       for (const link of result.links || []) {
         const type = (link.type || "").toLowerCase();
+        const url = (link.url || "").trim();
+        if (!type || !url) continue;
         if (allow && !allow.has(type)) continue;
         if (!out[type]) out[type] = [];
-        out[type].push({
-          url: link.url,
+        if (!indexesByType.has(type)) indexesByType.set(type, new Map());
+        const normalizedUrl = type === "magnet"
+          ? normalizeMagnetKey(url)
+          : url.replace(/\/$/, "").toLowerCase();
+        const source = result.source
+          || (result.channel ? "频道索引" : undefined);
+        const metadata = type === "magnet"
+          ? mergeTorrentMetadata(
+              enrichTorrentMetadata(result.title, result.content, result.metadata),
+              source ? { sources: [source] } : undefined
+            )
+          : result.metadata;
+        const incoming = {
+          url,
           password: link.password,
           note: result.title,
           datetime: result.datetime,
+          source,
           images: result.images,
-        });
+          metadata,
+          category:
+            result.metadata?.category ||
+            result.tags?.[0] ||
+            (result.content && result.content.length <= 60
+              ? result.content
+              : undefined),
+          sources: source ? [source] : [],
+          support_count: 1,
+        };
+        const existingIndex = indexesByType.get(type)!.get(normalizedUrl);
+        if (existingIndex === undefined) {
+          indexesByType.get(type)!.set(normalizedUrl, out[type].length);
+          out[type].push(incoming);
+          continue;
+        }
+
+        const existing = out[type][existingIndex];
+        if (!existing) continue;
+        const existingScore = scoreTorrentResult(existing, keyword);
+        const incomingScore = scoreTorrentResult(incoming, keyword);
+        const preferIncomingTitle = incomingScore > existingScore;
+        const existingTime = Date.parse(existing.datetime || "");
+        const incomingTime = Date.parse(incoming.datetime || "");
+        out[type][existingIndex] = {
+          ...existing,
+          url: incoming.url.length > existing.url.length ? incoming.url : existing.url,
+          note: preferIncomingTitle ? incoming.note : existing.note,
+          datetime:
+            Number.isFinite(incomingTime) && (!Number.isFinite(existingTime) || incomingTime > existingTime)
+              ? incoming.datetime
+              : existing.datetime,
+          source: existing.source || incoming.source,
+          images: existing.images?.length ? existing.images : incoming.images,
+          metadata: mergeTorrentMetadata(existing.metadata, incoming.metadata),
+          category: existing.category || incoming.category,
+          sources: Array.from(
+            new Set([
+              ...(existing.sources || (existing.source ? [existing.source] : [])),
+              ...(incoming.sources || (incoming.source ? [incoming.source] : [])),
+            ])
+          ),
+          support_count: Array.from(
+            new Set([
+              ...(existing.sources || (existing.source ? [existing.source] : [])),
+              ...(incoming.sources || (incoming.source ? [incoming.source] : [])),
+            ])
+          ).length || 1,
+        };
       }
+    }
+
+    for (const [type, items] of Object.entries(out)) {
+      sortMergedLinksByRelevance(items, keyword, type);
     }
     return out;
   }

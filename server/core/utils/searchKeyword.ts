@@ -49,11 +49,26 @@ export function buildSearchKeywordVariants(keyword: string): string[] {
     }
 
     for (const part of cjkParts) {
+      // 两个汉字的派生片段通常过宽（例如“救赎”），保留完整短查询，
+      // 但不再把长片名拆成这类弱相关请求。
+      if (CJK_PATTERN.test(part) && Array.from(normalizeSearchKeyword(part)).length < 3) {
+        continue;
+      }
       push(part);
     }
   }
 
   return variants.slice(0, 6);
+}
+
+export function matchesExactSearchKeyword(
+  text: string,
+  keyword: string
+): boolean {
+  const normalizedKeyword = normalizeSearchKeyword(keyword);
+  if (!normalizedKeyword) return true;
+
+  return normalizeSearchKeyword(text).includes(normalizedKeyword);
 }
 
 export function matchesSearchKeyword(text: string, keyword: string): boolean {

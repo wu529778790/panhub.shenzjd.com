@@ -1,0 +1,3028 @@
+{
+  "schema_version": "1.0",
+  "project_root": "/Users/sean/Documents/panpanso",
+  "generated_at": "2026-07-22T20:04:04Z",
+  "scope": {
+    "source_extensions": [
+      ".cjs",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".py",
+      ".ts",
+      ".tsx"
+    ],
+    "excluded_directories": [
+      ".git",
+      ".hg",
+      ".mypy_cache",
+      ".next",
+      ".nuxt",
+      ".pytest_cache",
+      ".ruff_cache",
+      ".svelte-kit",
+      ".svn",
+      ".venv",
+      "__pycache__",
+      "build",
+      "coverage",
+      "dist",
+      "node_modules",
+      "out",
+      "outputs",
+      "target",
+      "vendor",
+      "venv"
+    ],
+    "source_files": 214,
+    "source_loc": 22491,
+    "source_bytes": 2314310
+  },
+  "summary": {
+    "candidates": 148,
+    "proof_eligible": 6,
+    "potential_removable_loc": 6152,
+    "potential_removable_bytes": 1257098,
+    "by_category": {
+      "orphan-file": 83,
+      "unused-dependency": 0,
+      "unused-export": 63,
+      "duplicate-file": 1,
+      "commented-code": 1
+    }
+  },
+  "candidates": [
+    {
+      "category": "orphan-file",
+      "subject": ".codex-seo-visual-test.py",
+      "path": ".codex-seo-visual-test.py",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 45,
+      "bytes": 2324,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-001"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/BCYUChiP.js",
+      "path": ".output/public/_nuxt/BCYUChiP.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 140011,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: BCYUChiP, BCYUChiP.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-002"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/BGxsx0TN.js",
+      "path": ".output/public/_nuxt/BGxsx0TN.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 275,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: BGxsx0TN, BGxsx0TN.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-003"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/BHoPddxq.js",
+      "path": ".output/public/_nuxt/BHoPddxq.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 414,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: BHoPddxq, BHoPddxq.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-004"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/BhwPdyg7.js",
+      "path": ".output/public/_nuxt/BhwPdyg7.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 305,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: BhwPdyg7, BhwPdyg7.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-005"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/BrEz5IKj.js",
+      "path": ".output/public/_nuxt/BrEz5IKj.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 410,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: BrEz5IKj, BrEz5IKj.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-006"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/CHTgmpFa.js",
+      "path": ".output/public/_nuxt/CHTgmpFa.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 310,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: CHTgmpFa, CHTgmpFa.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-007"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/CT52cIms.js",
+      "path": ".output/public/_nuxt/CT52cIms.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 2009,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: CT52cIms, CT52cIms.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-008"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/CZbx7lNI.js",
+      "path": ".output/public/_nuxt/CZbx7lNI.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 3692,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: CZbx7lNI, CZbx7lNI.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-009"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/CbNbuWb2.js",
+      "path": ".output/public/_nuxt/CbNbuWb2.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 267,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: CbNbuWb2, CbNbuWb2.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-010"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/CfUrNL1K.js",
+      "path": ".output/public/_nuxt/CfUrNL1K.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 2919,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: CfUrNL1K, CfUrNL1K.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-011"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/Cuu9779P.js",
+      "path": ".output/public/_nuxt/Cuu9779P.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 419,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: Cuu9779P, Cuu9779P.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-012"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/D3bGyH_U.js",
+      "path": ".output/public/_nuxt/D3bGyH_U.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 3,
+      "bytes": 94052,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: D3bGyH_U, D3bGyH_U.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-013"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/D65ukYnA.js",
+      "path": ".output/public/_nuxt/D65ukYnA.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 26557,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: D65ukYnA, D65ukYnA.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-014"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/D748dLCJ.js",
+      "path": ".output/public/_nuxt/D748dLCJ.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 67165,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: D748dLCJ, D748dLCJ.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-015"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/DMwX1WEl.js",
+      "path": ".output/public/_nuxt/DMwX1WEl.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 23831,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: DMwX1WEl, DMwX1WEl.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-016"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/DWoqGCi-.js",
+      "path": ".output/public/_nuxt/DWoqGCi-.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 3,
+      "bytes": 113058,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: DWoqGCi-, DWoqGCi-.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-017"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/DWr_OC-d.js",
+      "path": ".output/public/_nuxt/DWr_OC-d.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 1515,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: DWr_OC-d, DWr_OC-d.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-018"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/D_X6GRZy.js",
+      "path": ".output/public/_nuxt/D_X6GRZy.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 2060,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: D_X6GRZy, D_X6GRZy.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-019"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/Din6mfaL.js",
+      "path": ".output/public/_nuxt/Din6mfaL.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 271,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: Din6mfaL, Din6mfaL.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-020"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/DnOljBaa.js",
+      "path": ".output/public/_nuxt/DnOljBaa.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 4547,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: DnOljBaa, DnOljBaa.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-021"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/Dp84xg9x.js",
+      "path": ".output/public/_nuxt/Dp84xg9x.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 2158,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: Dp84xg9x, Dp84xg9x.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-022"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/DrEnm75J.js",
+      "path": ".output/public/_nuxt/DrEnm75J.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 410,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: DrEnm75J, DrEnm75J.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-023"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/Nn3Fh2eE.js",
+      "path": ".output/public/_nuxt/Nn3Fh2eE.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 267,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: Nn3Fh2eE, Nn3Fh2eE.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-024"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/OckstAWV.js",
+      "path": ".output/public/_nuxt/OckstAWV.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 302,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: OckstAWV, OckstAWV.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-025"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/_nuxt/popr4JVf.js",
+      "path": ".output/public/_nuxt/popr4JVf.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1,
+      "bytes": 307,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: popr4JVf, popr4JVf.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-026"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/public/panhub-link-checker.user.js",
+      "path": ".output/public/panhub-link-checker.user.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 569,
+      "bytes": 20007,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: panhub-link-checker.user, panhub-link-checker.user.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-027"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/PhArrowRight.vue.mjs",
+      "path": ".output/server/chunks/_/PhArrowRight.vue.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 2116,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: PhArrowRight.vue."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-028"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/PhArrowUpRight.vue.mjs",
+      "path": ".output/server/chunks/_/PhArrowUpRight.vue.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 2067,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: PhArrowUpRight.vue."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-029"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/PhMagnifyingGlass.vue.mjs",
+      "path": ".output/server/chunks/_/PhMagnifyingGlass.vue.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 2219,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: PhMagnifyingGlass.vue."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-030"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/cloudflareBindings.mjs",
+      "path": ".output/server/chunks/_/cloudflareBindings.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 1210,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: cloudflareBindings, cloudflareBindings.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-031"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/d1HotSearchService.mjs",
+      "path": ".output/server/chunks/_/d1HotSearchService.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 4818,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: d1HotSearchService, d1HotSearchService.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-032"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/index.mjs",
+      "path": ".output/server/chunks/_/index.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 65715,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: index, index.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-033"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/index2.mjs",
+      "path": ".output/server/chunks/_/index2.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 1738,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: index2, index2.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-034"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/linkHealthService.mjs",
+      "path": ".output/server/chunks/_/linkHealthService.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 8311,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: linkHealthService, linkHealthService.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-035"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/logger.mjs",
+      "path": ".output/server/chunks/_/logger.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 2274,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: logger, logger.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-036"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/memoryCache.mjs",
+      "path": ".output/server/chunks/_/memoryCache.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 301860,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: memoryCache, memoryCache.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-037"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/performance.mjs",
+      "path": ".output/server/chunks/_/performance.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 3640,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: performance, performance.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-038"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/searchLinkHealth.mjs",
+      "path": ".output/server/chunks/_/searchLinkHealth.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 4025,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: searchLinkHealth, searchLinkHealth.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-039"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/searchQualityService.mjs",
+      "path": ".output/server/chunks/_/searchQualityService.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 16478,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: searchQualityService, searchQualityService.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-040"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/_/shared.esm-bundler.mjs",
+      "path": ".output/server/chunks/_/shared.esm-bundler.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 16817,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: shared.esm-bundler, shared.esm-bundler.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-041"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/nitro/nitro.mjs",
+      "path": ".output/server/chunks/nitro/nitro.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 106533,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: nitro, nitro.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-042"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/chunks/virtual/_commonjsHelpers.mjs",
+      "path": ".output/server/chunks/virtual/_commonjsHelpers.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 206,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: _commonjsHelpers, _commonjsHelpers.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-043"
+    },
+    {
+      "category": "orphan-file",
+      "subject": ".output/server/index.mjs",
+      "path": ".output/server/index.mjs",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 2,
+      "bytes": 252,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: .output/server/index, .output/server/index.mjs, index, index.mjs."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-044"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useAiAnalysis.ts",
+      "path": "composables/useAiAnalysis.ts",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 98,
+      "bytes": 2458,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-045"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useDarkMode.ts",
+      "path": "composables/useDarkMode.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 39,
+      "bytes": 1135,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: composables/useDarkMode, composables/useDarkMode.ts, useDarkMode, useDarkMode.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-046"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useFavorites.ts",
+      "path": "composables/useFavorites.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 200,
+      "bytes": 5738,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: useFavorites."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-047"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useLinkHealth.ts",
+      "path": "composables/useLinkHealth.ts",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 83,
+      "bytes": 2711,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-048"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useRecentSearches.ts",
+      "path": "composables/useRecentSearches.ts",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 44,
+      "bytes": 1317,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-049"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useSearch.ts",
+      "path": "composables/useSearch.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 443,
+      "bytes": 13232,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: composables/useSearch, composables/useSearch.ts, useSearch, useSearch.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-050"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useSettings.ts",
+      "path": "composables/useSettings.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 250,
+      "bytes": 7163,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: composables/useSettings, composables/useSettings.ts, useSettings, useSettings.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-051"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "composables/useToast.ts",
+      "path": "composables/useToast.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 26,
+      "bytes": 640,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: composables/useToast, composables/useToast.ts, useToast, useToast.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-052"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "config/plugins.ts",
+      "path": "config/plugins.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 50,
+      "bytes": 1950,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: config/plugins, plugins, plugins.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-053"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 1237,
+      "bytes": 76747,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: config/seoContent, seoContent."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-054"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "config/seoDiscovery.ts",
+      "path": "config/seoDiscovery.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 71,
+      "bytes": 2377,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: config/seoDiscovery, seoDiscovery."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-055"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "nuxt.config.ts",
+      "path": "nuxt.config.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 89,
+      "bytes": 3323,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: nuxt.config, nuxt.config.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-056"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "public/panhub-link-checker.user.js",
+      "path": "public/panhub-link-checker.user.js",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 569,
+      "bytes": 20007,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: panhub-link-checker.user, panhub-link-checker.user.js, public/panhub-link-checker.user, public/panhub-link-checker.user.js."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-057"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/ai/analyze.post.ts",
+      "path": "server/api/ai/analyze.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 197,
+      "bytes": 5760,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: analyze.post."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-058"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/douban-hot.get.ts",
+      "path": "server/api/douban-hot.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 203,
+      "bytes": 6213,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: douban-hot.get, douban-hot.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-059"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/favorites/sync.get.ts",
+      "path": "server/api/favorites/sync.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 39,
+      "bytes": 1155,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: sync.get."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-060"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/favorites/sync.post.ts",
+      "path": "server/api/favorites/sync.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 100,
+      "bytes": 3026,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: sync.post."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-061"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/health.get.ts",
+      "path": "server/api/health.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 17,
+      "bytes": 452,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: health.get, health.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-062"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/hot-search-stats.get.ts",
+      "path": "server/api/hot-search-stats.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 42,
+      "bytes": 1096,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: hot-search-stats.get."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-063"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/hot-searches.get.ts",
+      "path": "server/api/hot-searches.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 34,
+      "bytes": 1279,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: hot-searches.get, hot-searches.get.ts, server/api/hot-searches.get, server/api/hot-searches.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-064"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/hot-searches.post.ts",
+      "path": "server/api/hot-searches.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 46,
+      "bytes": 1451,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: hot-searches.post, hot-searches.post.ts, server/api/hot-searches.post, server/api/hot-searches.post.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-065"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/img.get.ts",
+      "path": "server/api/img.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 81,
+      "bytes": 2795,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: img.get, img.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-066"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/link-health/query.post.ts",
+      "path": "server/api/link-health/query.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 24,
+      "bytes": 908,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: query.post."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-067"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/link-health/report.post.ts",
+      "path": "server/api/link-health/report.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 57,
+      "bytes": 1659,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: report.post."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-068"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/ops/quality.get.ts",
+      "path": "server/api/ops/quality.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 23,
+      "bytes": 950,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: quality.get."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-069"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/plugin-health.get.ts",
+      "path": "server/api/plugin-health.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 18,
+      "bytes": 558,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: plugin-health.get, plugin-health.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-070"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/search-quality.post.ts",
+      "path": "server/api/search-quality.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 56,
+      "bytes": 1850,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: search-quality.post."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-071"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/search.get.ts",
+      "path": "server/api/search.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 183,
+      "bytes": 5346,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: search.get, search.get.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-072"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/search.post.ts",
+      "path": "server/api/search.post.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 152,
+      "bytes": 4585,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: search.post, search.post.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-073"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/api/source-status.get.ts",
+      "path": "server/api/source-status.get.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 72,
+      "bytes": 2439,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: source-status.get."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-074"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/core/services/d1DoubanHotCache.ts",
+      "path": "server/core/services/d1DoubanHotCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 96,
+      "bytes": 2465,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: d1DoubanHotCache, server/core/services/d1DoubanHotCache."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-075"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/core/utils/errors.ts",
+      "path": "server/core/utils/errors.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 175,
+      "bytes": 3653,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: errors, errors.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-076"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/middleware/rateLimiter.ts",
+      "path": "server/middleware/rateLimiter.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 82,
+      "bytes": 2457,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: rateLimiter, rateLimiter.ts, server/middleware/rateLimiter, server/middleware/rateLimiter.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-077"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "server/middleware/seoHeaders.ts",
+      "path": "server/middleware/seoHeaders.ts",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 28,
+      "bytes": 871,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-078"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "test/tg-parse-test.mjs",
+      "path": "test/tg-parse-test.mjs",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "low",
+      "proof_eligible": true,
+      "loc": 82,
+      "bytes": 2624,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability."
+      ],
+      "id": "CRT-079"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "utils/autoLinkHealth.ts",
+      "path": "utils/autoLinkHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 186,
+      "bytes": 6185,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: autoLinkHealth, utils/autoLinkHealth."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-080"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "utils/favoritesVault.ts",
+      "path": "utils/favoritesVault.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 149,
+      "bytes": 4633,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: favoritesVault, utils/favoritesVault."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-081"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "utils/groupCloudSearchItems.ts",
+      "path": "utils/groupCloudSearchItems.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 101,
+      "bytes": 2993,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: groupCloudSearchItems, utils/groupCloudSearchItems."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-082"
+    },
+    {
+      "category": "orphan-file",
+      "subject": "vitest.config.ts",
+      "path": "vitest.config.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 28,
+      "bytes": 561,
+      "evidence": [
+        "No resolved static inbound import was found.",
+        "The file is not a detected package or conventional entry point.",
+        "Repository text contains possible string/name references: vitest.config, vitest.config.ts."
+      ],
+      "caveats": [
+        "Dynamic loading, reflection, external consumers, or incomplete framework detection can hide reachability.",
+        "Possible string reachability prevents high-confidence deletion."
+      ],
+      "id": "CRT-083"
+    },
+    {
+      "category": "unused-export",
+      "subject": "PanSouContainer from cloudflare/pansou-container/src/index.ts",
+      "path": "cloudflare/pansou-container/src/index.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 36,
+      "id": "CRT-084"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ParseCatalogOptions from cloudflare/resource-sync/src/catalog.ts",
+      "path": "cloudflare/resource-sync/src/catalog.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 18,
+      "id": "CRT-085"
+    },
+    {
+      "category": "unused-export",
+      "subject": "useAiAnalysis from composables/useAiAnalysis.ts",
+      "path": "composables/useAiAnalysis.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 14,
+      "id": "CRT-086"
+    },
+    {
+      "category": "unused-export",
+      "subject": "useLinkHealth from composables/useLinkHealth.ts",
+      "path": "composables/useLinkHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 11,
+      "id": "CRT-087"
+    },
+    {
+      "category": "unused-export",
+      "subject": "useRecentSearches from composables/useRecentSearches.ts",
+      "path": "composables/useRecentSearches.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 4,
+      "id": "CRT-088"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SearchOptions from composables/useSearch.ts",
+      "path": "composables/useSearch.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 21,
+      "id": "CRT-089"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SearchState from composables/useSearch.ts",
+      "path": "composables/useSearch.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 33,
+      "id": "CRT-090"
+    },
+    {
+      "category": "unused-export",
+      "subject": "DEFAULT_DOUBAN_CATEGORIES from config/doubanHot.ts",
+      "path": "config/doubanHot.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 35,
+      "id": "CRT-091"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoFact from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 3,
+      "id": "CRT-092"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoHub from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 32,
+      "id": "CRT-093"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoPage from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 14,
+      "id": "CRT-094"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoPageKind from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 1,
+      "id": "CRT-095"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoSection from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 8,
+      "id": "CRT-096"
+    },
+    {
+      "category": "unused-export",
+      "subject": "getSeoPageByKind from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 1183,
+      "id": "CRT-097"
+    },
+    {
+      "category": "unused-export",
+      "subject": "legalPages from config/seoContent.ts",
+      "path": "config/seoContent.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 969,
+      "id": "CRT-098"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SeoDiscoveryLink from config/seoDiscovery.ts",
+      "path": "config/seoDiscovery.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 1,
+      "id": "CRT-099"
+    },
+    {
+      "category": "unused-export",
+      "subject": "MemoryCacheOptions from server/core/cache/memoryCache.ts",
+      "path": "server/core/cache/memoryCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 3,
+      "id": "CRT-100"
+    },
+    {
+      "category": "unused-export",
+      "subject": "MemoryCacheStats from server/core/cache/memoryCache.ts",
+      "path": "server/core/cache/memoryCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 10,
+      "id": "CRT-101"
+    },
+    {
+      "category": "unused-export",
+      "subject": "UnifiedCacheConfig from server/core/cache/unifiedCache.ts",
+      "path": "server/core/cache/unifiedCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 16,
+      "id": "CRT-102"
+    },
+    {
+      "category": "unused-export",
+      "subject": "createSearchCache from server/core/cache/unifiedCache.ts",
+      "path": "server/core/cache/unifiedCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 148,
+      "id": "CRT-103"
+    },
+    {
+      "category": "unused-export",
+      "subject": "Fox4kPlugin from server/core/plugins/fox4k.ts",
+      "path": "server/core/plugins/fox4k.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 94,
+      "id": "CRT-104"
+    },
+    {
+      "category": "unused-export",
+      "subject": "Hdr4kPlugin from server/core/plugins/hdr4k.ts",
+      "path": "server/core/plugins/hdr4k.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 80,
+      "id": "CRT-105"
+    },
+    {
+      "category": "unused-export",
+      "subject": "HubanPlugin from server/core/plugins/huban.ts",
+      "path": "server/core/plugins/huban.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 95,
+      "id": "CRT-106"
+    },
+    {
+      "category": "unused-export",
+      "subject": "MuouPlugin from server/core/plugins/muou.ts",
+      "path": "server/core/plugins/muou.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 66,
+      "id": "CRT-107"
+    },
+    {
+      "category": "unused-export",
+      "subject": "OugePlugin from server/core/plugins/ouge.ts",
+      "path": "server/core/plugins/ouge.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 101,
+      "id": "CRT-108"
+    },
+    {
+      "category": "unused-export",
+      "subject": "Pan666Plugin from server/core/plugins/pan666.ts",
+      "path": "server/core/plugins/pan666.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 42,
+      "id": "CRT-109"
+    },
+    {
+      "category": "unused-export",
+      "subject": "PanyqPlugin from server/core/plugins/panyq.ts",
+      "path": "server/core/plugins/panyq.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 10,
+      "id": "CRT-110"
+    },
+    {
+      "category": "unused-export",
+      "subject": "PluginHealthConfig from server/core/plugins/pluginHealth.ts",
+      "path": "server/core/plugins/pluginHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 19,
+      "id": "CRT-111"
+    },
+    {
+      "category": "unused-export",
+      "subject": "PluginHealthStatus from server/core/plugins/pluginHealth.ts",
+      "path": "server/core/plugins/pluginHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 6,
+      "id": "CRT-112"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ShandianPlugin from server/core/plugins/shandian.ts",
+      "path": "server/core/plugins/shandian.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 39,
+      "id": "CRT-113"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SusuPlugin from server/core/plugins/susu.ts",
+      "path": "server/core/plugins/susu.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 78,
+      "id": "CRT-114"
+    },
+    {
+      "category": "unused-export",
+      "subject": "TorrentGalaxyPlugin from server/core/plugins/torrentgalaxy.ts",
+      "path": "server/core/plugins/torrentgalaxy.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 54,
+      "id": "CRT-115"
+    },
+    {
+      "category": "unused-export",
+      "subject": "WanouPlugin from server/core/plugins/wanou.ts",
+      "path": "server/core/plugins/wanou.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 95,
+      "id": "CRT-116"
+    },
+    {
+      "category": "unused-export",
+      "subject": "X1337xPlugin from server/core/plugins/x1337x.ts",
+      "path": "server/core/plugins/x1337x.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 54,
+      "id": "CRT-117"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ZhizhenPlugin from server/core/plugins/zhizhen.ts",
+      "path": "server/core/plugins/zhizhen.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 94,
+      "id": "CRT-118"
+    },
+    {
+      "category": "unused-export",
+      "subject": "AiServiceConfig from server/core/services/aiAnalysisService.ts",
+      "path": "server/core/services/aiAnalysisService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 10,
+      "id": "CRT-119"
+    },
+    {
+      "category": "unused-export",
+      "subject": "D1DoubanHotCacheEntry from server/core/services/d1DoubanHotCache.ts",
+      "path": "server/core/services/d1DoubanHotCache.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 9,
+      "id": "CRT-120"
+    },
+    {
+      "category": "unused-export",
+      "subject": "extractSearchTerm from server/core/services/doubanHotService.ts",
+      "path": "server/core/services/doubanHotService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 262,
+      "id": "CRT-121"
+    },
+    {
+      "category": "unused-export",
+      "subject": "fetchDoubanHot from server/core/services/doubanHotService.ts",
+      "path": "server/core/services/doubanHotService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 281,
+      "id": "CRT-122"
+    },
+    {
+      "category": "unused-export",
+      "subject": "getSearchServiceStats from server/core/services/index.ts",
+      "path": "server/core/services/index.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 89,
+      "id": "CRT-123"
+    },
+    {
+      "category": "unused-export",
+      "subject": "resetSearchService from server/core/services/index.ts",
+      "path": "server/core/services/index.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 82,
+      "id": "CRT-124"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ResultClickInput from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 73,
+      "id": "CRT-125"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SearchQualityInput from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 17,
+      "id": "CRT-126"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SourcePerformanceInput from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 25,
+      "id": "CRT-127"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SourceQualityState from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 36,
+      "id": "CRT-128"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SourceQualityStats from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 43,
+      "id": "CRT-129"
+    },
+    {
+      "category": "unused-export",
+      "subject": "clearSourceQualityPolicyCache from server/core/services/searchQualityService.ts",
+      "path": "server/core/services/searchQualityService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 398,
+      "id": "CRT-130"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SearchExecutionResult from server/core/services/searchService.ts",
+      "path": "server/core/services/searchService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 55,
+      "id": "CRT-131"
+    },
+    {
+      "category": "unused-export",
+      "subject": "SourceExecutionMetric from server/core/services/searchService.ts",
+      "path": "server/core/services/searchService.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 44,
+      "id": "CRT-132"
+    },
+    {
+      "category": "unused-export",
+      "subject": "TgFetchOptions from server/core/services/tg.ts",
+      "path": "server/core/services/tg.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 16,
+      "id": "CRT-133"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ErrorDetail from server/core/utils/errors.ts",
+      "path": "server/core/utils/errors.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 25,
+      "id": "CRT-134"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ErrorSeverity from server/core/utils/errors.ts",
+      "path": "server/core/utils/errors.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 16,
+      "id": "CRT-135"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ErrorType from server/core/utils/errors.ts",
+      "path": "server/core/utils/errors.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 4,
+      "id": "CRT-136"
+    },
+    {
+      "category": "unused-export",
+      "subject": "FetchWithRetryOptions from server/core/utils/fetch.ts",
+      "path": "server/core/utils/fetch.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 15,
+      "id": "CRT-137"
+    },
+    {
+      "category": "unused-export",
+      "subject": "createPersistentFetcher from server/core/utils/fetch.ts",
+      "path": "server/core/utils/fetch.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 177,
+      "id": "CRT-138"
+    },
+    {
+      "category": "unused-export",
+      "subject": "LogLevel from server/core/utils/logger.ts",
+      "path": "server/core/utils/logger.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 6,
+      "id": "CRT-139"
+    },
+    {
+      "category": "unused-export",
+      "subject": "LogMeta from server/core/utils/logger.ts",
+      "path": "server/core/utils/logger.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 24,
+      "id": "CRT-140"
+    },
+    {
+      "category": "unused-export",
+      "subject": "LogOptions from server/core/utils/logger.ts",
+      "path": "server/core/utils/logger.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 18,
+      "id": "CRT-141"
+    },
+    {
+      "category": "unused-export",
+      "subject": "AutomaticLinkHealthStatus from utils/autoLinkHealth.ts",
+      "path": "utils/autoLinkHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 1,
+      "id": "CRT-142"
+    },
+    {
+      "category": "unused-export",
+      "subject": "ConfirmedAutomaticLinkHealthDecision from utils/autoLinkHealth.ts",
+      "path": "utils/autoLinkHealth.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 14,
+      "id": "CRT-143"
+    },
+    {
+      "category": "unused-export",
+      "subject": "MAX_FAVORITE_ITEMS from utils/favoritesVault.ts",
+      "path": "utils/favoritesVault.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 7,
+      "id": "CRT-144"
+    },
+    {
+      "category": "unused-export",
+      "subject": "inferTorrentMetadata from utils/torrentMetadata.ts",
+      "path": "utils/torrentMetadata.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 154,
+      "id": "CRT-145"
+    },
+    {
+      "category": "unused-export",
+      "subject": "withTorrentAvailability from utils/torrentMetadata.ts",
+      "path": "utils/torrentMetadata.ts",
+      "confidence": "medium",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 0,
+      "bytes": 0,
+      "evidence": [
+        "No reference to the exported symbol was found outside its defining file."
+      ],
+      "caveats": [
+        "Public APIs, re-export patterns, generated declarations, templates, or external consumers may use it."
+      ],
+      "line": 84,
+      "id": "CRT-146"
+    },
+    {
+      "category": "duplicate-file",
+      "subject": "public/panhub-link-checker.user.js duplicates .output/public/panhub-link-checker.user.js",
+      "path": "public/panhub-link-checker.user.js",
+      "confidence": "high",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 569,
+      "bytes": 20007,
+      "evidence": [
+        "Normalized content matches .output/public/panhub-link-checker.user.js exactly."
+      ],
+      "caveats": [
+        "Duplication is not proof that either implementation is unreachable.",
+        "Callers may depend on separate module boundaries."
+      ],
+      "id": "CRT-147"
+    },
+    {
+      "category": "commented-code",
+      "subject": "Comment block in test/unit/hot-search.test.ts",
+      "path": "test/unit/hot-search.test.ts",
+      "confidence": "low",
+      "initial_status": "REVIEW",
+      "risk": "medium",
+      "proof_eligible": false,
+      "loc": 4,
+      "bytes": 195,
+      "evidence": [
+        "A block of four or more code-like line comments was found."
+      ],
+      "caveats": [
+        "The block may be documentation, an example, a protocol, or an intentional workaround."
+      ],
+      "line": 127,
+      "id": "CRT-148"
+    }
+  ],
+  "limitations": [
+    "Static analysis cannot prove absence of dynamic, reflective, operational, platform-specific, or external use.",
+    "JavaScript/TypeScript and Python import resolution is intentionally conservative and does not implement every alias or framework convention.",
+    "Unused dependencies and exports are leads only until project-native tooling and focused proof support removal.",
+    "No project code, package command, or dependency was executed by this scanner."
+  ]
+}

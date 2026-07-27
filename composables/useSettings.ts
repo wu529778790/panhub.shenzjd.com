@@ -11,6 +11,7 @@ export interface UserSettings {
   enabledPlugins: string[];
   concurrency: number;
   pluginTimeoutMs: number;
+  filterAdultContent: boolean;
 }
 
 export interface UseSettingsReturn {
@@ -26,6 +27,71 @@ export interface UseSettingsReturn {
 
 // 模块级守卫：useSettings() 在多个组件中调用，loadSettings() 只需执行一次
 let _settingsInitialized = false;
+const CURRENT_SOURCE_VERSION = "15";
+const PREVIOUS_DEFAULT_CONCURRENCY = 4;
+const PREVIOUS_DEFAULT_TIMEOUT_MS = 5000;
+const NEW_SEARCH_PLUGINS = [
+  "全网索引",
+  "精选资料库",
+  "影视速搜",
+  "影视直达",
+  "资源补充",
+  "磁力索引",
+  "好搜聚合",
+  "开放资源索引",
+  "网络资源索引",
+  "solidtorrents",
+];
+const NEW_SEARCH_CHANNELS = [
+  "kuyupan",
+  "WPpindao",
+  "phzvip",
+  "vip4kMovies",
+  "dmhy_org",
+  "solidsexydoll",
+  "xiangnikanj",
+  "pan123cloud",
+  "Baidu_Netdisk",
+  "bdyunpan",
+  "djya5",
+  "a123fxme",
+  "x123panfxme",
+  "xuexizil",
+  "quark_ziyuan",
+  "quarkF",
+  "QuarkFree",
+  "ydypzyfx",
+  "movielover8888_film3",
+  "ciliziyuanku",
+  "FLMdongtianfudi",
+  "jxwpzy",
+  "kuake_yppan",
+  "yoyokuakeduanju",
+  "Netdisk_Movies",
+  "WFYSFX03",
+  "yeqingjie_GJG666",
+  "ucshare",
+  "yp123pan",
+  "D_wusun",
+  "MCPH03",
+  "kduanju",
+  "jzmm_123pan",
+  "guoman4K",
+  "kuakedongman",
+  "SharePanFilms",
+  "xxzlzn",
+  "dzsgx",
+  "douerpan",
+  "baidu_yppan",
+  "CBduanju",
+  "dianying4k",
+  "kkdj001",
+  "qixingzhenren",
+  "wp123zy",
+  "yunpanNB",
+  "yunpanquark",
+  "zdqxm",
+];
 
 function getDefaultSettings(defaultTgChannels: string[]): UserSettings {
   return {
@@ -33,6 +99,7 @@ function getDefaultSettings(defaultTgChannels: string[]): UserSettings {
     enabledPlugins: [...DEFAULT_USER_SETTINGS.enabledPlugins],
     concurrency: DEFAULT_USER_SETTINGS.concurrency,
     pluginTimeoutMs: DEFAULT_USER_SETTINGS.pluginTimeoutMs,
+    filterAdultContent: DEFAULT_USER_SETTINGS.filterAdultContent,
   };
 }
 
@@ -77,11 +144,43 @@ export function useSettings(): UseSettingsReturn {
           typeof parsed.pluginTimeoutMs === "number" && parsed.pluginTimeoutMs > 0
             ? parsed.pluginTimeoutMs
             : DEFAULT_USER_SETTINGS.pluginTimeoutMs,
+        filterAdultContent:
+          typeof parsed.filterAdultContent === "boolean"
+            ? parsed.filterAdultContent
+            : DEFAULT_USER_SETTINGS.filterAdultContent,
       };
 
       validated.enabledPlugins = validated.enabledPlugins.filter((name) =>
         ALL_PLUGIN_NAMES.includes(name as any)
       );
+      const availableTgChannels = new Set(channelsConfig.defaultChannels);
+      validated.enabledTgChannels = validated.enabledTgChannels.filter((name) =>
+        availableTgChannels.has(name)
+      );
+
+      if (localStorage.getItem(STORAGE_KEYS.sourceVersion) !== CURRENT_SOURCE_VERSION) {
+        // 只迁移旧默认值，保留用户手动调整过的并发和超时设置。
+        if (validated.concurrency === PREVIOUS_DEFAULT_CONCURRENCY) {
+          validated.concurrency = DEFAULT_USER_SETTINGS.concurrency;
+        }
+        if (validated.pluginTimeoutMs === PREVIOUS_DEFAULT_TIMEOUT_MS) {
+          validated.pluginTimeoutMs = DEFAULT_USER_SETTINGS.pluginTimeoutMs;
+        }
+        for (const plugin of [...NEW_SEARCH_PLUGINS].reverse()) {
+          if (!validated.enabledPlugins.includes(plugin)) {
+            validated.enabledPlugins.unshift(plugin);
+          }
+        }
+        for (const channel of [...NEW_SEARCH_CHANNELS].reverse()) {
+          if (!validated.enabledTgChannels.includes(channel)) {
+            validated.enabledTgChannels.unshift(channel);
+          }
+        }
+        // 成人资源默认展示并单独归类；用户可在结果页主动隐藏。
+        validated.filterAdultContent = false;
+        localStorage.setItem(STORAGE_KEYS.sourceVersion, CURRENT_SOURCE_VERSION);
+        localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(validated));
+      }
 
       if (
         validated.enabledPlugins.length === 0 &&

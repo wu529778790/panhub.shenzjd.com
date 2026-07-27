@@ -2,9 +2,37 @@ name = "panhub-shenzjd-com"
 main = ".output/server/index.mjs"
 compatibility_date = "2025-07-15"
 compatibility_flags = ["nodejs_compat"]
+routes = [
+  { pattern = "haosouku.com", custom_domain = true },
+  { pattern = "www.haosouku.com", custom_domain = true }
+]
+
+[[services]]
+binding = "PANSOU"
+service = "haosouku-pansou"
+
+[[d1_databases]]
+binding = "FAVORITES_DB"
+database_name = "haosouku-data"
+database_id = "c047a6d8-13f5-4859-bbfd-301b02610b0d"
+migrations_dir = "migrations"
+
+[vars]
+AI_BASE_URL = "https://cliproxy.fullcoin.com/v1"
+AI_MODEL = "gpt-5.6-luna"
+GEO_EMBED_MODEL = "@cf/baai/bge-m3"
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "GEO_VECTOR"
+index_name = "haosouku-geo-knowledge"
 
 [assets]
 directory = ".output/public"
 binding = "ASSETS"
 
-
+[observability]
+enabled = true
+head_sampling_rate = 0.1

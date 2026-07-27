@@ -1,148 +1,158 @@
 <template>
-  <section class="search">
+  <section class="search" :aria-label="searchLabel">
     <div class="search-container">
-      <div class="search-box" data-theme-part="search-box" :class="{ focused: isFocused, loading: loading }">
-        <div class="search-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-        </div>
+      <label class="search-label" for="resource-search">搜索关键词</label>
+      <div
+        class="search-box"
+        data-theme-part="search-box"
+        :class="{ focused: isFocused, loading, paused }">
+        <PhMagnifyingGlass class="search-icon" :size="24" weight="regular" aria-hidden="true" />
 
         <input
+          id="resource-search"
           ref="inputEl"
           :value="modelValue"
           :placeholder="placeholder"
           name="kw"
-          aria-label="搜索关键词"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="off"
           spellcheck="false"
           class="search-input"
-          @input="
-            $emit('update:modelValue', ($event.target as HTMLInputElement).value)
-          "
+          aria-describedby="match-mode-help"
+          @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
           @focus="isFocused = true"
           @blur="isFocused = false"
           @keyup.enter="handleSearch" />
 
         <div class="search-actions">
-          <!-- 重置按钮 - 搜索后显示 -->
+          <kbd v-if="!modelValue && !loading" class="shortcut-hint">{{ shortcutLabel }}</kbd>
+
           <button
             v-if="searched"
-            class="action-btn reset"
+            class="action-button action-button--quiet reset-button"
             type="button"
             @click="
               $emit('update:modelValue', '');
               $emit('reset');
             "
-
             aria-label="重置搜索"
             title="重置搜索">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-              <path d="M3 3v5h5"></path>
-            </svg>
-            <span class="btn-text">重置</span>
+            <PhArrowCounterClockwise :size="18" aria-hidden="true" />
+            <span>重置</span>
           </button>
 
-          <!-- 清空按钮 - 未搜索时显示 -->
           <button
             v-else-if="modelValue && !loading"
-            class="action-btn ghost"
+            class="clear-button"
             type="button"
-            @click="
-              $emit('update:modelValue', '');
-              $emit('reset');
-            "
-
+            @click="$emit('update:modelValue', '')"
             aria-label="清空关键词"
-            title="清空">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            title="清空关键词">
+            <PhX :size="18" aria-hidden="true" />
           </button>
 
-          <!-- 暂停按钮 -->
           <button
             v-if="loading && !paused"
-            class="action-btn pause"
+            class="action-button action-button--quiet"
             type="button"
             @click="$emit('pause')"
-
-            aria-label="暂停搜索"
-            title="暂停搜索">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="6" y="4" width="4" height="16" rx="1"></rect>
-              <rect x="14" y="4" width="4" height="16" rx="1"></rect>
-            </svg>
-            <span class="btn-text">暂停</span>
+            aria-label="暂停搜索">
+            <PhPause :size="17" weight="fill" aria-hidden="true" />
+            <span>暂停</span>
           </button>
 
-          <!-- 继续按钮 -->
           <button
             v-if="loading && paused"
-            class="action-btn resume"
+            class="action-button action-button--primary"
             type="button"
             @click="$emit('continue')"
-
-            aria-label="继续搜索"
-            title="继续搜索">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 3l14 9-14 9V3z"></path>
-            </svg>
-            <span class="btn-text">继续</span>
+            aria-label="继续搜索">
+            <PhPlay :size="17" weight="fill" aria-hidden="true" />
+            <span>继续</span>
           </button>
 
-          <!-- 加载动画 -->
-          <div v-if="loading && !paused" class="loading-spinner"></div>
-
-          <!-- 搜索按钮 -->
           <button
             v-else-if="!loading"
-            class="action-btn primary"
+            class="action-button action-button--primary"
             type="button"
-            :disabled="!modelValue"
+            :disabled="!modelValue.trim()"
             aria-label="开始搜索"
             @click="handleSearch">
-            <span class="btn-text">搜索</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
+            <span>开始搜索</span>
+            <PhArrowRight :size="18" weight="bold" aria-hidden="true" />
           </button>
-
-          <!-- 暂停状态提示 -->
-          <div v-if="paused" class="paused-indicator" title="搜索已暂停">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="12" r="10" opacity="0.2"></circle>
-              <rect x="8" y="8" width="8" height="8" rx="1"></rect>
-            </svg>
-          </div>
         </div>
 
+        <span v-if="loading && !paused" class="search-progress" aria-hidden="true" />
       </div>
+
+      <fieldset class="match-mode" :disabled="loading">
+        <legend>匹配方式</legend>
+        <div class="match-mode__options" role="group" aria-label="选择关键词匹配方式">
+          <button
+            type="button"
+            :class="{ active: matchMode === 'fuzzy' }"
+            :aria-pressed="matchMode === 'fuzzy'"
+            @click="selectMatchMode('fuzzy')">
+            模糊搜索
+          </button>
+          <button
+            type="button"
+            :class="{ active: matchMode === 'exact' }"
+            :aria-pressed="matchMode === 'exact'"
+            @click="selectMatchMode('exact')">
+            精确搜索
+          </button>
+        </div>
+        <p id="match-mode-help">
+          {{ matchMode === "exact"
+            ? "完整关键词必须出现在标题、正文或标签中"
+            : "自动尝试相近写法，优先找到更多结果" }}
+        </p>
+      </fieldset>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+import {
+  PhArrowCounterClockwise,
+  PhArrowRight,
+  PhMagnifyingGlass,
+  PhPause,
+  PhPlay,
+  PhX,
+} from "@phosphor-icons/vue";
+import type { SearchMatchMode } from "~/types/search";
+
+const props = withDefaults(defineProps<{
   modelValue: string;
+  matchMode: SearchMatchMode;
   loading: boolean;
   paused: boolean;
   placeholder: string;
   searched: boolean;
-}>();
-const emit = defineEmits(["update:modelValue", "search", "reset", "pause", "continue"]);
+  searchLabel?: string;
+}>(), {
+  searchLabel: "资源搜索",
+});
 
+const emit = defineEmits<{
+  (event: "update:modelValue", value: string): void;
+  (event: "update:matchMode", value: SearchMatchMode): void;
+  (event: "search" | "reset" | "pause" | "continue"): void;
+}>();
 const isFocused = ref(false);
 const inputEl = ref<HTMLInputElement | null>(null);
+const shortcutLabel = ref("Ctrl K");
 
-// 处理搜索按钮点击
+function selectMatchMode(mode: SearchMatchMode) {
+  if (props.loading || props.matchMode === mode) return;
+  emit("update:matchMode", mode);
+}
+
 function handleSearch() {
-  // iOS Safari兼容性：确保输入框失去焦点
   if (
     typeof window !== "undefined" &&
     document.activeElement instanceof HTMLInputElement
@@ -150,14 +160,11 @@ function handleSearch() {
     document.activeElement.blur();
   }
 
-  // 添加小延迟确保焦点处理完成
-  setTimeout(() => {
-    emit("search");
-  }, 50);
+  setTimeout(() => emit("search"), 50);
 }
 
 function onKeyDownGlobal(e: KeyboardEvent) {
-  if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
     e.preventDefault();
     inputEl.value?.focus();
     inputEl.value?.select();
@@ -165,20 +172,14 @@ function onKeyDownGlobal(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+  if (/Mac|iPhone|iPad|iPod/i.test(navigator.userAgent)) shortcutLabel.value = "⌘ K";
   document.addEventListener("keydown", onKeyDownGlobal);
-  // 仅在桌面端自动聚焦，避免移动端抢焦点和键盘闪烁
   if (window.matchMedia("(pointer: fine)").matches) {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        inputEl.value?.focus();
-      }, 100);
-    });
+    requestAnimationFrame(() => setTimeout(() => inputEl.value?.focus(), 100));
   }
 });
 
-onBeforeUnmount(() => {
-  document.removeEventListener("keydown", onKeyDownGlobal);
-});
+onBeforeUnmount(() => document.removeEventListener("keydown", onKeyDownGlobal));
 </script>
 
 <style scoped>
@@ -190,367 +191,303 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 
-/* 搜索框主体 - 玻璃拟态设计 */
-.search-box {
+.search-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.match-mode {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-medium);
-  border-radius: 18px;
-  box-shadow: var(--shadow-lg);
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal),
-    transform var(--transition-normal);
+  margin: 10px 2px 0;
+  padding: 0;
+  border: 0;
+}
+
+.match-mode legend {
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.match-mode__options {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.match-mode__options button {
+  min-height: 32px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 680;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.match-mode__options button:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.match-mode__options button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.match-mode__options button.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.match-mode__options button:focus-visible {
+  outline: 2px solid var(--primary-strong);
+  outline-offset: 2px;
+}
+
+.match-mode:disabled {
+  opacity: 0.62;
+}
+
+.match-mode p {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-box {
   position: relative;
+  display: grid;
+  min-height: 68px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal), background var(--transition-normal), transform 420ms var(--ease-spring);
 }
 
 .search-box.focused {
-  border-color: var(--primary);
-  box-shadow: 0 10px 26px rgba(15, 118, 110, 0.14);
-  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--primary-strong) 72%, var(--border-strong));
+  box-shadow: 0 0 0 4px var(--primary-glow), var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .search-box.loading {
-  border-color: var(--primary);
-  animation: searchPulse 2.2s ease-in-out infinite;
+  border-color: color-mix(in srgb, var(--primary) 56%, var(--border-medium));
 }
 
-@keyframes searchPulse {
-  0%, 100% { box-shadow: 0 8px 32px rgba(15, 118, 110, 0.22); }
-  50% { box-shadow: 0 8px 40px rgba(15, 118, 110, 0.34); }
-}
-
-/* 搜索图标 */
 .search-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: var(--text-tertiary);
-  transition: color var(--transition-fast);
-  flex-shrink: 0;
+  transition: color var(--transition-fast), transform 420ms var(--ease-spring);
 }
 
 .search-box.focused .search-icon {
-  color: var(--primary);
+  color: var(--primary-strong);
+  transform: scale(1.1) rotate(-7deg);
 }
 
-.search-icon svg {
-  stroke: currentColor;
-}
-
-/* 搜索输入框 */
 .search-input {
-  flex: 1;
-  border: none;
+  width: 100%;
+  min-width: 0;
+  height: 50px;
+  padding: 0;
+  border: 0;
+  outline: 0;
   background: transparent;
-  outline: none;
-  font-size: 16px;
-  font-weight: 500;
   color: var(--text-primary);
-  min-width: 0; /* 允许收缩 */
-
-  /* iOS Safari兼容性 */
-  -webkit-appearance: none;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
+  font-size: clamp(16px, 1.4vw, 18px);
+  font-weight: 520;
 }
 
 .search-input::placeholder {
   color: var(--text-tertiary);
-  font-weight: 400;
+  opacity: 1;
 }
 
-
-/* 操作按钮区域 */
 .search-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
 }
 
-/* 通用按钮样式 */
-.action-btn {
-  display: flex;
+.shortcut-hint {
+  display: inline-flex;
+  min-width: 46px;
+  min-height: 28px;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast),
-    border-color var(--transition-fast), transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-  white-space: nowrap;
-
-  /* iOS Safari兼容性 */
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.action-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-/* 主要按钮 - 渐变背景 */
-.action-btn.primary {
-  background: linear-gradient(135deg, var(--primary), #14b8a6);
-  color: white;
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
-}
-
-.action-btn.primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.36);
-}
-
-.action-btn.primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* 幽灵按钮 - 透明背景 */
-.action-btn.ghost {
-  background: var(--bg-input);
-  color: var(--text-secondary);
+  justify-content: center;
+  padding: 0 7px;
   border: 1px solid var(--border-light);
-  padding: 8px;
+  border-bottom-color: var(--border-medium);
+  border-radius: 7px;
+  background: var(--bg-surface-subtle);
+  color: var(--text-tertiary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 0 var(--border-light);
 }
 
-.action-btn.ghost:hover {
-  background: var(--bg-primary);
+.action-button,
+.clear-button {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast), transform 360ms var(--ease-spring);
+}
+
+.action-button {
+  min-width: 124px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  font-size: 15px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.action-button--primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+.action-button--primary:hover:not(:disabled) {
+  background: var(--primary-strong);
+  transform: translateY(-1px) scale(1.015);
+}
+
+.action-button--primary:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.action-button--primary svg {
+  transition: transform 360ms var(--ease-spring);
+}
+
+.action-button--primary:disabled {
+  opacity: 0.38;
+}
+
+.action-button--quiet {
+  min-width: auto;
+  padding: 0 14px;
+  border-color: var(--border-light);
+  background: var(--bg-btn);
+  color: var(--text-secondary);
+}
+
+.action-button--quiet:hover {
   border-color: var(--border-medium);
+  background: var(--bg-btn-hover);
   color: var(--text-primary);
 }
 
-.action-btn.ghost:active {
-  background: var(--border-light);
+.clear-button {
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-tertiary);
 }
 
-/* 暂停按钮 - 黄色警告样式 */
-.action-btn.pause {
-  background: linear-gradient(135deg, #f59e0b, #fbbf24);
-  color: white;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+.clear-button:hover {
+  background: var(--bg-btn-hover);
+  color: var(--text-primary);
 }
 
-.action-btn.pause:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+.search-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  transform: translateX(-100%);
+  animation: searchProgress 1.4s ease-in-out infinite;
 }
 
-.action-btn.pause:active:not(:disabled) {
-  transform: translateY(0);
+@keyframes searchProgress {
+  50%, 100% { transform: translateX(100%); }
 }
 
-/* 继续按钮 - 绿色成功样式 */
-.action-btn.resume {
-  background: linear-gradient(135deg, #10b981, #34d399);
-  color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.action-btn.resume:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-}
-
-.action-btn.resume:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* 重置按钮 - 红色样式 */
-.action-btn.reset {
-  background: linear-gradient(135deg, #ef4444, #f87171);
-  color: white;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.action-btn.reset:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-}
-
-.action-btn.reset:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* 暂停状态指示器 */
-.paused-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  color: #f59e0b;
-  flex-shrink: 0;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-
-/* 按钮图标 */
-.action-btn svg {
-  stroke: currentColor;
-  flex-shrink: 0;
-}
-
-.btn-text {
-  display: inline-block;
-}
-
-/* 加载动画 */
-.loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(99, 102, 241, 0.2);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* 移动端优化 */
 @media (max-width: 640px) {
   .search-box {
-    padding: 10px 12px;
-    gap: 8px;
+    min-height: 62px;
+    gap: 10px;
+    padding: 7px 7px 7px 15px;
   }
 
   .search-icon {
-    display: none; /* 在移动端隐藏图标，节省空间 */
+    width: 21px;
+    height: 21px;
   }
 
   .search-input {
-    font-size: 15px;
+    height: 46px;
+    font-size: 16px;
   }
 
-  .search-actions {
-    gap: 6px; /* 减小间距以确保按钮居中 */
+  .action-button {
+    min-width: 50px;
+    width: 50px;
+    min-height: 48px;
+    padding: 0;
   }
 
-  .action-btn {
-    padding: 8px 10px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .action-button span {
+    display: none;
   }
 
-  .action-btn.primary .btn-text,
-  .action-btn.pause .btn-text,
-  .action-btn.resume .btn-text,
-  .action-btn.reset .btn-text {
-    display: none; /* 在小屏幕上只显示图标 */
+  .shortcut-hint {
+    display: none;
   }
 
-  .action-btn.ghost {
-    padding: 6px;
+  .match-mode {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 10px;
+    margin-top: 9px;
   }
 
-  .action-btn.pause,
-  .action-btn.resume,
-  .action-btn.reset {
-    padding: 8px;
+  .match-mode__options {
+    justify-self: start;
   }
 
-  .loading-spinner {
-    width: 18px;
-    height: 18px;
-  }
-
-  .paused-indicator {
-    width: 28px;
-    height: 28px;
-  }
-}
-
-/* 超小屏幕优化 */
-@media (max-width: 360px) {
-  .search-box {
-    padding: 8px 10px;
-  }
-
-  .action-btn {
-    padding: 6px 8px;
-    font-size: 12px;
-  }
-}
-
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .search-box {
-    border-width: 3px;
-  }
-
-  .action-btn.primary {
-    border: 2px solid white;
-  }
-
-  .action-btn.ghost {
-    border-width: 2px;
-  }
-}
-
-/* 减少动画模式支持 */
-@media (prefers-reduced-motion: reduce) {
-  .search-box,
-  .action-btn {
-    transition: none;
-  }
-
-  .search-box.loading {
-    animation: none;
-  }
-
-  .loading-spinner {
-    animation: none;
-    opacity: 0.7;
-  }
-
-  .action-btn.primary:hover:not(:disabled),
-  .action-btn.primary:active:not(:disabled) {
-    transform: none;
-  }
-}
-
-/* iOS Safari特定优化 */
-@supports (-webkit-touch-callout: none) {
-  .search-box {
-    /* iOS Safari兼容性：防止缩放 */
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .search-input {
-    /* iOS Safari兼容性：确保输入框正常工作 */
-    -webkit-appearance: none;
-    -webkit-border-radius: 0;
-    border-radius: 0;
-  }
-
-  .action-btn {
-    /* iOS Safari兼容性：确保触摸区域足够大 */
-    min-height: 44px;
-    min-width: 44px;
-    -webkit-appearance: none;
+  .match-mode p {
+    grid-column: 1 / -1;
+    white-space: normal;
   }
 }
 </style>

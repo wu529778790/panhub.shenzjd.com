@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="好搜库">
+  <rect width="64" height="64" rx="16" fill="#72d83b"/>
+  <circle cx="27" cy="26" r="14" fill="none" stroke="#15340b" stroke-width="7"/>
+  <path d="M37 36L50 49" fill="none" stroke="#15340b" stroke-width="7" stroke-linecap="round"/>
+  <path d="M21 23H33M21 30H29" fill="none" stroke="#15340b" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

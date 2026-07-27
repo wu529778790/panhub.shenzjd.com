@@ -52,7 +52,7 @@
   <rect x="75" y="155" width="290" height="48" rx="6" fill="#0f172a"/>
   <rect x="75" y="155" width="290" height="48" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1"/>
   <text x="220" y="175" fill="white" font-size="11" font-weight="600" text-anchor="middle">Composables</text>
-  <text x="220" y="193" fill="#94a3b8" font-size="9" text-anchor="middle">useSearch · useSettings · useAuth</text>
+  <text x="220" y="193" fill="#94a3b8" font-size="9" text-anchor="middle">useSearch · useSettings · useDarkMode</text>
 
   <!-- UI Components -->
   <rect x="395" y="155" width="280" height="48" rx="6" fill="#0f172a"/>
@@ -87,12 +87,6 @@
   <text x="340" y="298" fill="white" font-size="10" font-weight="600" text-anchor="middle">/api/hot-searches</text>
   <text x="340" y="314" fill="#94a3b8" font-size="8" text-anchor="middle">GET · POST</text>
 
-  <!-- /api/auth -->
-  <rect x="453" y="280" width="145" height="42" rx="6" fill="#0f172a"/>
-  <rect x="453" y="280" width="145" height="42" rx="6" fill="rgba(136,19,55,0.3)" stroke="#fb7185" stroke-width="1"/>
-  <text x="525" y="298" fill="white" font-size="10" font-weight="600" text-anchor="middle">/api/auth</text>
-  <text x="525" y="314" fill="#94a3b8" font-size="8" text-anchor="middle">HMAC Cookie</text>
-
   <!-- /api/douban-hot -->
   <rect x="613" y="280" width="170" height="42" rx="6" fill="#0f172a"/>
   <rect x="613" y="280" width="170" height="42" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1"/>
@@ -105,14 +99,8 @@
   <text x="929" y="298" fill="white" font-size="10" font-weight="600" text-anchor="middle">/api/health · /api/plugin-health</text>
   <text x="929" y="314" fill="#94a3b8" font-size="8" text-anchor="middle">/api/img (proxy)</text>
 
-  <!-- Auth middleware annotation -->
-  <rect x="445" y="328" width="160" height="20" rx="4" fill="rgba(136,19,55,0.2)" stroke="#fb7185" stroke-width="0.8" stroke-dasharray="4,2"/>
-  <text x="525" y="342" fill="#fb7185" font-size="8" font-weight="500" text-anchor="middle">requireSearchAuth 中间件</text>
-
   <!-- Arrow: API → SearchService -->
   <line x1="340" y1="322" x2="340" y2="370" stroke="#34d399" stroke-width="1" stroke-opacity="0.5" marker-end="url(#arrow-emerald)"/>
-  <line x1="560" y1="322" x2="560" y2="370" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-emerald)"/>
-
   <!-- ==================== Layer 4: SearchService ==================== -->
   <rect x="210" y="370" width="700" height="55" rx="8" fill="#0f172a"/>
   <rect x="210" y="370" width="700" height="55" rx="8" fill="rgba(6,78,59,0.5)" stroke="#34d399" stroke-width="2"/>

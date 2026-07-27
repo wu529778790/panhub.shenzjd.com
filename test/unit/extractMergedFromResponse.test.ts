@@ -39,6 +39,8 @@ describe("extractMergedFromResponse", () => {
           title: "标题",
           datetime: "2025-01-01",
           channel: "test_channel",
+          source: "BitSearch",
+          metadata: { seeders: 42, sizeBytes: 1_500_000_000 },
           links: [
             { type: "aliyun", url: "https://a.com", password: "p1" },
           ],
@@ -49,7 +51,8 @@ describe("extractMergedFromResponse", () => {
     expect(result.aliyun).toHaveLength(1);
     expect(result.aliyun![0].url).toBe("https://a.com");
     expect(result.aliyun![0].note).toBe("标题");
-    expect(result.aliyun![0].source).toBe("tg:test_channel");
+    expect(result.aliyun![0].source).toBe("BitSearch");
+    expect(result.aliyun![0].metadata?.seeders).toBe(42);
   });
 
   it("应正确解析 results 中的扁平 MergedLink 格式", () => {

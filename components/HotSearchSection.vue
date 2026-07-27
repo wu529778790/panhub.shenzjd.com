@@ -1,35 +1,34 @@
 <template>
-  <div v-if="!loading && searches.length === 0" class="hidden"></div>
-
-  <div v-else class="hot-search-section">
-    <div class="cloud-container">
-      <div v-if="loading" class="loading-state" data-theme-part="loading-state">
-        <div class="spinner"></div>
-        <span>搜索热度加载中…</span>
+  <aside v-if="loading || searches.length" class="hot-search-section" aria-labelledby="hot-search-title">
+    <header class="hot-header">
+      <div>
+        <span class="hot-kicker">{{ usingFallback ? "热门推荐" : "实时趋势" }}</span>
+        <h2 id="hot-search-title">{{ usingFallback ? "试试这些" : "大家正在找" }}</h2>
       </div>
+      <PhTrendUp :size="24" weight="regular" aria-hidden="true" />
+    </header>
 
-      <ClientOnly>
-        <div
-          v-show="!loading && searches.length > 0"
-          ref="tagCloudRef"
-          class="tag-cloud-wrap"
-          data-theme-part="tag-cloud-wrap"
-          @click="onContainerClick"
-        />
-        <template #fallback>
-          <div class="tag-cloud-placeholder" />
-        </template>
-      </ClientOnly>
+    <div v-if="loading" class="hot-skeleton" aria-label="热门搜索加载中">
+      <span v-for="i in 6" :key="i" :style="{ width: `${92 - i * 6}%` }" />
     </div>
-  </div>
+
+    <ol v-else class="hot-list">
+      <li v-for="(item, index) in searches.slice(0, 9)" :key="item.term">
+        <button
+          type="button"
+          :aria-label="`搜索 ${item.term}`"
+          @click="emit('search', item.term)">
+          <span class="hot-rank">{{ String(index + 1).padStart(2, "0") }}</span>
+          <span class="hot-term">{{ item.term }}</span>
+          <PhArrowUpRight :size="16" aria-hidden="true" />
+        </button>
+      </li>
+    </ol>
+  </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount, nextTick } from "vue";
-
-interface Props {
-  onSearch: (term: string) => void;
-}
+import { PhArrowUpRight, PhTrendUp } from "@phosphor-icons/vue";
 
 interface HotSearchItem {
   term: string;
@@ -38,30 +37,41 @@ interface HotSearchItem {
   createdAt: number;
 }
 
-const props = defineProps<Props>();
+const FALLBACK_SEARCHES: HotSearchItem[] = [
+  "热门电影",
+  "国产剧",
+  "纪录片",
+  "考公资料",
+  "Office 教程",
+  "Python",
+  "无损音乐",
+  "设计素材",
+  "儿童动画",
+].map((term) => ({ term, score: 0, lastSearched: 0, createdAt: 0 }));
 
+const emit = defineEmits<{
+  search: [term: string];
+}>();
 const loading = ref(false);
-const searches = ref<HotSearchItem[]>([]);
+const searches = ref<HotSearchItem[]>([...FALLBACK_SEARCHES]);
 const hasInitialized = ref(false);
-const tagCloudRef = ref<HTMLElement | null>(null);
-const isUpdating = ref(false);
-let tagCloudInstance: { update: (t: string[]) => void; destroy: () => void } | null = null;
-let updateTimer: ReturnType<typeof setTimeout> | null = null;
+const usingFallback = ref(true);
 
 async function fetchHotSearches() {
   loading.value = true;
   try {
-    const response = await fetch("/api/hot-searches?limit=25");
+    const response = await fetch("/api/hot-searches?limit=12");
     const data = await response.json();
-    if (data.code === 0 && data.data?.hotSearches) {
-      searches.value = data.data.hotSearches
-        .sort((a: HotSearchItem, b: HotSearchItem) => b.score - a.score)
-        .slice(0, 25);
-    } else {
-      searches.value = [];
-    }
+    const incoming = data.code === 0 && data.data?.hotSearches
+      ? [...data.data.hotSearches]
+          .sort((a: HotSearchItem, b: HotSearchItem) => b.score - a.score)
+          .slice(0, 9)
+      : [];
+    usingFallback.value = incoming.length === 0;
+    searches.value = usingFallback.value ? FALLBACK_SEARCHES : incoming;
   } catch {
-    searches.value = [];
+    usingFallback.value = true;
+    searches.value = FALLBACK_SEARCHES;
   } finally {
     loading.value = false;
   }
@@ -77,81 +87,7 @@ async function refresh() {
   await fetchHotSearches();
 }
 
-function getTerms(): string[] {
-  return searches.value.map((s) => s.term);
-}
-
-async function initTagCloud() {
-  if (!tagCloudRef.value || typeof window === "undefined") return;
-  const terms = getTerms();
-  if (terms.length === 0) return;
-
-  // 防抖：避免频繁更新
-  if (isUpdating.value) {
-    if (updateTimer) clearTimeout(updateTimer);
-    updateTimer = setTimeout(() => {
-      isUpdating.value = false;
-      initTagCloud();
-    }, 300);
-    return;
-  }
-
-  if (tagCloudInstance) {
-    isUpdating.value = true;
-    tagCloudInstance.update(terms);
-    // 更新完成后重置状态
-    setTimeout(() => {
-      isUpdating.value = false;
-    }, 100);
-    return;
-  }
-
-  const TagCloud = (await import("TagCloud")).default;
-  tagCloudInstance = TagCloud(tagCloudRef.value, terms, {
-    radius: 150,
-    maxSpeed: "slow",
-    initSpeed: "slow",
-    direction: 135,
-    keep: true,
-    containerClass: "hot-tagcloud",
-    itemClass: "hot-tagcloud-item",
-  });
-}
-
-function destroyTagCloud() {
-  if (updateTimer) {
-    clearTimeout(updateTimer);
-    updateTimer = null;
-  }
-  if (tagCloudInstance) {
-    tagCloudInstance.destroy();
-    tagCloudInstance = null;
-  }
-  isUpdating.value = false;
-}
-
-function onContainerClick(e: MouseEvent) {
-  const target = e.target as HTMLElement;
-  if (target?.classList?.contains("hot-tagcloud-item")) {
-    const term = target.innerText?.trim();
-    if (term) props.onSearch(term);
-  }
-}
-
-watch(
-  () => [searches.value.length, loading.value] as const,
-  async ([len, ld]) => {
-    if (!ld && len > 0) {
-      await nextTick();
-      initTagCloud();
-    }
-  },
-  { flush: "post" }
-);
-
-onBeforeUnmount(() => {
-  destroyTagCloud();
-});
+onMounted(() => void init());
 
 defineExpose({ init, refresh });
 </script>
@@ -159,99 +95,131 @@ defineExpose({ init, refresh });
 <style scoped>
 .hot-search-section {
   width: 100%;
+  padding: 12px 0 0 38px;
+  border-left: 1px solid var(--border-light);
 }
 
-.cloud-container {
-  width: 100%;
-}
-
-.tag-cloud-wrap {
-  min-height: 340px;
-  padding: 20px;
-  background: var(--bg-surface);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
-  cursor: pointer;
-}
-
-.tag-cloud-placeholder {
-  min-height: 340px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
-}
-
-/* 覆盖 TagCloud 默认样式，适配项目主题 */
-.tag-cloud-wrap :deep(.hot-tagcloud) {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  /* GPU 加速 */
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.tag-cloud-wrap :deep(.hot-tagcloud-item) {
-  color: var(--primary-dark, #0f766e) !important;
-  font-weight: 600 !important;
-  font-family: inherit !important;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
-  /* GPU 加速 */
-  transform: translateZ(0);
-  will-change: transform, opacity;
-}
-
-.tag-cloud-wrap :deep(.hot-tagcloud-item:hover) {
-  opacity: 0.9;
-}
-
-.loading-state {
+.hot-header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px 20px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
   color: var(--text-secondary);
-  background: var(--bg-surface);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
 }
 
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid rgba(15, 118, 110, 0.2);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.hot-kicker {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+.hot-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 760;
+  letter-spacing: -0.04em;
+}
+
+.hot-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hot-list li + li {
+  border-top: 1px solid var(--border-light);
+}
+
+.hot-list button {
+  display: grid;
+  width: 100%;
+  min-height: 43px;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  text-align: left;
+  transition: color var(--transition-fast), transform 360ms var(--ease-spring);
+}
+
+.hot-list button:hover {
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.hot-list button:active {
+  transform: scale(0.985);
+}
+
+.hot-list button svg {
+  transition: color var(--transition-fast), transform 360ms var(--ease-spring);
+}
+
+.hot-list button:hover svg {
+  color: var(--primary-strong);
+  transform: translate(2px, -2px);
+}
+
+.hot-rank {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.hot-term {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 560;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hot-skeleton {
+  display: grid;
+  gap: 12px;
+}
+
+.hot-skeleton span {
+  display: block;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--bg-skeleton);
+  animation: pulse 1.3s ease-in-out infinite;
+}
+
+@media (max-width: 820px) {
+  .hot-search-section {
+    padding: 24px 0 0;
+    border-top: 1px solid var(--border-light);
+    border-left: 0;
+  }
+
+  .hot-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
+
+  .hot-list li:nth-child(2) {
+    border-top: 0;
   }
 }
 
-@media (max-width: 640px) {
-  .tag-cloud-wrap {
-    min-height: 260px;
-    padding: 12px;
+@media (max-width: 520px) {
+  .hot-list {
+    grid-template-columns: 1fr;
   }
 
-  .tag-cloud-wrap :deep(.hot-tagcloud) {
-    height: 240px;
+  .hot-list li:nth-child(2) {
+    border-top: 1px solid var(--border-light);
   }
-
-  .loading-state {
-    padding: 24px 12px;
-  }
-}
-
-.hidden {
-  display: none;
 }
 </style>

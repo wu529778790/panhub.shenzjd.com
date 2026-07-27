@@ -1,0 +1,149 @@
+id,final_status,category,subject,path,line,confidence,risk,proof_eligible,loc,bytes,status_reason
+CRT-001,REVIEW,orphan-file,.codex-seo-visual-test.py,.codex-seo-visual-test.py,,high,low,True,45,2324,Not proven in a disposable copy.
+CRT-002,KEEP,orphan-file,.output/public/_nuxt/BCYUChiP.js,.output/public/_nuxt/BCYUChiP.js,,medium,medium,False,2,140011,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-003,KEEP,orphan-file,.output/public/_nuxt/BGxsx0TN.js,.output/public/_nuxt/BGxsx0TN.js,,medium,medium,False,1,275,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-004,KEEP,orphan-file,.output/public/_nuxt/BHoPddxq.js,.output/public/_nuxt/BHoPddxq.js,,medium,medium,False,1,414,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-005,KEEP,orphan-file,.output/public/_nuxt/BhwPdyg7.js,.output/public/_nuxt/BhwPdyg7.js,,medium,medium,False,1,305,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-006,KEEP,orphan-file,.output/public/_nuxt/BrEz5IKj.js,.output/public/_nuxt/BrEz5IKj.js,,medium,medium,False,1,410,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-007,KEEP,orphan-file,.output/public/_nuxt/CHTgmpFa.js,.output/public/_nuxt/CHTgmpFa.js,,medium,medium,False,1,310,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-008,KEEP,orphan-file,.output/public/_nuxt/CT52cIms.js,.output/public/_nuxt/CT52cIms.js,,medium,medium,False,1,2009,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-009,KEEP,orphan-file,.output/public/_nuxt/CZbx7lNI.js,.output/public/_nuxt/CZbx7lNI.js,,medium,medium,False,1,3692,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-010,KEEP,orphan-file,.output/public/_nuxt/CbNbuWb2.js,.output/public/_nuxt/CbNbuWb2.js,,medium,medium,False,1,267,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-011,KEEP,orphan-file,.output/public/_nuxt/CfUrNL1K.js,.output/public/_nuxt/CfUrNL1K.js,,medium,medium,False,1,2919,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-012,KEEP,orphan-file,.output/public/_nuxt/Cuu9779P.js,.output/public/_nuxt/Cuu9779P.js,,medium,medium,False,1,419,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-013,KEEP,orphan-file,.output/public/_nuxt/D3bGyH_U.js,.output/public/_nuxt/D3bGyH_U.js,,medium,medium,False,3,94052,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-014,KEEP,orphan-file,.output/public/_nuxt/D65ukYnA.js,.output/public/_nuxt/D65ukYnA.js,,medium,medium,False,1,26557,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-015,KEEP,orphan-file,.output/public/_nuxt/D748dLCJ.js,.output/public/_nuxt/D748dLCJ.js,,medium,medium,False,1,67165,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-016,KEEP,orphan-file,.output/public/_nuxt/DMwX1WEl.js,.output/public/_nuxt/DMwX1WEl.js,,medium,medium,False,1,23831,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-017,KEEP,orphan-file,.output/public/_nuxt/DWoqGCi-.js,.output/public/_nuxt/DWoqGCi-.js,,medium,medium,False,3,113058,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-018,KEEP,orphan-file,.output/public/_nuxt/DWr_OC-d.js,.output/public/_nuxt/DWr_OC-d.js,,medium,medium,False,1,1515,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-019,KEEP,orphan-file,.output/public/_nuxt/D_X6GRZy.js,.output/public/_nuxt/D_X6GRZy.js,,medium,medium,False,1,2060,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-020,KEEP,orphan-file,.output/public/_nuxt/Din6mfaL.js,.output/public/_nuxt/Din6mfaL.js,,medium,medium,False,1,271,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-021,KEEP,orphan-file,.output/public/_nuxt/DnOljBaa.js,.output/public/_nuxt/DnOljBaa.js,,medium,medium,False,1,4547,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-022,KEEP,orphan-file,.output/public/_nuxt/Dp84xg9x.js,.output/public/_nuxt/Dp84xg9x.js,,medium,medium,False,1,2158,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-023,KEEP,orphan-file,.output/public/_nuxt/DrEnm75J.js,.output/public/_nuxt/DrEnm75J.js,,medium,medium,False,1,410,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-024,KEEP,orphan-file,.output/public/_nuxt/Nn3Fh2eE.js,.output/public/_nuxt/Nn3Fh2eE.js,,medium,medium,False,1,267,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-025,KEEP,orphan-file,.output/public/_nuxt/OckstAWV.js,.output/public/_nuxt/OckstAWV.js,,medium,medium,False,1,302,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-026,KEEP,orphan-file,.output/public/_nuxt/popr4JVf.js,.output/public/_nuxt/popr4JVf.js,,medium,medium,False,1,307,Generated Nuxt build output under .output; excluded from source cleanup scope.
+CRT-027,KEEP,orphan-file,.output/public/panhub-link-checker.user.js,.output/public/panhub-link-checker.user.js,,medium,medium,False,569,20007,Generated copy of a public asset under .output; excluded from source cleanup scope.
+CRT-028,KEEP,orphan-file,.output/server/chunks/_/PhArrowRight.vue.mjs,.output/server/chunks/_/PhArrowRight.vue.mjs,,medium,medium,False,2,2116,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-029,KEEP,orphan-file,.output/server/chunks/_/PhArrowUpRight.vue.mjs,.output/server/chunks/_/PhArrowUpRight.vue.mjs,,medium,medium,False,2,2067,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-030,KEEP,orphan-file,.output/server/chunks/_/PhMagnifyingGlass.vue.mjs,.output/server/chunks/_/PhMagnifyingGlass.vue.mjs,,medium,medium,False,2,2219,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-031,KEEP,orphan-file,.output/server/chunks/_/cloudflareBindings.mjs,.output/server/chunks/_/cloudflareBindings.mjs,,medium,medium,False,2,1210,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-032,KEEP,orphan-file,.output/server/chunks/_/d1HotSearchService.mjs,.output/server/chunks/_/d1HotSearchService.mjs,,medium,medium,False,2,4818,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-033,KEEP,orphan-file,.output/server/chunks/_/index.mjs,.output/server/chunks/_/index.mjs,,medium,medium,False,2,65715,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-034,KEEP,orphan-file,.output/server/chunks/_/index2.mjs,.output/server/chunks/_/index2.mjs,,medium,medium,False,2,1738,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-035,KEEP,orphan-file,.output/server/chunks/_/linkHealthService.mjs,.output/server/chunks/_/linkHealthService.mjs,,medium,medium,False,2,8311,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-036,KEEP,orphan-file,.output/server/chunks/_/logger.mjs,.output/server/chunks/_/logger.mjs,,medium,medium,False,2,2274,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-037,KEEP,orphan-file,.output/server/chunks/_/memoryCache.mjs,.output/server/chunks/_/memoryCache.mjs,,medium,medium,False,2,301860,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-038,KEEP,orphan-file,.output/server/chunks/_/performance.mjs,.output/server/chunks/_/performance.mjs,,medium,medium,False,2,3640,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-039,KEEP,orphan-file,.output/server/chunks/_/searchLinkHealth.mjs,.output/server/chunks/_/searchLinkHealth.mjs,,medium,medium,False,2,4025,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-040,KEEP,orphan-file,.output/server/chunks/_/searchQualityService.mjs,.output/server/chunks/_/searchQualityService.mjs,,medium,medium,False,2,16478,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-041,KEEP,orphan-file,.output/server/chunks/_/shared.esm-bundler.mjs,.output/server/chunks/_/shared.esm-bundler.mjs,,medium,medium,False,2,16817,Generated Nitro server chunk under .output; excluded from source cleanup scope.
+CRT-042,KEEP,orphan-file,.output/server/chunks/nitro/nitro.mjs,.output/server/chunks/nitro/nitro.mjs,,medium,medium,False,2,106533,Generated Nitro runtime entry under .output; excluded from source cleanup scope.
+CRT-043,KEEP,orphan-file,.output/server/chunks/virtual/_commonjsHelpers.mjs,.output/server/chunks/virtual/_commonjsHelpers.mjs,,medium,medium,False,2,206,Generated bundler helper under .output; excluded from source cleanup scope.
+CRT-044,KEEP,orphan-file,.output/server/index.mjs,.output/server/index.mjs,,medium,medium,False,2,252,Generated Nitro deployment entry under .output; excluded from source cleanup scope.
+CRT-045,KEEP,orphan-file,composables/useAiAnalysis.ts,composables/useAiAnalysis.ts,,high,low,True,98,2458,Nuxt auto-imported composable; used by pages/index/index.vue.
+CRT-046,KEEP,orphan-file,composables/useDarkMode.ts,composables/useDarkMode.ts,,medium,medium,False,39,1135,Nuxt auto-imported composable; used by app.vue.
+CRT-047,KEEP,orphan-file,composables/useFavorites.ts,composables/useFavorites.ts,,medium,medium,False,200,5738,"Nuxt auto-imported composable; used by app.vue, FavoritesDrawer and SearchResultList."
+CRT-048,KEEP,orphan-file,composables/useLinkHealth.ts,composables/useLinkHealth.ts,,high,low,True,83,2711,Nuxt auto-imported composable; used by the home page and FavoritesDrawer.
+CRT-049,KEEP,orphan-file,composables/useRecentSearches.ts,composables/useRecentSearches.ts,,high,low,True,44,1317,Nuxt auto-imported composable; used by pages/index/index.vue.
+CRT-050,KEEP,orphan-file,composables/useSearch.ts,composables/useSearch.ts,,medium,medium,False,443,13232,Nuxt auto-imported composable; it is the home-page search state machine.
+CRT-051,KEEP,orphan-file,composables/useSettings.ts,composables/useSettings.ts,,medium,medium,False,250,7163,Nuxt auto-imported composable; used by app.vue and the home page.
+CRT-052,KEEP,orphan-file,composables/useToast.ts,composables/useToast.ts,,medium,medium,False,26,640,Nuxt auto-imported composable; used by app.vue and the home page.
+CRT-053,KEEP,orphan-file,config/plugins.ts,config/plugins.ts,,medium,medium,False,50,1950,"Imported through Nuxt aliases by app, page, components and composables."
+CRT-054,KEEP,orphan-file,config/seoContent.ts,config/seoContent.ts,,medium,medium,False,1237,76747,"SEO route data imported by category, topic, guide and pan routes plus sitemap."
+CRT-055,KEEP,orphan-file,config/seoDiscovery.ts,config/seoDiscovery.ts,,medium,medium,False,71,2377,Imported by SeoDiscoverySection and its unit tests.
+CRT-056,KEEP,orphan-file,nuxt.config.ts,nuxt.config.ts,,medium,medium,False,89,3323,Conventional Nuxt configuration entry point.
+CRT-057,KEEP,orphan-file,public/panhub-link-checker.user.js,public/panhub-link-checker.user.js,,medium,medium,False,569,20007,Intentional public userscript linked from README and self-update metadata.
+CRT-058,KEEP,orphan-file,server/api/ai/analyze.post.ts,server/api/ai/analyze.post.ts,,medium,medium,False,197,5760,Conventional Nuxt server API route.
+CRT-059,KEEP,orphan-file,server/api/douban-hot.get.ts,server/api/douban-hot.get.ts,,medium,medium,False,203,6213,Conventional Nuxt server API route used by the home page.
+CRT-060,KEEP,orphan-file,server/api/favorites/sync.get.ts,server/api/favorites/sync.get.ts,,medium,medium,False,39,1155,Conventional Nuxt server API route used by favorites sync.
+CRT-061,KEEP,orphan-file,server/api/favorites/sync.post.ts,server/api/favorites/sync.post.ts,,medium,medium,False,100,3026,Conventional Nuxt server API route used by favorites sync.
+CRT-062,KEEP,orphan-file,server/api/health.get.ts,server/api/health.get.ts,,medium,medium,False,17,452,Conventional Nuxt health API route and deployment probe.
+CRT-063,KEEP,orphan-file,server/api/hot-search-stats.get.ts,server/api/hot-search-stats.get.ts,,medium,medium,False,42,1096,Conventional Nuxt server API route.
+CRT-064,KEEP,orphan-file,server/api/hot-searches.get.ts,server/api/hot-searches.get.ts,,medium,medium,False,34,1279,Conventional Nuxt server API route used by HotSearchSection.
+CRT-065,KEEP,orphan-file,server/api/hot-searches.post.ts,server/api/hot-searches.post.ts,,medium,medium,False,46,1451,Conventional Nuxt server API route used to record hot searches.
+CRT-066,KEEP,orphan-file,server/api/img.get.ts,server/api/img.get.ts,,medium,medium,False,81,2795,Conventional Nuxt image proxy route used by Douban artwork.
+CRT-067,KEEP,orphan-file,server/api/link-health/query.post.ts,server/api/link-health/query.post.ts,,medium,medium,False,24,908,Conventional Nuxt server API route used by useLinkHealth.
+CRT-068,KEEP,orphan-file,server/api/link-health/report.post.ts,server/api/link-health/report.post.ts,,medium,medium,False,57,1659,Conventional Nuxt server API route for link-health feedback.
+CRT-069,KEEP,orphan-file,server/api/ops/quality.get.ts,server/api/ops/quality.get.ts,,medium,medium,False,23,950,Conventional Nuxt operations API route for quality metrics.
+CRT-070,KEEP,orphan-file,server/api/plugin-health.get.ts,server/api/plugin-health.get.ts,,medium,medium,False,18,558,Conventional Nuxt server API route for plugin health.
+CRT-071,KEEP,orphan-file,server/api/search-quality.post.ts,server/api/search-quality.post.ts,,medium,medium,False,56,1850,Conventional Nuxt API route used by the client quality beacon.
+CRT-072,KEEP,orphan-file,server/api/search.get.ts,server/api/search.get.ts,,medium,medium,False,183,5346,Conventional Nuxt GET search route used by useSearch.
+CRT-073,KEEP,orphan-file,server/api/search.post.ts,server/api/search.post.ts,,medium,medium,False,152,4585,Conventional Nuxt POST search route retained for API compatibility.
+CRT-074,KEEP,orphan-file,server/api/source-status.get.ts,server/api/source-status.get.ts,,medium,medium,False,72,2439,Conventional Nuxt API route used by the source-status UI.
+CRT-075,KEEP,orphan-file,server/core/services/d1DoubanHotCache.ts,server/core/services/d1DoubanHotCache.ts,,medium,medium,False,96,2465,Imported by the Douban API route and unit tests.
+CRT-076,KEEP,orphan-file,server/core/utils/errors.ts,server/core/utils/errors.ts,,medium,medium,False,175,3653,"Imported by SearchService for ErrorCollector, classifyError and WarningInfo."
+CRT-077,KEEP,orphan-file,server/middleware/rateLimiter.ts,server/middleware/rateLimiter.ts,,medium,medium,False,82,2457,Conventional Nuxt server middleware; applies rate limits to API routes.
+CRT-078,KEEP,orphan-file,server/middleware/seoHeaders.ts,server/middleware/seoHeaders.ts,,high,low,True,28,871,Conventional Nuxt server middleware; applies SEO response headers.
+CRT-079,REVIEW,orphan-file,test/tg-parse-test.mjs,test/tg-parse-test.mjs,,high,low,True,82,2624,Not proven in a disposable copy.
+CRT-080,KEEP,orphan-file,utils/autoLinkHealth.ts,utils/autoLinkHealth.ts,,medium,medium,False,186,6185,Imported by the Cloudflare resource-sync Worker and covered by unit tests.
+CRT-081,KEEP,orphan-file,utils/favoritesVault.ts,utils/favoritesVault.ts,,medium,medium,False,149,4633,Imported by the favorites composable and unit tests.
+CRT-082,KEEP,orphan-file,utils/groupCloudSearchItems.ts,utils/groupCloudSearchItems.ts,,medium,medium,False,101,2993,Imported by the home page and unit tests.
+CRT-083,KEEP,orphan-file,vitest.config.ts,vitest.config.ts,,medium,medium,False,28,561,Conventional Vitest configuration entry point.
+CRT-084,KEEP,unused-export,PanSouContainer from cloudflare/pansou-container/src/index.ts,cloudflare/pansou-container/src/index.ts,36,medium,medium,False,0,0,Cloudflare Containers class exported by name and referenced in wrangler durable-object configuration.
+CRT-085,REVIEW,unused-export,ParseCatalogOptions from cloudflare/resource-sync/src/catalog.ts,cloudflare/resource-sync/src/catalog.ts,18,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-086,KEEP,unused-export,useAiAnalysis from composables/useAiAnalysis.ts,composables/useAiAnalysis.ts,14,medium,medium,False,0,0,Nuxt auto-imported composable export used by pages/index/index.vue.
+CRT-087,KEEP,unused-export,useLinkHealth from composables/useLinkHealth.ts,composables/useLinkHealth.ts,11,medium,medium,False,0,0,Nuxt auto-imported composable export used by the home page and FavoritesDrawer.
+CRT-088,KEEP,unused-export,useRecentSearches from composables/useRecentSearches.ts,composables/useRecentSearches.ts,4,medium,medium,False,0,0,Nuxt auto-imported composable export used by pages/index/index.vue.
+CRT-089,REVIEW,unused-export,SearchOptions from composables/useSearch.ts,composables/useSearch.ts,21,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-090,REVIEW,unused-export,SearchState from composables/useSearch.ts,composables/useSearch.ts,33,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-091,REVIEW,unused-export,DEFAULT_DOUBAN_CATEGORIES from config/doubanHot.ts,config/doubanHot.ts,35,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-092,REVIEW,unused-export,SeoFact from config/seoContent.ts,config/seoContent.ts,3,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-093,REVIEW,unused-export,SeoHub from config/seoContent.ts,config/seoContent.ts,32,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-094,REVIEW,unused-export,SeoPage from config/seoContent.ts,config/seoContent.ts,14,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-095,REVIEW,unused-export,SeoPageKind from config/seoContent.ts,config/seoContent.ts,1,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-096,REVIEW,unused-export,SeoSection from config/seoContent.ts,config/seoContent.ts,8,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-097,KEEP,unused-export,getSeoPageByKind from config/seoContent.ts,config/seoContent.ts,1183,medium,medium,False,0,0,Imported through the Nuxt alias by four dynamic SEO routes.
+CRT-098,KEEP,unused-export,legalPages from config/seoContent.ts,config/seoContent.ts,969,medium,medium,False,0,0,Aggregated into the exported SEO page collection consumed by the sitemap.
+CRT-099,REVIEW,unused-export,SeoDiscoveryLink from config/seoDiscovery.ts,config/seoDiscovery.ts,1,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-100,REVIEW,unused-export,MemoryCacheOptions from server/core/cache/memoryCache.ts,server/core/cache/memoryCache.ts,3,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-101,REVIEW,unused-export,MemoryCacheStats from server/core/cache/memoryCache.ts,server/core/cache/memoryCache.ts,10,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-102,REVIEW,unused-export,UnifiedCacheConfig from server/core/cache/unifiedCache.ts,server/core/cache/unifiedCache.ts,16,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-103,REVIEW,unused-export,createSearchCache from server/core/cache/unifiedCache.ts,server/core/cache/unifiedCache.ts,148,medium,medium,False,0,0,Factory export has no repository reference; removal is small but should be proved with build and tests.
+CRT-104,REVIEW,unused-export,Fox4kPlugin from server/core/plugins/fox4k.ts,server/core/plugins/fox4k.ts,94,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-105,REVIEW,unused-export,Hdr4kPlugin from server/core/plugins/hdr4k.ts,server/core/plugins/hdr4k.ts,80,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-106,REVIEW,unused-export,HubanPlugin from server/core/plugins/huban.ts,server/core/plugins/huban.ts,95,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-107,REVIEW,unused-export,MuouPlugin from server/core/plugins/muou.ts,server/core/plugins/muou.ts,66,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-108,REVIEW,unused-export,OugePlugin from server/core/plugins/ouge.ts,server/core/plugins/ouge.ts,101,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-109,REVIEW,unused-export,Pan666Plugin from server/core/plugins/pan666.ts,server/core/plugins/pan666.ts,42,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-110,REVIEW,unused-export,PanyqPlugin from server/core/plugins/panyq.ts,server/core/plugins/panyq.ts,10,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-111,REVIEW,unused-export,PluginHealthConfig from server/core/plugins/pluginHealth.ts,server/core/plugins/pluginHealth.ts,19,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-112,REVIEW,unused-export,PluginHealthStatus from server/core/plugins/pluginHealth.ts,server/core/plugins/pluginHealth.ts,6,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-113,REVIEW,unused-export,ShandianPlugin from server/core/plugins/shandian.ts,server/core/plugins/shandian.ts,39,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-114,REVIEW,unused-export,SusuPlugin from server/core/plugins/susu.ts,server/core/plugins/susu.ts,78,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-115,REVIEW,unused-export,TorrentGalaxyPlugin from server/core/plugins/torrentgalaxy.ts,server/core/plugins/torrentgalaxy.ts,54,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-116,REVIEW,unused-export,WanouPlugin from server/core/plugins/wanou.ts,server/core/plugins/wanou.ts,95,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-117,REVIEW,unused-export,X1337xPlugin from server/core/plugins/x1337x.ts,server/core/plugins/x1337x.ts,54,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-118,REVIEW,unused-export,ZhizhenPlugin from server/core/plugins/zhizhen.ts,server/core/plugins/zhizhen.ts,94,medium,medium,False,0,0,No inbound import and not registered by SearchService; the whole legacy plugin file is a strong removal candidate pending proof.
+CRT-119,REVIEW,unused-export,AiServiceConfig from server/core/services/aiAnalysisService.ts,server/core/services/aiAnalysisService.ts,10,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-120,REVIEW,unused-export,D1DoubanHotCacheEntry from server/core/services/d1DoubanHotCache.ts,server/core/services/d1DoubanHotCache.ts,9,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-121,REVIEW,unused-export,extractSearchTerm from server/core/services/doubanHotService.ts,server/core/services/doubanHotService.ts,262,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-122,REVIEW,unused-export,fetchDoubanHot from server/core/services/doubanHotService.ts,server/core/services/doubanHotService.ts,281,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-123,REVIEW,unused-export,getSearchServiceStats from server/core/services/index.ts,server/core/services/index.ts,89,medium,medium,False,0,0,Monitoring helper has no repository reference; removal should be proved with API and unit checks.
+CRT-124,REVIEW,unused-export,resetSearchService from server/core/services/index.ts,server/core/services/index.ts,82,medium,medium,False,0,0,Test reset helper has no repository reference; removal should be proved against all tests.
+CRT-125,REVIEW,unused-export,ResultClickInput from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,73,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-126,REVIEW,unused-export,SearchQualityInput from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,17,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-127,REVIEW,unused-export,SourcePerformanceInput from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,25,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-128,REVIEW,unused-export,SourceQualityState from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,36,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-129,REVIEW,unused-export,SourceQualityStats from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,43,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-130,REVIEW,unused-export,clearSourceQualityPolicyCache from server/core/services/searchQualityService.ts,server/core/services/searchQualityService.ts,398,medium,medium,False,0,0,Policy-cache reset helper has no repository reference; removal should be proved against quality tests.
+CRT-131,REVIEW,unused-export,SearchExecutionResult from server/core/services/searchService.ts,server/core/services/searchService.ts,55,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-132,REVIEW,unused-export,SourceExecutionMetric from server/core/services/searchService.ts,server/core/services/searchService.ts,44,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-133,REVIEW,unused-export,TgFetchOptions from server/core/services/tg.ts,server/core/services/tg.ts,16,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-134,REVIEW,unused-export,ErrorDetail from server/core/utils/errors.ts,server/core/utils/errors.ts,25,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-135,REVIEW,unused-export,ErrorSeverity from server/core/utils/errors.ts,server/core/utils/errors.ts,16,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-136,REVIEW,unused-export,ErrorType from server/core/utils/errors.ts,server/core/utils/errors.ts,4,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-137,REVIEW,unused-export,FetchWithRetryOptions from server/core/utils/fetch.ts,server/core/utils/fetch.ts,15,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-138,REVIEW,unused-export,createPersistentFetcher from server/core/utils/fetch.ts,server/core/utils/fetch.ts,177,medium,medium,False,0,0,Persistent fetch factory has no repository reference; removal should be proved with unit tests and build.
+CRT-139,REVIEW,unused-export,LogLevel from server/core/utils/logger.ts,server/core/utils/logger.ts,6,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-140,REVIEW,unused-export,LogMeta from server/core/utils/logger.ts,server/core/utils/logger.ts,24,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-141,REVIEW,unused-export,LogOptions from server/core/utils/logger.ts,server/core/utils/logger.ts,18,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-142,REVIEW,unused-export,AutomaticLinkHealthStatus from utils/autoLinkHealth.ts,utils/autoLinkHealth.ts,1,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-143,REVIEW,unused-export,ConfirmedAutomaticLinkHealthDecision from utils/autoLinkHealth.ts,utils/autoLinkHealth.ts,14,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-144,REVIEW,unused-export,MAX_FAVORITE_ITEMS from utils/favoritesVault.ts,utils/favoritesVault.ts,7,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-145,REVIEW,unused-export,inferTorrentMetadata from utils/torrentMetadata.ts,utils/torrentMetadata.ts,154,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-146,REVIEW,unused-export,withTorrentAvailability from utils/torrentMetadata.ts,utils/torrentMetadata.ts,84,medium,medium,False,0,0,Not proven in a disposable copy.
+CRT-147,KEEP,duplicate-file,public/panhub-link-checker.user.js duplicates .output/public/panhub-link-checker.user.js,public/panhub-link-checker.user.js,,high,medium,False,569,20007,The second copy is generated build output; public/ remains the canonical source asset.
+CRT-148,REVIEW,commented-code,Comment block in test/unit/hot-search.test.ts,test/unit/hot-search.test.ts,127,low,medium,False,4,195,Not proven in a disposable copy.

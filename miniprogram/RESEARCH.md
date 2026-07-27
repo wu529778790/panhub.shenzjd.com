@@ -29,31 +29,10 @@
 
 ---
 
-## 3. 后端最小侵入性改造（兼容 MP auth，向后兼容）
+## 3. 后端接口访问
 
-现状：`/api/auth/unlock` 依赖 `Set-Cookie`，小程序内 cookie 行为异常（时而不回传、跨请求丢失）。
-
-改造方向：后端 auth 校验加一层 `Authorization: Bearer` header 兼容。
-
-```ts
-// server/utils/auth.ts  (拟新增)
-export function isUnlocked(event: H3Event): boolean {
-  // 原逻辑（Web cookie）
-  if (getCookie(event, 'unlocked') === '1') return true
-  // 新逻辑（MP header token）
-  const h = getHeader(event, 'Authorization')
-  if (h === `Bearer ${process.env.SEARCH_PASSWORD}`) return true
-  return false
-}
-```
-
-加上 `/api/auth/unlock` 响应里同时返回 `{ ok: true, token: SEARCH_PASSWORD }`，
-MP 端把 token 存 `wx.setStorageSync`，后续每个请求带 Authorization header。
-
-影响：
-- Web 端行为可完全保持不变（cookie 仍有效）
-- MP 端解锁有效
-- 改动点：① unlock 接口响应体加 token ② 校验中间件加 header 判断 ③ 可选：logout 接口
+搜索 API 为公开接口，Web 与小程序直接复用 `/api/search`，无需 Cookie、登录或访问令牌。
+服务端保留常规请求限流和输入校验，客户端只需处理正常结果与 429 重试提示。
 
 ---
 
@@ -162,7 +141,6 @@ MP 端把 token 存 `wx.setStorageSync`，后续每个请求带 Authorization he
 |------|------|
 | `app/composables/useSearch.ts` | Vue 响应式（ref/reactive）绑定，MP 无法复用 |
 | `app/composables/useSettings.ts` | 同上 |
-| `app/composables/useAuth.ts` | 同上 |
 | `config/channels.json` | 后端权威配置，MP 端 config 是"展示视图"不同物 |
 
 ### 目录结构（含 shared）

@@ -12,6 +12,16 @@ import { PluginManager, registerGlobalPlugin } from "../plugins/manager";
 // See: data/panhub.shenzjd.com-20260706090537.log analysis
 import { PansearchPlugin } from "../plugins/pansearch";
 import { NyaaPlugin } from "../plugins/nyaa";
+import { HaosouAggregatePlugin } from "../plugins/haosouAggregate";
+import { SolidTorrentsPlugin } from "../plugins/solidtorrents";
+import { ResourceCatalogPlugin } from "../plugins/resourceCatalog";
+import { FastMediaPlugin } from "../plugins/fastMedia";
+import { ResourceSupplementPlugin } from "../plugins/resourceSupplement";
+import { MagnetIndexPlugin } from "../plugins/magnetIndex";
+import { GlobalIndexPlugin } from "../plugins/globalIndex";
+import { MediaDiscoveryPlugin } from "../plugins/mediaDiscovery";
+import { OpenResourceIndexPlugin } from "../plugins/openResourceIndex";
+import { NetworkResourceIndexPlugin } from "../plugins/networkResourceIndex";
 
 const SERVICE_CONTEXT_KEY = "__panhub_search_service__";
 
@@ -23,6 +33,16 @@ function createPluginManager(): PluginManager {
   // 仅注册稳定可用的插件
   registerGlobalPlugin(new PansearchPlugin());
   registerGlobalPlugin(new NyaaPlugin());
+  registerGlobalPlugin(new SolidTorrentsPlugin());
+  registerGlobalPlugin(new HaosouAggregatePlugin());
+  registerGlobalPlugin(new ResourceCatalogPlugin());
+  registerGlobalPlugin(new FastMediaPlugin());
+  registerGlobalPlugin(new MediaDiscoveryPlugin());
+  registerGlobalPlugin(new ResourceSupplementPlugin());
+  registerGlobalPlugin(new MagnetIndexPlugin());
+  registerGlobalPlugin(new GlobalIndexPlugin());
+  registerGlobalPlugin(new OpenResourceIndexPlugin());
+  registerGlobalPlugin(new NetworkResourceIndexPlugin());
   pm.registerAllGlobalPlugins();
   return pm;
 }
@@ -34,8 +54,8 @@ function createServiceOptions(runtimeConfig: any): SearchServiceOptions {
   return {
     priorityChannels: runtimeConfig.priorityChannels || [],
     defaultChannels: runtimeConfig.defaultChannels || [],
-    defaultConcurrency: runtimeConfig.defaultConcurrency || 10,
-    pluginTimeoutMs: runtimeConfig.pluginTimeoutMs || 15000,
+    defaultConcurrency: runtimeConfig.defaultConcurrency || 6,
+    pluginTimeoutMs: runtimeConfig.pluginTimeoutMs || 4000,
     cacheEnabled: !!runtimeConfig.cacheEnabled,
     cacheTtlMinutes: runtimeConfig.cacheTtlMinutes || 30,
   };

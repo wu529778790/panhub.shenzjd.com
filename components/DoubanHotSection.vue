@@ -59,15 +59,27 @@
               @click="onItemClick(item.title)"
             >
               <div class="card-cover">
+                <div
+                  v-if="item.cover && !isImageLoaded(item) && !imgFailed.includes(item.id ?? 0)"
+                  class="cover-loading"
+                  aria-hidden="true" />
                 <img
                   v-if="item.cover && !imgFailed.includes(item.id ?? 0)"
                   :src="proxyCover(item.cover)"
                   :alt="extractTerm(item.title)"
+                  :class="{ 'is-loaded': isImageLoaded(item) }"
                   loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
+                  width="300"
+                  height="450"
                   referrerpolicy="no-referrer"
+                  @load="onImgLoad(item)"
                   @error="onImgError(item.id ?? 0)"
                 />
-                <div v-else class="cover-placeholder">🎬</div>
+                <div v-else class="cover-placeholder">
+                  <PhFilmSlate :size="32" weight="regular" aria-hidden="true" />
+                </div>
               </div>
               <div class="card-info">
                 <span class="card-title">{{ item.title }}</span>
@@ -96,14 +108,24 @@
         </div>
 
         <div v-else-if="items.length > 0" class="end-message">
-          — 已经到底了 —
+          没有更多了
         </div>
       </div>
 
-      <!-- 空状态 -->
-      <div v-if="!loading && items.length === 0" class="empty-state">
-        <span class="empty-icon">📭</span>
-        <span class="empty-text">暂无数据</span>
+      <!-- 可恢复的错误状态 -->
+      <div
+        v-if="!loading && items.length === 0"
+        class="empty-state"
+        role="status"
+        aria-live="polite"
+      >
+        <PhWarningCircle class="empty-icon" :size="30" weight="regular" aria-hidden="true" />
+        <strong class="empty-title">{{ errorMessage || "片单暂时没加载出来" }}</strong>
+        <span class="empty-text">可能是网络波动，稍后重试即可。</span>
+        <button class="retry-button" type="button" @click="retryCurrentCategory">
+          <PhArrowClockwise :size="16" aria-hidden="true" />
+          重新加载
+        </button>
       </div>
     </div>
   </div>
@@ -111,6 +133,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount, nextTick } from "vue";
+import { PhArrowClockwise, PhFilmSlate, PhWarningCircle } from "@phosphor-icons/vue";
 
 interface Props {
   onSearch: (term: string) => void;
@@ -125,6 +148,12 @@ interface DoubanHotItem {
   hot?: number;
 }
 
+interface CategorySnapshot {
+  items: DoubanHotItem[];
+  hasMore: boolean;
+  savedAt?: number;
+}
+
 const props = defineProps<Props>();
 
 const loading = ref(false);
@@ -132,10 +161,16 @@ const loadingMore = ref(false);
 const items = ref<DoubanHotItem[]>([]);
 const hasMore = ref(true);
 const imgFailed = ref<number[]>([]);
+const loadedImages = ref<Set<string>>(new Set());
 const selectedCategoryId = ref<string>("douban-top250");
 const currentPage = ref(1);
 const loadObserver = ref<IntersectionObserver | null>(null);
 const loadTriggerRef = ref<HTMLElement | null>(null);
+const errorMessage = ref("");
+const PAGE_LIMIT = 10;
+const SNAPSHOT_PREFIX = "haosouku:douban-hot:v2:";
+const SNAPSHOT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const categorySnapshots = new Map<string, CategorySnapshot>();
 
 // 防止快速切换分类时旧响应覆盖新数据
 let fetchSeq = 0;
@@ -158,15 +193,24 @@ const availableCategories = computed(() => {
   ];
 });
 
-// 是否有任何数据
-const hasAnyData = computed(() => {
-  return items.value.length > 0 || loading.value;
-});
-
 function onImgError(id: number) {
   if (!imgFailed.value.includes(id)) {
     imgFailed.value = [...imgFailed.value, id];
   }
+}
+
+function imageKey(item: DoubanHotItem): string {
+  return String(item.id ?? item.cover ?? item.title);
+}
+
+function isImageLoaded(item: DoubanHotItem): boolean {
+  return loadedImages.value.has(imageKey(item));
+}
+
+function onImgLoad(item: DoubanHotItem) {
+  const next = new Set(loadedImages.value);
+  next.add(imageKey(item));
+  loadedImages.value = next;
 }
 
 function extractTerm(title: string): string {
@@ -178,44 +222,148 @@ function proxyCover(url: string): string {
   return `/api/img?url=${encodeURIComponent(url)}`;
 }
 
+function readCategorySnapshot(categoryId: string): CategorySnapshot | undefined {
+  const memorySnapshot = categorySnapshots.get(categoryId);
+  if (memorySnapshot) return memorySnapshot;
+
+  const storages: Storage[] = [];
+  if (typeof sessionStorage !== "undefined") storages.push(sessionStorage);
+  if (typeof localStorage !== "undefined") storages.push(localStorage);
+
+  for (const storage of storages) {
+    try {
+      const key = `${SNAPSHOT_PREFIX}${categoryId}`;
+      const raw = storage.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw) as Partial<CategorySnapshot>;
+      if (
+        parsed.savedAt &&
+        Date.now() - parsed.savedAt > SNAPSHOT_MAX_AGE_MS
+      ) {
+        storage.removeItem(key);
+        continue;
+      }
+      const snapshot = {
+        items: Array.isArray(parsed.items)
+          ? parsed.items.filter((item) => item && typeof item.title === "string")
+          : [],
+        hasMore: Boolean(parsed.hasMore),
+        savedAt: parsed.savedAt,
+      };
+      if (snapshot.items.length === 0) continue;
+      categorySnapshots.set(categoryId, snapshot);
+      return snapshot;
+    } catch {
+      // Safari 隐私模式可能禁用存储，继续尝试其他缓存层。
+    }
+  }
+
+  return undefined;
+}
+
+function saveCategorySnapshot(categoryId: string, snapshot: CategorySnapshot) {
+  if (snapshot.items.length === 0) return;
+  const savedSnapshot = {
+    ...snapshot,
+    savedAt: Date.now(),
+  };
+  categorySnapshots.set(categoryId, savedSnapshot);
+
+  const storages: Storage[] = [];
+  if (typeof sessionStorage !== "undefined") storages.push(sessionStorage);
+  if (typeof localStorage !== "undefined") storages.push(localStorage);
+  for (const storage of storages) {
+    try {
+      storage.setItem(
+        `${SNAPSHOT_PREFIX}${categoryId}`,
+        JSON.stringify(savedSnapshot)
+      );
+    } catch {
+      // Safari 隐私模式可能禁用存储，内存缓存仍然可用。
+    }
+  }
+}
+
+async function requestCategoryPage(categoryId: string, page: number) {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15_000);
+    try {
+      const response = await fetch(
+        `/api/douban-hot?category=${categoryId}&page=${page}&limit=${PAGE_LIMIT}`,
+        { signal: controller.signal, headers: { Accept: "application/json" } }
+      );
+      if (!response.ok) throw new Error(`request failed with ${response.status}`);
+
+      const payload = await response.json();
+      const nextItems = Array.isArray(payload?.data?.items) ? payload.data.items : [];
+      if (payload?.code !== 0 || !payload?.data || (page === 1 && nextItems.length === 0)) {
+        throw new Error("invalid or empty response");
+      }
+
+      return {
+        items: nextItems as DoubanHotItem[],
+        hasMore: payload.data.hasMore !== undefined
+          ? Boolean(payload.data.hasMore)
+          : nextItems.length >= PAGE_LIMIT,
+      };
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 240));
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("request failed");
+}
+
 async function fetchCategoryData(categoryId: string, page: number, append = false) {
   const mySeq = ++fetchSeq;
   if (page === 1) {
     loading.value = true;
+    errorMessage.value = "";
+    const snapshot = readCategorySnapshot(categoryId);
+    if (!append) {
+      items.value = snapshot?.items || [];
+      hasMore.value = snapshot?.hasMore ?? true;
+    }
   } else {
     loadingMore.value = true;
   }
 
   try {
-    const response = await fetch(`/api/douban-hot?category=${categoryId}&page=${page}&limit=25`);
-    const data = await response.json();
+    const data = await requestCategoryPage(categoryId, page);
 
     // 如果在请求期间用户切换了分类，丢弃过期响应
     if (mySeq !== fetchSeq) return;
 
-    if (data.code === 0 && data.data) {
-      const newItems = data.data.items || [];
-      if (append) {
-        items.value = [...items.value, ...newItems];
-      } else {
-        items.value = newItems;
-      }
-      hasMore.value = data.data.hasMore !== undefined ? data.data.hasMore : newItems.length >= 25;
-      currentPage.value = page;
+    if (append) {
+      items.value = [...items.value, ...data.items];
     } else {
-      if (!append) {
-        items.value = [];
-      }
-      hasMore.value = false;
+      items.value = data.items;
+      saveCategorySnapshot(categoryId, data);
     }
+    hasMore.value = data.hasMore;
+    currentPage.value = page;
+    errorMessage.value = "";
   } catch {
-    if (!append) {
-      items.value = [];
+    if (mySeq !== fetchSeq) return;
+
+    if (!append && items.value.length === 0) {
+      errorMessage.value = "片单暂时没加载出来";
     }
     hasMore.value = false;
   } finally {
-    loading.value = false;
-    loadingMore.value = false;
+    // 旧请求不能关闭新请求的加载状态。
+    if (mySeq === fetchSeq) {
+      loading.value = false;
+      loadingMore.value = false;
+    }
   }
 }
 
@@ -227,8 +375,11 @@ async function selectCategory(categoryId: string) {
   selectedCategoryId.value = categoryId;
   currentPage.value = 1;
   hasMore.value = true;
-  items.value = []; // 立即清空当前内容
-  loading.value = true; // 立即显示骨架屏
+  errorMessage.value = "";
+  items.value = readCategorySnapshot(categoryId)?.items || [];
+  loadedImages.value = new Set();
+  loading.value = true;
+  loadingMore.value = false;
 
   // 开始获取新数据
   await fetchCategoryData(categoryId, 1, false);
@@ -239,6 +390,14 @@ async function selectCategory(categoryId: string) {
 async function loadMore() {
   if (loadingMore.value || !hasMore.value) return;
   await fetchCategoryData(selectedCategoryId.value, currentPage.value + 1, true);
+}
+
+async function retryCurrentCategory() {
+  currentPage.value = 1;
+  hasMore.value = true;
+  await fetchCategoryData(selectedCategoryId.value, 1, false);
+  await nextTick();
+  setupLoadMoreObserver();
 }
 
 function setupLoadMoreObserver() {
@@ -524,7 +683,30 @@ defineExpose({ init, refresh });
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.card-cover img.is-loaded {
+  opacity: 1;
+}
+
+.cover-loading {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--bg-skeleton) 20%,
+    var(--bg-skeleton-shine) 42%,
+    var(--bg-skeleton) 64%
+  );
+  background-size: 220% 100%;
+  animation: cover-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes cover-shimmer {
+  from { background-position: 120% 0; }
+  to { background-position: -120% 0; }
 }
 
 .movie-card:hover .card-cover img {
@@ -635,16 +817,51 @@ defineExpose({ init, refresh });
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 40px 0;
+  gap: 7px;
+  padding: 48px 16px;
+  text-align: center;
 }
 .empty-icon {
-  font-size: 28px;
-  opacity: 0.6;
+  margin-bottom: 3px;
+  color: var(--text-tertiary, #9ca3af);
+}
+.empty-title {
+  color: var(--text-primary, #1f2937);
+  font-size: 14px;
+  font-weight: 650;
 }
 .empty-text {
   color: var(--text-tertiary, #9ca3af);
-  font-size: 14px;
+  font-size: 12px;
+}
+.retry-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--border-light, #e5e7eb);
+  border-radius: 9px;
+  background: var(--bg-surface);
+  color: var(--text-primary, #1f2937);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.retry-button:hover {
+  background: var(--bg-hover);
+}
+.retry-button:active {
+  transform: scale(0.98);
+}
+.retry-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 /* 过渡动画 */
@@ -718,7 +935,8 @@ defineExpose({ init, refresh });
 @media (prefers-reduced-motion: reduce) {
   .tab-button,
   .movie-card,
-  .skeleton-card {
+  .skeleton-card,
+  .retry-button {
     transition: none;
     animation: none;
   }
@@ -742,6 +960,10 @@ defineExpose({ init, refresh });
     animation: none;
   }
 
+  .cover-loading {
+    animation: none;
+  }
+
   .skeleton-cover {
     background: var(--bg-secondary);
   }
@@ -754,6 +976,158 @@ defineExpose({ init, refresh });
 
   .spinner-dots span {
     animation: none;
+  }
+}
+</style>
+
+<style scoped>
+.category-nav {
+  display: flex;
+  margin: 0 0 24px;
+  padding: 0 0 14px;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-light);
+  scrollbar-width: none;
+}
+
+.category-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-button {
+  position: relative;
+  min-height: 36px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  overflow: visible;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.tab-button::before {
+  display: none;
+}
+
+.tab-button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab-button.is-active {
+  border: 0;
+  background: var(--primary-soft);
+  box-shadow: none;
+  color: var(--primary-strong);
+}
+
+.content-area {
+  min-height: 280px;
+}
+
+.skeleton-grid,
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(12px, 1.8vw, 20px);
+}
+
+.skeleton-card,
+.movie-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.movie-card {
+  overflow: visible;
+}
+
+.movie-card:hover {
+  box-shadow: none;
+  transform: translateY(-3px);
+}
+
+.card-cover,
+.skeleton-cover {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--bg-skeleton);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-cover img {
+  transition: transform var(--transition-normal), filter var(--transition-normal);
+}
+
+.movie-card:hover .card-cover img {
+  transform: scale(1.025);
+  filter: saturate(1.04);
+}
+
+.cover-placeholder {
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+}
+
+.card-info,
+.skeleton-info {
+  min-height: 58px;
+  padding: 10px 2px 0;
+}
+
+.card-title {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 680;
+  line-height: 1.45;
+}
+
+.card-desc {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.end-message,
+.empty-state {
+  color: var(--text-tertiary);
+}
+
+.empty-icon {
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 840px) {
+  .skeleton-grid,
+  .grid-container {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .skeleton-grid,
+  .grid-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .category-nav {
+    margin-right: -14px;
+    padding-right: 14px;
+  }
+
+  .card-title {
+    font-size: 12px;
   }
 }
 </style>

@@ -47,12 +47,11 @@
 
 - **深色模式**：完整支持深色主题，自动跟随系统偏好
 - **响应式设计**：完美适配桌面、平板、手机
-- **密码门**：可配置 `SEARCH_PASSWORD`，密码爆破防护（5 次失败锁定）
 - **优雅降级**：单个插件/频道失败不影响整体
 
 ### 🛡️ 安全与稳定性
 
-- **限流防护**：API 路由限流 + unlock 密码爆破防护
+- **限流防护**：API 路由限流，降低恶意请求对搜索服务的影响
 - **SSRF 防护**：图片代理白名单 + URL 严格校验
 - **输入校验**：关键词长度限制、并发数范围校验
 - **错误处理**：统一的 `createError` 错误响应
@@ -135,8 +134,6 @@ npm build
 | `LOG_LEVEL` | `info` | 日志级别（debug/info/warn/error），支持白名单校验 |
 | `NITRO_PRESET` | auto-detect | 部署预设（vercel/cloudflare/docker） |
 | `PORT` | `4000` | 服务端口 |
-| `SEARCH_PASSWORD` | 空 | 非空时启用密码门，搜索时需输入密码（5 次失败锁定 5 分钟） |
-
 ### 部署差异说明
 
 | 特性 | Docker/Node | CF Workers / Vercel |

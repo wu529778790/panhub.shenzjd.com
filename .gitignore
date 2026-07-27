@@ -26,3 +26,4 @@ logs
 # Runtime data (SQLite database, hot-searches)
 data/
 .playwright-mcp
+.wrangler/

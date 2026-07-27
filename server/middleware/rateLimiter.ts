@@ -7,8 +7,22 @@ interface RateLimitEntry {
 
 // 路径 → { limit, windowMs }
 const RATE_LIMITS: Record<string, { limit: number; windowMs: number }> = {
-  "/api/search": { limit: 10, windowMs: 60_000 },
+  // 前端会按插件和频道批次渐进返回结果。40 次可覆盖约 3 次完整搜索，
+  // 同时继续限制脚本化高频调用。
+  "/api/search": { limit: 40, windowMs: 60_000 },
   "/api/hot-searches": { limit: 30, windowMs: 60_000 },
+  "/api/ai/analyze": { limit: 6, windowMs: 60_000 },
+  "/api/favorites/sync": { limit: 30, windowMs: 60_000 },
+  "/api/link-health/query": { limit: 30, windowMs: 60_000 },
+  "/api/link-health/report": { limit: 20, windowMs: 60_000 },
+  "/api/seo/event": { limit: 12, windowMs: 60_000 },
+  "/api/seo/report": { limit: 20, windowMs: 60_000 },
+  "/api/geo/search": { limit: 20, windowMs: 60_000 },
+  "/api/geo/pages": { limit: 30, windowMs: 60_000 },
+  "/api/ops/geo": { limit: 30, windowMs: 60_000 },
+  "/api/ops/geo/run": { limit: 6, windowMs: 60_000 },
+  "/api/traffic/event": { limit: 40, windowMs: 60_000 },
+  "/api/ops/traffic": { limit: 30, windowMs: 60_000 },
 };
 
 const DEFAULT_LIMIT = { limit: 60, windowMs: 60_000 };
@@ -45,7 +59,7 @@ function cleanup() {
 }
 
 export default defineEventHandler((event) => {
-  // 只限制 API 路由（健康检查和认证排除限流）
+  // 只限制 API 路由（健康检查排除限流）
   const path = event.path || "";
   if (!path.startsWith("/api/")) return;
   if (path === "/api/health") return;

@@ -3,6 +3,15 @@ import { ofetch } from "ofetch";
 import type { SearchResult } from "../types/models";
 import { matchesSearchKeyword } from "../utils/searchKeyword";
 import { logger } from "../utils/logger";
+import {
+  enrichTorrentMetadata,
+  magnetInfoHash,
+  magnetTrackerCount,
+} from "../../../utils/torrentMetadata";
+
+function truncateText(value: string, maxCodePoints: number): string {
+  return Array.from(value).slice(0, maxCodePoints).join("");
+}
 
 export interface TgFetchOptions {
   limitPerChannel?: number;
@@ -23,13 +32,18 @@ export async function fetchTgChannelPosts(
   const maxPages = Math.ceil(limit / 20);
   const allResults: SearchResult[] = [];
   let before: string | undefined;
+  const searchTerm = keyword.trim();
 
   for (let page = 0; page < maxPages && allResults.length < limit; page++) {
     // 客户端断开时提前退出分页循环
     if (options.signal?.aborted) break;
 
     const baseUrl = `https://t.me/s/${encodeURIComponent(channel)}`;
-    const url = before ? `${baseUrl}?before=${before}` : baseUrl;
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("q", searchTerm);
+    if (before) params.set("before", before);
+    const queryString = params.toString();
+    const url = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
     let html = "";
     try {
@@ -39,9 +53,9 @@ export async function fetchTgChannelPosts(
     }
 
     if (!html || !html.includes("tgme_widget_message")) {
-      const mirrorUrl = before
-        ? `https://r.jina.ai/https://t.me/s/${encodeURIComponent(channel)}?before=${before}`
-        : `https://r.jina.ai/https://t.me/s/${encodeURIComponent(channel)}`;
+      const mirrorUrl = queryString
+        ? `https://r.jina.ai/${baseUrl}?${queryString}`
+        : `https://r.jina.ai/${baseUrl}`;
 
       try {
         html = await ofetch<string>(mirrorUrl, { headers: { "user-agent": ua }, signal: options.signal });
@@ -113,11 +127,25 @@ export function parseChannelPage(
     if (host === "pan.baidu.com") return "baidu";
     if (host === "pan.quark.cn") return "quark";
     if (host === "pan.xunlei.com") return "xunlei";
-    if (host.endsWith("123pan.com")) return "123";
+    if (
+      /(^|\.)(?:123pan|123684|123685|123865|123912|123592)\.(?:com|cn)$/.test(host)
+    ) return "123";
     if (host === "cloud.189.cn") return "tianyi";
-    if (host === "115.com" || host.endsWith(".115.com")) return "115";
+    if (
+      host === "115.com" ||
+      host.endsWith(".115.com") ||
+      host === "115cdn.com" ||
+      host.endsWith(".115cdn.com") ||
+      host === "anxia.com" ||
+      host.endsWith(".anxia.com")
+    ) return "115";
     if (host === "drive.uc.cn") return "uc";
-    if (host === "yun.139.com") return "mobile";
+    if (
+      host === "yun.139.com" ||
+      host.endsWith(".yun.139.com") ||
+      host === "caiyun.feixin.10086.cn"
+    ) return "mobile";
+    if (host === "mypikpak.com" || host.endsWith(".mypikpak.com")) return "pikpak";
     return "";
   };
 
@@ -127,7 +155,7 @@ export function parseChannelPage(
     const text = root.find(".tgme_widget_message_text").text().trim();
     const dateTitle = root.find("time").attr("datetime") || "";
     const postId = root.find(".tgme_widget_message").attr("data-post") || "";
-    const firstLine = text.split("\n")[0] || text.slice(0, 80);
+    const firstLine = text.split("\n")[0] || truncateText(text, 80);
 
     if (!matchesSearchKeyword(text, keyword)) {
       return;
@@ -137,16 +165,36 @@ export function parseChannelPage(
     const seenUrls = new Set<string>();
     // 匹配 http(s) 链接和 magnet 链接（磁力链接无 hostname，需单独匹配）
     const urlPattern = /https?:\/\/[A-Za-z0-9\-._~:\/?#\[\]@!$&'()*+,;=%]+|magnet:\?[A-Za-z0-9\-._~:\/?#\[\]@!$&'()*+,;=%]+/g;
-    const passwdPattern = /(?:提取码|密码|pwd|pass)[:：\s]*([a-zA-Z0-9]{3,6})/i;
+    const passwdPattern =
+      /(?:提取码|访问码|密码|pwd|pass(?:word)?)(?:\s*[:：=]\s*|\s+)([a-zA-Z0-9]{3,6})(?![a-zA-Z0-9])/i;
+
+    const normalizeResolvedUrl = (parsed: URL, type: string): string => {
+      if (type === "115") {
+        // Telegram 的纯文本会把链接后的英文正文粘到 # 后面；115 的分享
+        // fragment 不参与定位，统一移除可避免同一链接出现两次。
+        parsed.hash = "";
+        // anxia.com 是 115 的旧跳转域名且证书已失配，改用其官方落地域名。
+        if (
+          parsed.hostname === "anxia.com" ||
+          parsed.hostname.endsWith(".anxia.com")
+        ) {
+          parsed.hostname = "115cdn.com";
+        }
+      }
+      return parsed.toString();
+    };
 
     // 解析原始 URL 为 { url, type }；展开 r.jina.ai 代理，以及 t.me 分享/跳转链接
     // 里嵌套的真实网盘地址（如 https://t.me/share/url?url=https://pan.quark.cn/...）。
     // 否则宽正则会把整条 t.me 链接匹配出来，真实网盘地址被当成 t.me 丢弃。
     const resolveUrl = (raw: string): { url: string; type: string } | null => {
+      const decodedRaw = raw.replace(/&(?:amp;)+/gi, "&");
       // magnet 链接无 hostname，直接按协议识别
-      if (raw.startsWith("magnet:")) return { url: raw, type: "magnet" };
+      if (decodedRaw.startsWith("magnet:")) {
+        return { url: decodedRaw, type: "magnet" };
+      }
 
-      const deproxied = deproxyUrl(raw);
+      const deproxied = deproxyUrl(decodedRaw);
       let parsed: URL;
       try {
         parsed = new URL(deproxied);
@@ -154,17 +202,21 @@ export function parseChannelPage(
         return null;
       }
       const type = classifyByHostname(parsed.hostname);
-      if (type) return { url: deproxied, type };
+      if (type) return { url: normalizeResolvedUrl(parsed, type), type };
 
       // 顶层域名不是网盘，检查是否是带 url= 的分享/跳转链接
       const nestedRaw = parsed.searchParams.get("url");
       if (nestedRaw) {
         const nestedDeproxied = deproxyUrl(nestedRaw);
         try {
-          const nestedType = classifyByHostname(
-            new URL(nestedDeproxied).hostname
-          );
-          if (nestedType) return { url: nestedDeproxied, type: nestedType };
+          const nestedUrl = new URL(nestedDeproxied);
+          const nestedType = classifyByHostname(nestedUrl.hostname);
+          if (nestedType) {
+            return {
+              url: normalizeResolvedUrl(nestedUrl, nestedType),
+              type: nestedType,
+            };
+          }
         } catch {
           return null;
         }
@@ -180,18 +232,45 @@ export function parseChannelPage(
       if (seenUrls.has(key)) return;
       seenUrls.add(key);
 
-      const m = text.match(passwdPattern);
-      const password = m ? m[1] : "";
+      let password = "";
+      try {
+        const parsed = new URL(resolved.url);
+        password =
+          parsed.searchParams.get("password") ||
+          parsed.searchParams.get("pwd") ||
+          "";
+      } catch {}
+      if (!/^[a-zA-Z0-9]{3,6}$/.test(password)) {
+        const m = text.match(passwdPattern);
+        password = m ? m[1] : "";
+      }
       links.push({ type: resolved.type, url: resolved.url, password });
+
+      if (resolved.type === "pikpak") {
+        try {
+          const nestedMagnet = new URL(resolved.url).searchParams.get("__add_url");
+          if (nestedMagnet?.startsWith("magnet:?")) addUrl(nestedMagnet);
+        } catch {}
+      }
     };
 
-    const urlsFromText = text.match(urlPattern) || [];
-    for (const u of urlsFromText) addUrl(u);
-
-    root.find(".tgme_widget_message_text a[href]").each((_, a) => {
+    // Telegram 会把裸链接自动转换成 a 标签，也会把下载地址放进消息按钮。
+    // 读取整条消息内的 href，分类器会自动忽略频道主页、头像和消息永久链接。
+    root.find("a[href]").each((_, a) => {
       const href = $(a).attr("href");
       if (href) addUrl(href);
     });
+
+    // magnet 不一定会被 Telegram 自动转成 a 标签，即使正文中已有网盘链接也要扫描。
+    const magnetsFromText = text.match(/magnet:\?[A-Za-z0-9\-._~:\/?#\[\]@!$&'()*+,;=%]+/g) || [];
+    for (const magnet of magnetsFromText) addUrl(magnet);
+
+    // 没有识别到 HTTP 网盘链接时，再回退扫描纯文本。这样既能兼容镜像 HTML，
+    // 又避免把链接后紧邻的英文标题误粘进已由 href 正确解析的地址。
+    if (!links.some((link) => link.type !== "magnet")) {
+      const urlsFromText = text.match(urlPattern) || [];
+      for (const url of urlsFromText) addUrl(url);
+    }
 
     let title = firstLine;
     for (const link of links) {
@@ -204,9 +283,9 @@ export function parseChannelPage(
         " "
       )
       .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 80);
-    if (!title) title = firstLine.slice(0, 80);
+      .trim();
+    title = truncateText(title, 80);
+    if (!title) title = truncateText(firstLine, 80);
 
     let content = text;
     for (const link of links) {
@@ -214,7 +293,10 @@ export function parseChannelPage(
       content = content.replace(new RegExp(escaped, "g"), "");
       if (link.password) {
         content = content.replace(
-          new RegExp(`(?:提取码|密码|pwd|pass)[:：\\s]*${link.password}`, "gi"),
+          new RegExp(
+            `(?:提取码|访问码|密码|pwd|pass(?:word)?)(?:\\s*[:：=]\\s*|\\s+)${link.password}`,
+            "gi"
+          ),
           ""
         );
       }
@@ -225,14 +307,30 @@ export function parseChannelPage(
       .replace(/\s{2,}/g, " ")
       .trim();
 
+    const source = `Telegram @${channel}`;
+    const magnetLink = links.find((link) => link.type === "magnet");
+    const postDatetime = dateTitle ? new Date(dateTitle).toISOString() : "";
+    const metadata = magnetLink
+      ? enrichTorrentMetadata(title, text, {
+          infoHash: magnetInfoHash(magnetLink.url),
+          trackerCount: magnetTrackerCount(magnetLink.url),
+          lastSeenAt: postDatetime || undefined,
+          metadataCheckedAt: new Date().toISOString(),
+          sources: [source],
+          originSource: source,
+        })
+      : undefined;
+
     results.push({
       message_id: postId,
       unique_id: `tg-${channel}-${postId || startIndex + i}`,
       channel,
-      datetime: dateTitle ? new Date(dateTitle).toISOString() : "",
+      datetime: postDatetime,
       title,
       content,
       links,
+      source,
+      metadata,
     });
   });
 

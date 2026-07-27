@@ -24,6 +24,13 @@ export interface DoubanHotPageResult {
   hasMore: boolean;
 }
 
+export function isUsableDoubanHotPage(
+  result: DoubanHotPageResult,
+  page: number
+): boolean {
+  return page > 1 || result.items.length > 0;
+}
+
 /** 豆瓣 top_list API 返回的原始结构 */
 interface DoubanApiItem {
   id: string;
@@ -46,6 +53,9 @@ const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 const PAGE_SIZE = 20;
 
 const allItemsCache = new MemoryCache<DoubanHotItem[]>({ maxSize: 30 });
+const categoryPageCache = new MemoryCache<DoubanHotPageResult>({ maxSize: 240 });
+const top250PageCache = new MemoryCache<DoubanHotPageResult>({ maxSize: 20 });
+const top250SourcePageCache = new MemoryCache<DoubanHotItem[]>({ maxSize: 10 });
 
 /** 将豆瓣 API 返回的 item 转为 DoubanHotItem */
 function mapItem(raw: DoubanApiItem, index: number): DoubanHotItem {
@@ -99,47 +109,127 @@ async function fetchTopList(typeId: number, limit = 50): Promise<DoubanHotItem[]
   return allItems;
 }
 
+/** 按页获取普通分类。每次滚动只请求当前页，避免首屏预抓整份榜单。 */
+async function fetchTopListPage(
+  typeId: number,
+  page: number,
+  limit: number
+): Promise<DoubanHotPageResult> {
+  const cacheKey = `douban-page:${typeId}:${page}:${limit}`;
+  const cached = categoryPageCache.get(cacheKey);
+  if (cached.hit && cached.value) return cached.value;
+
+  const start = (page - 1) * limit;
+  const url = `${API_BASE}?type=${typeId}&interval_id=100:90&action=&start=${start}&limit=${limit}`;
+  const data = await ofetch<DoubanApiItem[]>(url, {
+    headers: { "user-agent": UA },
+    timeout: 10000,
+  });
+  const sourceItems = Array.isArray(data) ? data : [];
+  const result = {
+    items: sourceItems.map((item, index) => mapItem(item, start + index)),
+    hasMore: sourceItems.length === limit,
+  };
+
+  // 首页空数组通常是豆瓣临时限流，不能把故障结果缓存 24 小时。
+  if (isUsableDoubanHotPage(result, page)) {
+    categoryPageCache.set(cacheKey, result, CACHE_TTL_MS);
+  }
+  return result;
+}
+
 /**
  * Top250 专用爬虫（该分类不支持 JSON API，需爬 HTML）
  */
+const TOP250_PAGE_SIZE = 25;
+const TOP250_TOTAL = 250;
+const TOP250_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15";
+
+function parseTop250Page(html: string): DoubanHotItem[] {
+  const items: DoubanHotItem[] = [];
+  const $ = load(html);
+
+  $(".article ol.grid_view li").each((_, el) => {
+    const dom = $(el);
+    const href = dom.find(".pic a").attr("href") || "";
+    const id = Number(href.match(/\d+/)?.[0]) || undefined;
+    const rawTitle = dom.find(".info .title").first().text() || "";
+    const score = dom.find(".info .rating_num").text().trim() || "0.0";
+    const title = rawTitle ? `【${score}】${rawTitle}` : "";
+    if (!title) return;
+
+    const img = dom.find("img");
+    const cover = img.attr("data-src") || img.attr("src") || undefined;
+    const coverUrl = cover?.startsWith("//") ? "https:" + cover : cover;
+
+    items.push({
+      id,
+      title,
+      cover: coverUrl,
+      desc: dom.find(".info .inq").text().trim(),
+      url: href || `https://movie.douban.com/subject/${id}/`,
+    });
+  });
+
+  return items;
+}
+
+async function fetchTop250SourcePage(start: number): Promise<DoubanHotItem[]> {
+  const cacheKey = `top250-source:${start}`;
+  const cached = top250SourcePageCache.get(cacheKey);
+  if (cached.hit && cached.value) return cached.value;
+
+  const url = start === 0
+    ? "https://movie.douban.com/top250"
+    : `https://movie.douban.com/top250?start=${start}`;
+  const html = await ofetch<string>(url, {
+    headers: { "user-agent": TOP250_UA },
+    timeout: 10000,
+  });
+  const items = parseTop250Page(html);
+  if (items.length > 0) top250SourcePageCache.set(cacheKey, items, CACHE_TTL_MS);
+  return items;
+}
+
+/** 只抓取当前请求覆盖到的 Top250 页面，避免首屏为 25 条数据预抓全部 250 条。 */
+async function fetchTop250Page(page: number, limit: number): Promise<DoubanHotPageResult> {
+  const cacheKey = `top250:${page}:${limit}`;
+  const cached = top250PageCache.get(cacheKey);
+  if (cached.hit && cached.value) return cached.value;
+
+  const requestedStart = (page - 1) * limit;
+  if (requestedStart >= TOP250_TOTAL) {
+    return { items: [], hasMore: false };
+  }
+
+  const requestedEnd = Math.min(requestedStart + limit, TOP250_TOTAL);
+  const firstSourceStart = Math.floor(requestedStart / TOP250_PAGE_SIZE) * TOP250_PAGE_SIZE;
+  const lastSourceStart = Math.floor((requestedEnd - 1) / TOP250_PAGE_SIZE) * TOP250_PAGE_SIZE;
+  const sourceStarts: number[] = [];
+  for (let start = firstSourceStart; start <= lastSourceStart; start += TOP250_PAGE_SIZE) {
+    sourceStarts.push(start);
+  }
+
+  const sourcePages = await Promise.all(sourceStarts.map(fetchTop250SourcePage));
+  const combined = sourcePages.flat();
+  const offset = requestedStart - firstSourceStart;
+  const items = combined.slice(offset, offset + limit);
+  const result = {
+    items,
+    hasMore: requestedStart + items.length < TOP250_TOTAL,
+  };
+  if (items.length > 0) top250PageCache.set(cacheKey, result, CACHE_TTL_MS);
+  return result;
+}
+
 async function scrapeTop250(): Promise<DoubanHotItem[]> {
   const allItems: DoubanHotItem[] = [];
-  const UA_LOCAL = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15";
 
   for (let page = 0; page < 10; page++) {
     const start = page * 25;
-    const url = start === 0
-      ? "https://movie.douban.com/top250"
-      : `https://movie.douban.com/top250?start=${start}`;
 
     try {
-      const html = await ofetch<string>(url, {
-        headers: { "user-agent": UA_LOCAL },
-        timeout: 10000,
-      });
-      const $ = load(html);
-
-      $(".article ol.grid_view li").each((_, el) => {
-        const dom = $(el);
-        const href = dom.find(".pic a").attr("href") || "";
-        const id = Number(href.match(/\d+/)?.[0]) || undefined;
-        const rawTitle = dom.find(".info .title").first().text() || "";
-        const score = dom.find(".info .rating_num").text().trim() || "0.0";
-        const title = rawTitle ? `【${score}】${rawTitle}` : "";
-        if (!title) return;
-
-        const img = dom.find("img");
-        const cover = img.attr("data-src") || img.attr("src") || undefined;
-        const coverUrl = cover?.startsWith("//") ? "https:" + cover : cover;
-
-        allItems.push({
-          id,
-          title,
-          cover: coverUrl,
-          desc: dom.find(".info .inq").text().trim(),
-          url: href || `https://movie.douban.com/subject/${id}/`,
-        });
-      });
+      allItems.push(...await fetchTop250SourcePage(start));
 
       if (page < 9) await new Promise((r) => setTimeout(r, 1500));
     } catch {
@@ -179,14 +269,12 @@ export async function fetchDoubanHotByCategory(
   page: number = 1,
   limit: number = PAGE_SIZE
 ): Promise<DoubanHotPageResult> {
-  const allItems = await fetchAllItems(category);
-  const start = (page - 1) * limit;
-  const end = start + limit;
-
-  return {
-    items: allItems.slice(start, end),
-    hasMore: end < allItems.length,
-  };
+  const config = DOUBAN_HOT_SOURCES.find((source) => source.id === category);
+  if (!config) return { items: [], hasMore: false };
+  if (config?.typeId === -1) {
+    return fetchTop250Page(page, limit);
+  }
+  return fetchTopListPage(config.typeId, page, limit);
 }
 
 /** 获取所有分类的数据 */

@@ -10,34 +10,58 @@ type Resp = { pageProps: { data: { total: number; data: Item[] } } };
 const WEBSITE = "https://www.pansearch.me/search";
 const DATA = (buildId: string) =>
   `https://www.pansearch.me/_next/data/${buildId}/search.json`;
+const PAGE_OFFSET_STEP = 10;
+const MAX_PAGES = 10;
 
 export class PansearchPlugin extends BaseAsyncPlugin {
   constructor() {
     super("pansearch", 3);
   }
-  override async search(keyword: string): Promise<SearchResult[]> {
-    const buildId = await getBuildId().catch(() => "");
+  override async search(
+    keyword: string,
+    ext: Record<string, any> = {}
+  ): Promise<SearchResult[]> {
+    const signal = ext.signal as AbortSignal | undefined;
+    const buildId = await getBuildId(signal).catch(() => "");
     if (!buildId) return [];
-    const url = `${DATA(buildId)}?keyword=${encodeURIComponent(
-      keyword
-    )}&offset=0`;
-    const resp = await fetchWithRetry<Resp>(
-      url,
-      {
-        headers: { "user-agent": "Mozilla/5.0" },
-      },
-      {
-        maxRetries: 2,
-        timeout: 8000,
-        logWarnings: false,
-      }
-    ).catch(() => undefined);
-    const items = resp?.pageProps?.data?.data || [];
-    const out: SearchResult[] = [];
+
+    const fetchPage = (offset: number) =>
+      fetchWithRetry<Resp>(
+        `${DATA(buildId)}?keyword=${encodeURIComponent(keyword)}&offset=${offset}`,
+        {
+          headers: { "user-agent": "Mozilla/5.0" },
+          signal,
+        },
+        {
+          maxRetries: offset === 0 ? 1 : 0,
+          timeout: 6500,
+          logWarnings: false,
+          signal,
+        }
+      ).catch(() => undefined);
+
+    const firstPage = await fetchPage(0);
+    if (!firstPage) return [];
+
+    const total = Math.max(0, Number(firstPage.pageProps?.data?.total || 0));
+    const pageCount = Math.min(
+      MAX_PAGES,
+      Math.max(1, Math.ceil(total / PAGE_OFFSET_STEP))
+    );
+    const remainingPages = await Promise.all(
+      Array.from({ length: pageCount - 1 }, (_, index) =>
+        fetchPage((index + 1) * PAGE_OFFSET_STEP)
+      )
+    );
+    const items = [firstPage, ...remainingPages]
+      .flatMap((resp) => resp?.pageProps?.data?.data || []);
+
+    // 同一个分享链接会在源站重复出现，保留最新记录即可。
+    const byUrl = new Map<string, SearchResult>();
     for (const it of items) {
       const link = extractLink(it.content);
       if (!link.url) continue;
-      out.push({
+      const result: SearchResult = {
         message_id: "",
         unique_id: `pansearch-${it.id}`,
         channel: "",
@@ -47,9 +71,10 @@ export class PansearchPlugin extends BaseAsyncPlugin {
         links: [
           { type: mapType(link.url), url: link.url, password: link.password },
         ],
-      });
+      };
+      if (!byUrl.has(link.url)) byUrl.set(link.url, result);
     }
-    return out;
+    return Array.from(byUrl.values());
   }
 }
 
@@ -57,7 +82,7 @@ export class PansearchPlugin extends BaseAsyncPlugin {
 let cachedBuildId: { value: string; expires: number } | null = null;
 const BUILD_ID_TTL = 3600_000; // 1 小时
 
-async function getBuildId(): Promise<string> {
+async function getBuildId(signal?: AbortSignal): Promise<string> {
   if (cachedBuildId && Date.now() < cachedBuildId.expires) {
     return cachedBuildId.value;
   }
@@ -66,11 +91,13 @@ async function getBuildId(): Promise<string> {
     WEBSITE,
     {
       headers: { "user-agent": "Mozilla/5.0" },
+      signal,
     },
     {
       maxRetries: 2,
       timeout: 8000,
       logWarnings: false,
+      signal,
     }
   );
   const m = /"buildId":"([^"]+)"/.exec(html);
@@ -133,4 +160,3 @@ function mapType(url: string): string {
   if (u.includes("lanzou")) return "lanzou";
   return "others";
 }
-

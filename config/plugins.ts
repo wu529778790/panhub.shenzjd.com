@@ -4,8 +4,18 @@
 //   - server/core/services/index.ts 中的插件注册
 //   - server/core/plugins/ 下的插件实现
 export const ALL_PLUGIN_NAMES = [
+  "精选资料库",
+  "好搜聚合",
+  "影视速搜",
+  "影视直达",
+  "资源补充",
+  "开放资源索引",
+  "网络资源索引",
+  "磁力索引",
+  "全网索引",
   "pansearch",
   "nyaa",
+  "solidtorrents",
 ] as const;
 
 // 平台信息配置 — icon 为官方 favicon 图片路径
@@ -22,18 +32,22 @@ export const PLATFORM_INFO: Record<
   tianyi: { name: "天翼云盘", color: "#ec4899", icon: "/icons/tianyi.png" },
   "123": { name: "123网盘", color: "#10b981", icon: "/icons/123.png" },
   mobile: { name: "移动云盘", color: "#0ea5e9", icon: "/icons/mobile.png" },
+  pikpak: { name: "PikPak", color: "#5b6ee1", icon: "/icons/others.png" },
+  lanzou: { name: "蓝奏云", color: "#2296f3", icon: "/icons/others.png" },
   others: { name: "其他网盘", color: "#6b7280", icon: "/icons/others.png" },
 };
 
 // 默认用户设置
 export const DEFAULT_USER_SETTINGS = {
   enabledPlugins: [...ALL_PLUGIN_NAMES],
-  concurrency: 4,
-  pluginTimeoutMs: 5000,
+  concurrency: 6,
+  pluginTimeoutMs: 4000,
+  filterAdultContent: false,
 } as const;
 
 // 本地存储键名
 export const STORAGE_KEYS = {
   settings: "panhub.settings",
+  sourceVersion: "haosouku.sources.version",
   searchMode: "searchMode",
 } as const;

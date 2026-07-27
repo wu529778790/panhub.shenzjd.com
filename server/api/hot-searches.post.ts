@@ -1,4 +1,6 @@
-import { defineEventHandler, readBody, createError } from "h3";
+import { defineEventHandler, readBody, createError, setHeader } from "h3";
+import { getFavoritesDatabase } from "../utils/cloudflareBindings";
+import { recordD1HotSearch } from "../core/services/d1HotSearchService";
 import { getOrCreateHotSearchService } from "../core/services/hotSearchService";
 import { loggers } from "../core/utils/logger";
 
@@ -10,6 +12,7 @@ interface RequestBody {
 const SAFE_TERM_RE = /^[一-龥a-zA-Z0-9 ]+$/;
 
 export default defineEventHandler(async (event) => {
+  setHeader(event, "cache-control", "no-store");
   const body = await readBody<RequestBody>(event);
 
   if (!body || typeof body.term !== "string") {
@@ -30,8 +33,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "搜索词包含非法字符" });
   }
 
-  const service = getOrCreateHotSearchService();
-  await service.recordSearch(term);
+  const database = getFavoritesDatabase(event);
+  if (database) await recordD1HotSearch(database, term);
+  else await getOrCreateHotSearchService().recordSearch(term);
   loggers.hotSearch.debug(`记录热搜: "${term}"`);
 
   return {

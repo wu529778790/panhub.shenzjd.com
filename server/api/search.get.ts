@@ -19,9 +19,20 @@ function getClientAbortSignal(event: any): AbortSignal | undefined {
   }
   return undefined;
 }
-import { requireSearchAuth } from "../utils/requireAuth";
 import { getOrCreateSearchService } from "../core/services";
+import { registerSearchLinksForAutomaticCheck } from "../core/services/automaticLinkHealthService";
+import {
+  getSourceQualityPolicies,
+  recordSourcePerformance,
+} from "../core/services/searchQualityService";
+import { filterKnownDeadSearchLinks } from "../core/services/searchLinkHealth";
+import { evaluateMergedSearchResponse } from "../core/services/searchRanking";
 import type { GenericResponse, SearchRequest } from "../core/types/models";
+import {
+  attachCloudflareBindings,
+  deferCloudflareTask,
+  getLinkHealthDatabase,
+} from "../utils/cloudflareBindings";
 
 function parseList(val: string | undefined): string[] | undefined {
   if (!val) return undefined;
@@ -33,10 +44,11 @@ function parseList(val: string | undefined): string[] | undefined {
 }
 
 export default defineEventHandler(async (event) => {
-  requireSearchAuth(event);
+  const requestStartedAt = Date.now();
   const config = useRuntimeConfig();
   const service = getOrCreateSearchService(config);
   const q = getQuery(event);
+  const healthDatabase = getLinkHealthDatabase(event);
 
   const kw = ((q.kw as string) || "").trim();
   if (!kw) {
@@ -70,6 +82,9 @@ export default defineEventHandler(async (event) => {
       }
     }
   }
+  const sourcePolicies = await getSourceQualityPolicies(healthDatabase).catch(
+    () => ({})
+  );
 
   const req: SearchRequest = {
     kw,
@@ -79,11 +94,15 @@ export default defineEventHandler(async (event) => {
       return Number.isFinite(n) && n >= 1 && n <= 16 ? n : undefined;
     })(),
     refresh: String(q.refresh).trim() === "true",
+    match: String(q.match).trim() === "exact" ? "exact" : "fuzzy",
     res: (q.res as any) || "merged_by_type",
     src: (q.src as any) || "all",
     plugins: parseList(q.plugins as string | undefined),
     cloud_types: parseList(q.cloud_types as string | undefined),
-    ext,
+    ext: attachCloudflareBindings(event, {
+      ...(ext || {}),
+      __source_quality_policies: sourcePolicies,
+    }),
   };
 
   if (req.src === "tg") req.plugins = undefined;
@@ -92,7 +111,11 @@ export default defineEventHandler(async (event) => {
 
   const signal = getClientAbortSignal(event);
 
-  const { response: result, warnings } = await service.searchWithWarnings(
+  const {
+    response: searchResult,
+    warnings,
+    sourceMetrics,
+  } = await service.searchWithWarnings(
     req.kw,
     req.channels,
     req.conc,
@@ -102,8 +125,51 @@ export default defineEventHandler(async (event) => {
     req.plugins,
     req.cloud_types,
     req.ext || {},
-    signal
+    signal,
+    req.match
   );
+
+  let result = searchResult;
+  try {
+    result = (
+      await filterKnownDeadSearchLinks(healthDatabase, searchResult)
+    ).response;
+  } catch {
+    // 健康库不可用时仍返回搜索结果，不能让过滤逻辑阻断搜索。
+  }
+  result = evaluateMergedSearchResponse(result, kw);
+
+  const registration = registerSearchLinksForAutomaticCheck(
+    healthDatabase,
+    searchResult
+  ).catch(() => 0);
+  if (!deferCloudflareTask(event, registration)) await registration;
+
+  const observations = sourceMetrics.length
+    ? sourceMetrics
+    : [
+        {
+          sourceKey:
+            req.src === "tg"
+              ? "tg"
+              : req.plugins?.length === 1
+                ? req.plugins[0]!
+                : "aggregate",
+          resultCount: result.total,
+          uniqueResultCount: result.total,
+          duplicateCount: 0,
+          latencyMs: Date.now() - requestStartedAt,
+          success: warnings.length === 0,
+          timedOut: false,
+          cached: false,
+        },
+      ];
+  const sourceMetric = Promise.all(
+    observations.map((observation) =>
+      recordSourcePerformance(healthDatabase, observation)
+    )
+  ).catch(() => undefined);
+  if (!deferCloudflareTask(event, sourceMetric)) await sourceMetric;
 
   const resp: GenericResponse<typeof result> = {
     code: 0,

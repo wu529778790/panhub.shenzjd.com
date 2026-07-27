@@ -1061,7 +1061,7 @@ Covers missing kw, empty/unsafe hot search terms, and invalid limit."
 
 - [ ] **Step 1: Add deployment cache section to README**
 
-After the environment variables table (after the `SEARCH_PASSWORD` row), add:
+After the environment variables table, add:
 
 ```markdown
 ### 部署差异说明

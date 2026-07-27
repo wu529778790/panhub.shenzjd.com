@@ -1,7 +1,14 @@
-import type { MergedLinks, GenericResponse, SearchResponse } from "~/types/search";
+import type {
+  GenericResponse,
+  MergedLinks,
+  SearchMatchMode,
+  SearchResponse,
+} from "~/types/search";
 import { ALL_PLUGIN_NAMES } from "~/config/plugins";
+import channelsConfig from "~/config/channels.json";
 import { extractMergedFromResponse } from "~/utils/extractMergedFromResponse";
 import { mergeMergedByType } from "~/utils/mergeMergedByType";
+import { buildSearchTaskPlan } from "~/utils/searchTaskPlan";
 
 const devLog = (...args: any[]) => {
   if (import.meta.dev) console.log(...args);
@@ -16,14 +23,13 @@ const devError = (...args: any[]) => {
 export interface SearchOptions {
   apiBase: string;
   keyword: string;
+  matchMode: SearchMatchMode;
   settings: {
     enabledPlugins: string[];
     enabledTgChannels: string[];
     concurrency: number;
     pluginTimeoutMs: number;
   };
-  /** 当搜索接口返回 401 时回调（密码门） */
-  onAuthRequired?: () => void;
 }
 
 export interface SearchState {
@@ -38,6 +44,8 @@ export interface SearchState {
 }
 
 export function useSearch() {
+  const { getAttribution } = useSeoAttribution();
+  const { getContext: getTrafficContext } = useTrafficAnalytics();
   const state = ref<SearchState>({
     loading: false,
     deepLoading: false,
@@ -76,10 +84,37 @@ export function useSearch() {
 
   let searchSeq = 0;
   const activeControllers: AbortController[] = [];
-  /** 暂停时已完成的任务数，供 continueSearch 从断点续跑 */
-  let pausedAtTaskIndex = 0;
-  /** 当前并搜已完成数，暂停时用于记录断点 */
-  let parallelCompletedCount = 0;
+  const completedTaskKeys = new Set<string>();
+  let activeQualityEventId = "";
+  let qualityRecorded = false;
+
+  function createQualityEventId(prefix: string): string {
+    const value = typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+    return `${prefix}:${value}`;
+  }
+
+  function reportSearchCompletion(options: SearchOptions): void {
+    if (!import.meta.client || !activeQualityEventId || qualityRecorded) return;
+    qualityRecorded = true;
+    void fetch(`${options.apiBase}/search-quality`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      credentials: "same-origin",
+      keepalive: true,
+      body: JSON.stringify({
+        event: "search_complete",
+        eventId: activeQualityEventId,
+        query: options.keyword,
+        resultCount: state.value.total,
+        latencyMs: state.value.elapsedMs,
+        matchMode: options.matchMode,
+        attribution: getAttribution(),
+        traffic: getTrafficContext(),
+      }),
+    }).catch(() => undefined);
+  }
 
   // 取消所有进行中的请求
   function cancelActiveRequests(): void {
@@ -95,7 +130,6 @@ export function useSearch() {
   function pauseSearch(): void {
     if (state.value.loading || state.value.deepLoading) {
       setPaused(true);
-      pausedAtTaskIndex = parallelCompletedCount;
       cancelActiveRequests();
     }
   }
@@ -107,36 +141,43 @@ export function useSearch() {
     setPaused(false);
     setDeepLoading(true);
 
-    const startFrom = pausedAtTaskIndex;
     try {
-      await performParallelSearch(options, searchSeq, startFrom, state.value.merged);
+      await performParallelSearch(options, searchSeq, state.value.merged);
     } catch (error) {
       // 忽略错误
     } finally {
-      pausedAtTaskIndex = 0;
       setDeepLoading(false);
       setLoading(false);
+      reportSearchCompletion(options);
     }
   }
   /** 创建带 AbortController 的搜索任务（插件或 TG 批次） */
   function createSearchTask(
     apiBase: string,
     keyword: string,
+    matchMode: SearchMatchMode,
     conc: number,
     pluginTimeoutMs: number,
     params: { src: "plugin" | "tg"; plugins?: string; channels?: string },
     label: string,
-    shouldSkip: () => boolean,
-    onAuthRequired?: () => void
+    shouldSkip: () => boolean
   ): () => Promise<MergedLinks> {
     return async () => {
-      if (shouldSkip()) return {};
+      if (shouldSkip()) {
+        const error = new Error("Search task cancelled");
+        error.name = "AbortError";
+        throw error;
+      }
       const ac = new AbortController();
       activeControllers.push(ac);
       try {
-        const extParam = JSON.stringify({ __plugin_timeout_ms: pluginTimeoutMs });
+        const extParam = JSON.stringify({
+          __plugin_timeout_ms: pluginTimeoutMs,
+          __respect_source_quality: true,
+        });
         const q = new URLSearchParams({
           kw: keyword,
+          match: matchMode,
           res: "merged_by_type",
           src: params.src,
           conc: String(conc),
@@ -150,8 +191,10 @@ export function useSearch() {
         );
         return extractMergedFromResponse(response.data);
       } catch (error: any) {
-        if (error?.name === "AbortError") return {};
-        if (error?.statusCode === 401) onAuthRequired?.();
+        if (error?.name === "AbortError") throw error;
+        const status =
+          error?.statusCode || error?.status || error?.response?.status;
+        if (status === 429) throw error;
         devWarn(`${label} search failed:`, error);
         return {};
       } finally {
@@ -161,16 +204,20 @@ export function useSearch() {
     };
   }
 
-  // 并发搜索 - 每个源独立请求，支持从 startFromTaskIndex 断点续跑
-  // initialMerged: continueSearch 时传入暂停前已累积的结果，避免覆盖
+  interface PlannedSearchTask {
+    key: string;
+    run: () => Promise<MergedLinks>;
+  }
+
+  // 快速插件、优先频道并行启动；普通频道等优先频道完成后再进入深度阶段。
+  // initialMerged: continueSearch 时传入暂停前已累积的结果，避免覆盖。
   async function performParallelSearch(
     options: SearchOptions,
     mySeq: number,
-    startFromTaskIndex = 0,
     initialMerged?: MergedLinks
   ): Promise<void> {
-    const { apiBase, keyword, settings } = options;
-    const conc = Math.min(16, Math.max(1, Number(settings.concurrency || 3)));
+    const { apiBase, keyword, matchMode, settings } = options;
+    const conc = Math.min(16, Math.max(1, Number(settings.concurrency || 6)));
 
     const enabledPlugins = settings.enabledPlugins.filter((n) =>
       ALL_PLUGIN_NAMES.includes(n as any)
@@ -183,70 +230,63 @@ export function useSearch() {
       return;
     }
 
-    // 收集所有搜索任务
-    const searchTasks: Array<() => Promise<MergedLinks>> = [];
-
     const shouldSkip = () => mySeq !== searchSeq || state.value.paused;
-    const onAuth = options.onAuthRequired;
+    const tgBatchSize = Math.min(16, Math.max(8, conc * 3));
+    const plan = buildSearchTaskPlan(
+      enabledPlugins,
+      enabledTgChannels,
+      channelsConfig.priorityChannels,
+      tgBatchSize
+    );
 
-    // 为每个插件创建独立的搜索任务
-    for (const plugin of enabledPlugins) {
-      searchTasks.push(
-        createSearchTask(
+    const pluginTasks: PlannedSearchTask[] = plan.pluginGroups.map(
+      (plugins, index) => ({
+        key: `plugin:${plugins.slice().sort().join(",")}`,
+        run: createSearchTask(
           apiBase,
           keyword,
+          matchMode,
           conc,
           settings.pluginTimeoutMs,
-          { src: "plugin", plugins: plugin },
-          `Plugin ${plugin}`,
-          shouldSkip,
-          onAuth
-        )
-      );
-    }
+          { src: "plugin", plugins: plugins.join(",") },
+          index === 0 ? "Fast plugin group" : "Plugin group",
+          shouldSkip
+        ),
+      })
+    );
 
-    // 为 TG 频道创建搜索任务（每批作为一个任务）
-    const tgBatchSize = conc;
-    for (let i = 0; i < enabledTgChannels.length; i += tgBatchSize) {
-      const batch = enabledTgChannels.slice(i, i + tgBatchSize);
-      searchTasks.push(
-        createSearchTask(
+    const createTgTasks = (
+      batches: string[][],
+      phase: "priority" | "deep"
+    ): PlannedSearchTask[] =>
+      batches.map((batch, index) => ({
+        key: `tg:${batch.slice().sort().join(",")}`,
+        run: createSearchTask(
           apiBase,
           keyword,
+          matchMode,
           conc,
           settings.pluginTimeoutMs,
           { src: "tg", channels: batch.join(",") },
-          `TG batch ${Math.floor(i / tgBatchSize)}`,
-          shouldSkip,
-          onAuth
-        )
-      );
-    }
+          `TG ${phase} batch ${index + 1}`,
+          shouldSkip
+        ),
+      }));
 
-    // 使用 p-limit 控制并发数
-    const pLimit = (await import('p-limit')).default;
-    const limit = pLimit(conc);
-
-    // 并发执行所有任务，哪个先返回就立即合并展示，不等待其它
-    let currentMerged: MergedLinks = initialMerged ? { ...initialMerged } : {};
-
-    const tasksToSchedule =
-      startFromTaskIndex > 0 ? searchTasks.slice(startFromTaskIndex) : searchTasks;
-    const limitedTasks = tasksToSchedule.map((task) => limit(task));
-
-    devLog(
-      '[performParallelSearch] 开始执行',
-      limitedTasks.length,
-      '个任务',
-      startFromTaskIndex > 0 ? `(从第 ${startFromTaskIndex + 1} 个续跑)` : ''
+    const priorityTasks = createTgTasks(
+      plan.priorityChannelBatches,
+      "priority"
     );
+    const deepTasks = createTgTasks(plan.deepChannelBatches, "deep");
 
-    let completedCount = startFromTaskIndex;
-    parallelCompletedCount = startFromTaskIndex;
+    const pLimit = (await import("p-limit")).default;
+    const limit = pLimit(conc);
+    let currentMerged: MergedLinks = initialMerged ? { ...initialMerged } : {};
+    let rateLimited = false;
 
-    // 每个任务完成即立刻合并展示，不等其它任务
-    const processTask = (result: MergedLinks) => {
+    const processTask = (task: PlannedSearchTask, result: MergedLinks) => {
       if (mySeq !== searchSeq || state.value.paused) return;
+      completedTaskKeys.add(task.key);
       if (Object.keys(result).length > 0) {
         currentMerged = mergeMergedByType(currentMerged, result);
         setMerged(currentMerged);
@@ -256,25 +296,55 @@ export function useSearch() {
             0
           )
         );
-        devLog('[performParallelSearch] 有数据即展示，当前总数:', Object.values(currentMerged).reduce((s, a) => s + a.length, 0));
+        devLog(
+          "[performParallelSearch] 有数据即展示，当前总数:",
+          Object.values(currentMerged).reduce((sum, items) => sum + items.length, 0)
+        );
       }
-      completedCount++;
-      parallelCompletedCount = completedCount;
     };
 
-    const wrapped = limitedTasks.map((limitedTask) =>
-      limitedTask
-        .then((result) => {
-          processTask(result);
-          return result;
-        })
-        .catch((err) => {
-          devError('[performParallelSearch] 任务错误:', err);
-        })
-    );
+    const runTasks = async (tasks: PlannedSearchTask[]): Promise<void> => {
+      const pending = tasks.filter(
+        (task) => !completedTaskKeys.has(task.key)
+      );
+      await Promise.all(
+        pending.map((task) =>
+          limit(task.run)
+            .then((result) => processTask(task, result))
+            .catch((error) => {
+              if (error?.name === "AbortError") return;
+              const status =
+                error?.statusCode || error?.status || error?.response?.status;
+              if (status === 429) rateLimited = true;
+              completedTaskKeys.add(task.key);
+              devError("[performParallelSearch] 任务错误:", error);
+            })
+        )
+      );
+    };
 
-    await Promise.all(wrapped);
-    devLog('[performParallelSearch] 所有任务完成');
+    devLog("[performParallelSearch] 请求计划", {
+      plugins: pluginTasks.length,
+      priorityTg: priorityTasks.length,
+      deepTg: deepTasks.length,
+      total: plan.requestCount,
+    });
+
+    const pluginPromise = runTasks(pluginTasks);
+    const telegramPromise = (async () => {
+      await runTasks(priorityTasks);
+      if (shouldSkip() || deepTasks.every((task) => completedTaskKeys.has(task.key))) {
+        return;
+      }
+      setDeepLoading(true);
+      await runTasks(deepTasks);
+    })();
+
+    await Promise.all([pluginPromise, telegramPromise]);
+    if (Object.keys(currentMerged).length === 0 && rateLimited) {
+      setError("搜索请求较多，请稍等片刻后重试");
+    }
+    devLog("[performParallelSearch] 所有任务完成");
   }
 
   // 主搜索函数
@@ -316,6 +386,9 @@ export function useSearch() {
     setTotal(0);
     setMerged({});
     setDeepLoading(false);
+    activeQualityEventId = createQualityEventId("search");
+    qualityRecorded = false;
+    completedTaskKeys.clear();
 
     const mySeq = ++searchSeq;
     const start = performance.now();
@@ -332,6 +405,7 @@ export function useSearch() {
       // 如果暂停了，保持 loading 状态，只取消 deepLoading
       if (!state.value.paused) {
         setLoading(false);
+        reportSearchCompletion(options);
       }
       setDeepLoading(false);
     }
@@ -349,6 +423,9 @@ export function useSearch() {
     setElapsedMs(0);
     setTotal(0);
     setMerged({});
+    activeQualityEventId = "";
+    qualityRecorded = false;
+    completedTaskKeys.clear();
   }
 
   // 复制链接

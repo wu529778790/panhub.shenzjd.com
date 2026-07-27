@@ -1,19 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="100%" stop-color="#111827"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#g)"/>
-  <g fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial">
-    <text x="80" y="180" font-size="64" opacity="0.9">PanHub</text>
-    <text x="80" y="260" font-size="40" opacity="0.85">全网最全的网盘搜索工具</text>
-    <text x="80" y="340" font-size="28" opacity="0.7">聚合 阿里云盘 · 夸克 · 百度网盘 · 115 · 迅雷 等平台</text>
-    <a href="https://panhub.shenzjd.com/" target="_blank" rel="noopener noreferrer">
-      <text x="80" y="430" font-size="26" fill="#93c5fd">panhub.shenzjd.com</text>
-    </a>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">好搜库</title>
+  <desc id="desc">一个入口，搜索多个网盘</desc>
+  <rect width="1200" height="630" fill="#f7f8f3"/>
+  <g opacity="0.32" fill="#aeb9af">
+    <circle cx="80" cy="72" r="2"/><circle cx="116" cy="72" r="2"/><circle cx="152" cy="72" r="2"/>
+    <circle cx="80" cy="108" r="2"/><circle cx="116" cy="108" r="2"/><circle cx="152" cy="108" r="2"/>
+    <circle cx="1048" cy="522" r="2"/><circle cx="1084" cy="522" r="2"/><circle cx="1120" cy="522" r="2"/>
+    <circle cx="1048" cy="558" r="2"/><circle cx="1084" cy="558" r="2"/><circle cx="1120" cy="558" r="2"/>
   </g>
+  <rect x="80" y="78" width="72" height="72" rx="20" fill="#72d83b"/>
+  <text x="116" y="132" text-anchor="middle" font-size="42" font-weight="800" fill="#15340b" font-family="PingFang SC,Microsoft YaHei,sans-serif">好</text>
+  <text x="176" y="126" font-size="34" font-weight="760" letter-spacing="1" fill="#171a18" font-family="PingFang SC,Microsoft YaHei,sans-serif">好搜库</text>
+  <text x="80" y="280" font-size="76" font-weight="800" letter-spacing="-3" fill="#171a18" font-family="PingFang SC,Microsoft YaHei,sans-serif">网盘资源，一搜就有</text>
+  <text x="80" y="350" font-size="30" fill="#59615c" font-family="PingFang SC,Microsoft YaHei,sans-serif">聚合夸克、阿里、百度、115、迅雷等主流网盘资源</text>
+  <rect x="80" y="430" width="1040" height="1" fill="#dde3dc"/>
+  <text x="80" y="500" font-size="25" font-weight="650" fill="#4ebd20" font-family="Manrope,Arial,sans-serif">HAOSOUKU.COM</text>
 </svg>
-
-

@@ -1,11 +1,7 @@
 <template>
   <div v-if="error" class="error-boundary">
     <div class="error-boundary__content">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
+      <PhWarningCircle :size="24" weight="regular" aria-hidden="true" />
       <span>{{ message }}</span>
       <button class="error-boundary__retry" @click="retry">重试</button>
     </div>
@@ -14,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { PhWarningCircle } from "@phosphor-icons/vue";
 defineProps<{
   message?: string;
 }>();

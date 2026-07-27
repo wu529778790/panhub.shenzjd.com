@@ -77,9 +77,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.dark .github-btn { color: var(--text-tertiary); }
-.dark .github-btn:hover { color: var(--text-primary); }
-
 .dark .toast {
   background: var(--bg-secondary);
   border-color: var(--border-light);
@@ -347,16 +344,6 @@
 }
 .dark [data-theme-part="movie-card"]:hover {
   box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15);
-}
-
-/* PasswordGate */
-.dark [data-theme-part="gate-overlay"] {
-  background: rgba(0, 0, 0, 0.75);
-}
-.dark [data-theme-part="gate-card"] {
-  background: var(--bg-secondary);
-  border-color: var(--border-light);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
 /* Homepage */

@@ -41,4 +41,35 @@ describe("mergeMergedByType", () => {
     expect(target.aliyun).toHaveLength(1);
     expect(result.aliyun).toHaveLength(2);
   });
+
+  it("同一 BTIH 应合并活跃度和索引来源", () => {
+    const hash = "582fc386d0087dcefe998b70d0bc6794c361e603";
+    const target = {
+      magnet: [{
+        url: `magnet:?xt=urn:btih:${hash}`,
+        password: "",
+        note: "示例 1080P",
+        datetime: "",
+        metadata: { seeders: 3, sources: ["Nyaa"] },
+      }],
+    };
+    const incoming = {
+      magnet: [{
+        url: "magnet:?dn=demo&xt=urn:btih:LAX4HBWQBB6457UZRNYNBPDHSTBWDZQD&tr=udp%3A%2F%2Ftracker.example",
+        password: "",
+        note: "示例 1080P H.265",
+        datetime: "2026-01-01T00:00:00.000Z",
+        metadata: { seeders: 18, sizeBytes: 2_000_000_000, sources: ["BitSearch"] },
+      }],
+    };
+
+    const result = mergeMergedByType(target, incoming);
+    expect(result.magnet).toHaveLength(1);
+    expect(result.magnet?.[0].metadata).toMatchObject({
+      seeders: 18,
+      sizeBytes: 2_000_000_000,
+      sources: ["Nyaa", "BitSearch"],
+    });
+    expect(result.magnet?.[0].url).toContain("tracker.example");
+  });
 });

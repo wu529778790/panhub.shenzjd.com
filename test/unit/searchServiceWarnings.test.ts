@@ -107,6 +107,92 @@ class VariantMergePlugin extends BaseAsyncPlugin {
   }
 }
 
+class MatchModePlugin extends BaseAsyncPlugin {
+  queries: string[] = [];
+
+  async search(keyword: string): Promise<SearchResult[]> {
+    this.queries.push(keyword);
+    if (keyword !== "肖申克的救赎") return [];
+
+    return [
+      {
+        message_id: "match-exact",
+        unique_id: "match-exact",
+        channel: "match-plugin",
+        datetime: new Date("2026-01-03T00:00:00.000Z").toISOString(),
+        title: "肖申克 的救赎 4K 修复版",
+        content: "完整片名资源",
+        links: [{ type: "quark", url: "https://example.com/match-exact", password: "" }],
+      },
+      {
+        message_id: "match-partial",
+        unique_id: "match-partial",
+        channel: "match-plugin",
+        datetime: new Date("2026-01-02T00:00:00.000Z").toISOString(),
+        title: "肖申克 4K 修复版",
+        content: "高分电影合集",
+        links: [{ type: "quark", url: "https://example.com/match-partial", password: "" }],
+      },
+    ];
+  }
+}
+
+class AliasMagnetPlugin extends BaseAsyncPlugin {
+  queries: string[] = [];
+
+  useKeywordVariants(): boolean {
+    return false;
+  }
+
+  async search(keyword: string): Promise<SearchResult[]> {
+    this.queries.push(keyword);
+    if (keyword !== "three body") return [];
+    return [
+      {
+        message_id: "magnet-relevant",
+        unique_id: "magnet-relevant",
+        channel: "magnet-plugin",
+        datetime: "2026-01-03T00:00:00.000Z",
+        title: "The Three Body Problem 2024 1080P",
+        content: "",
+        links: [{
+          type: "magnet",
+          url: `magnet:?xt=urn:btih:${"a".repeat(40)}`,
+          password: "",
+        }],
+      },
+      {
+        message_id: "magnet-noise",
+        unique_id: "magnet-noise",
+        channel: "magnet-plugin",
+        datetime: "2026-01-02T00:00:00.000Z",
+        title: "These Three Slut Sisters Are Lusting For My Body",
+        content: "",
+        links: [{
+          type: "magnet",
+          url: `magnet:?xt=urn:btih:${"b".repeat(40)}`,
+          password: "",
+        }],
+      },
+    ];
+  }
+}
+
+class TimedVariantPlugin extends BaseAsyncPlugin {
+  queries: Array<{ keyword: string; budgetMs: number }> = [];
+
+  async search(
+    keyword: string,
+    ext?: Record<string, any>
+  ): Promise<SearchResult[]> {
+    this.queries.push({
+      keyword,
+      budgetMs: Number(ext?.__plugin_timeout_ms || 0),
+    });
+    return new Promise((resolve) => setTimeout(() => resolve([]), 1600));
+  }
+}
+
 function createService(plugin: BaseAsyncPlugin) {
   const manager = new PluginManager();
   manager.registerPlugin(plugin);
@@ -248,6 +334,38 @@ describe("SearchService warnings", () => {
     expect(status?.failureCount).toBe(0);
   });
 
+  it("skips quality-disabled plugins when the web client enables quality controls", async () => {
+    const disabled = new EmptyPlugin("disabled", 1);
+    const active = new EmptyPlugin("active", 2);
+    const disabledSearch = vi.spyOn(disabled, "search");
+    const activeSearch = vi.spyOn(active, "search");
+    const service = createServiceWithPlugins([disabled, active]);
+
+    const result = await service.searchWithWarnings(
+      "test",
+      [],
+      2,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["disabled", "active"],
+      undefined,
+      {
+        __respect_source_quality: true,
+        __source_quality_policies: {
+          disabled: { state: "disabled", score: 20 },
+          active: { state: "active", score: 95 },
+        },
+      }
+    );
+
+    expect(disabledSearch).not.toHaveBeenCalled();
+    expect(activeSearch).toHaveBeenCalledOnce();
+    expect(result.sourceMetrics.map((metric) => metric.sourceKey)).toEqual([
+      "active",
+    ]);
+  });
+
   it("does not count a successful fallback search as a plugin failure", async () => {
     const service = createService(new FallbackPlugin("fallback", 1));
 
@@ -269,6 +387,13 @@ describe("SearchService warnings", () => {
     expect(status?.isHealthy).toBe(true);
     expect(status?.failureCount).toBe(0);
     expect(status?.successCount).toBe(1);
+    expect(result.sourceMetrics).toMatchObject([
+      {
+        sourceKey: "fallback",
+        success: true,
+        timedOut: false,
+      },
+    ]);
   });
 
   it("aborts the plugin abort signal when its search exceeds the timeout", async () => {
@@ -291,11 +416,50 @@ describe("SearchService warnings", () => {
 
       // searchPlugins 的 timeoutMs 有 Math.max(3000, ...) 下限，需推进超过 3000ms
       await vi.advanceTimersByTimeAsync(3500);
-      await pending;
+      const result = await pending;
 
       // 插件应通过 ext 收到一个 abort signal，且超时后被 abort
       expect(plugin.receivedSignal).toBeDefined();
       expect(plugin.receivedSignal?.aborted).toBe(true);
+      expect(result.sourceMetrics[0]).toMatchObject({
+        sourceKey: "hanging",
+        success: false,
+        timedOut: true,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shares one timeout budget across all keyword variants", async () => {
+    const plugin = new TimedVariantPlugin("timed-variant", 1);
+    const service = createService(plugin);
+
+    vi.useFakeTimers();
+    try {
+      const pending = service.searchWithWarnings(
+        "肖申克的救赎 4K",
+        [],
+        1,
+        false,
+        "merged_by_type",
+        "plugin",
+        ["timed-variant"],
+        undefined,
+        {}
+      );
+
+      await vi.advanceTimersByTimeAsync(3200);
+      const result = await pending;
+
+      expect(plugin.queries).toHaveLength(2);
+      expect(plugin.queries[0]?.budgetMs).toBe(3000);
+      expect(plugin.queries[1]?.budgetMs).toBeLessThanOrEqual(1400);
+      expect(result.sourceMetrics[0]).toMatchObject({
+        sourceKey: "timed-variant",
+        timedOut: true,
+      });
+      expect(result.sourceMetrics[0]?.latencyMs).toBeLessThanOrEqual(3000);
     } finally {
       vi.useRealTimers();
     }
@@ -318,6 +482,134 @@ describe("SearchService warnings", () => {
 
     expect(result.response.total).toBe(2);
     expect(result.warnings).toEqual([]);
+  });
+
+  it("keeps broad matches and keyword variants in fuzzy mode", async () => {
+    const plugin = new MatchModePlugin("match", 1);
+    const service = createService(plugin);
+
+    const result = await service.searchWithWarnings(
+      "肖申克的救赎",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["match"],
+      undefined,
+      {}
+    );
+
+    expect(result.response.total).toBe(2);
+    expect(plugin.queries.length).toBeGreaterThan(1);
+  });
+
+  it("keeps relevant alias magnets and drops scattered keyword noise", async () => {
+    const plugin = new AliasMagnetPlugin("alias-magnet", 1);
+    const service = createService(plugin);
+
+    const result = await service.searchWithWarnings(
+      "三体",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["alias-magnet"],
+      undefined,
+      {}
+    );
+
+    expect(result.response.merged_by_type?.magnet).toHaveLength(1);
+    expect(result.response.merged_by_type?.magnet?.[0]?.note).toContain(
+      "Three Body Problem"
+    );
+    expect(plugin.queries[0]).toBe("three body");
+  });
+
+  it("limits a degraded source to the original query", async () => {
+    const plugin = new MatchModePlugin("match", 1);
+    const service = createService(plugin);
+
+    await service.searchWithWarnings(
+      "肖申克的救赎",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["match"],
+      undefined,
+      {
+        __source_quality_policies: {
+          match: { score: 30, state: "degraded", maxVariants: 1, timeoutMs: 4000 },
+        },
+      }
+    );
+
+    expect(plugin.queries).toEqual(["肖申克的救赎"]);
+  });
+
+  it("skips disabled sources by default but honors explicit selection", async () => {
+    const plugin = new MatchModePlugin("match", 1);
+    const service = createService(plugin);
+    const ext = {
+      __source_quality_policies: {
+        match: { score: 10, state: "disabled", maxVariants: 1 },
+      },
+    };
+
+    const automatic = await service.searchWithWarnings(
+      "肖申克的救赎",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      undefined,
+      undefined,
+      ext
+    );
+    expect(automatic.response.total).toBe(0);
+    expect(plugin.queries).toEqual([]);
+
+    const explicit = await service.searchWithWarnings(
+      "肖申克的救赎",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["match"],
+      undefined,
+      ext
+    );
+    expect(explicit.response.total).toBeGreaterThan(0);
+  });
+
+  it("uses only the original query and removes partial matches in exact mode", async () => {
+    const plugin = new MatchModePlugin("match", 1);
+    const service = createService(plugin);
+
+    const result = await service.searchWithWarnings(
+      "肖申克的救赎",
+      [],
+      1,
+      false,
+      "merged_by_type",
+      "plugin",
+      ["match"],
+      undefined,
+      {},
+      undefined,
+      "exact"
+    );
+
+    expect(result.response.total).toBe(1);
+    expect(result.response.merged_by_type?.quark?.[0]?.url).toBe(
+      "https://example.com/match-exact"
+    );
+    expect(plugin.queries).toEqual(["肖申克的救赎"]);
   });
 
   it("sorts newest-first and puts missing-datetime entries last (no NaN breakage)", () => {

@@ -1,8 +1,10 @@
-import { defineEventHandler, getQuery, createError } from "h3";
+import { defineEventHandler, getQuery, createError, setHeader } from "h3";
+import { getFavoritesDatabase } from "../utils/cloudflareBindings";
+import { getD1HotSearches } from "../core/services/d1HotSearchService";
 import { getOrCreateHotSearchService } from "../core/services/hotSearchService";
 
 export default defineEventHandler(async (event) => {
-  const service = getOrCreateHotSearchService();
+  setHeader(event, "cache-control", "no-store");
   const query = getQuery(event);
   const limit = parseInt((query.limit as string) || "30", 10);
 
@@ -10,7 +12,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "limit 参数无效，范围 1-100" });
   }
 
-  const hotSearches = await service.getHotSearches(limit);
+  const database = getFavoritesDatabase(event);
+  const hotSearches = database
+    ? await getD1HotSearches(database, limit)
+    : await getOrCreateHotSearchService().getHotSearches(limit);
 
   const maxScore = hotSearches.length > 0 ? (hotSearches[0].displayScore ?? hotSearches[0].score) : 1;
 

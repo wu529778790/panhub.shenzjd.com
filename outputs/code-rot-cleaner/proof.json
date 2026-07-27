@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "project_root": "/Users/sean/Documents/panpanso",
+  "analysis_file": "/Users/sean/Documents/panpanso/outputs/code-rot-cleaner/analysis.json",
+  "generated_at": "2026-07-22T20:17:00Z",
+  "commands": [
+    "pnpm test",
+    "pnpm build"
+  ],
+  "copy_excluded_directories": [
+    ".git",
+    ".nuxt",
+    ".output",
+    "outputs"
+  ],
+  "baseline": {
+    "passed": false,
+    "commands": [
+      {
+        "command": "pnpm test",
+        "exit_code": 1,
+        "duration_seconds": 86.57,
+        "timed_out": false,
+        "passed": false,
+        "output": "230/232 tests passed. The two failures were live Telegram assertions: tg-fetch expected more than 0 results and tg-multipage expected more than 20 results; upstream returned 0."
+      },
+      {
+        "command": "pnpm build",
+        "exit_code": 0,
+        "duration_seconds": 14.523,
+        "timed_out": false,
+        "passed": true,
+        "output": "Nuxt production build completed successfully for the Cloudflare module preset."
+      }
+    ]
+  },
+  "results": [],
+  "manual_batch_comparison": {
+    "disposable_copy": "/private/tmp/haosouku-proof.ai4amG",
+    "removed_files": [
+      ".codex-seo-visual-test.py",
+      "package-lock.json",
+      "test/tg-parse-test.mjs",
+      "server/core/plugins/fox4k.ts",
+      "server/core/plugins/hdr4k.ts",
+      "server/core/plugins/huban.ts",
+      "server/core/plugins/muou.ts",
+      "server/core/plugins/ouge.ts",
+      "server/core/plugins/pan666.ts",
+      "server/core/plugins/panyq.ts",
+      "server/core/plugins/shandian.ts",
+      "server/core/plugins/susu.ts",
+      "server/core/plugins/torrentgalaxy.ts",
+      "server/core/plugins/wanou.ts",
+      "server/core/plugins/x1337x.ts",
+      "server/core/plugins/zhizhen.ts"
+    ],
+    "test": {
+      "exit_code": 1,
+      "duration_seconds": 85.65,
+      "passed_tests": 230,
+      "failed_tests": 2,
+      "same_failures_as_baseline": true
+    },
+    "build": {
+      "exit_code": 0,
+      "duration_seconds": 8.675,
+      "passed": true
+    }
+  },
+  "limitations": [
+    "Commands ran in a disposable copy; the real project was not changed.",
+    "The untouched baseline was not fully green because two tests depend on live Telegram content.",
+    "The removal batch produced exactly the same two external-data failures and no new test failures, and the production build remained green.",
+    "Strict SAFE TO REMOVE classification is withheld because the baseline did not fully pass."
+  ]
+}

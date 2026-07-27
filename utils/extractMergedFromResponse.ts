@@ -34,7 +34,9 @@ export function extractMergedFromResponse(
             password: link.password || "",
             note,
             datetime: dt,
-            source: rAny.channel ? `tg:${rAny.channel}` : undefined,
+            source: rAny.source || (rAny.channel ? "频道索引" : undefined),
+            images: rAny.images,
+            metadata: rAny.metadata,
           });
         }
       } else if (rAny.url) {
@@ -47,6 +49,8 @@ export function extractMergedFromResponse(
           note: rAny.note || "",
           datetime: rAny.datetime || "",
           source: rAny.source,
+          images: rAny.images,
+          metadata: rAny.metadata,
         });
       }
     }
@@ -66,6 +70,8 @@ export function extractMergedFromResponse(
           note: item.note || "",
           datetime: item.datetime || "",
           source: item.source,
+          images: item.images,
+          metadata: item.metadata,
         });
       }
     }

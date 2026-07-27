@@ -25,7 +25,7 @@
               $emit('update:open', false);
             }
           ">
-          关闭
+          <PhX :size="18" aria-hidden="true" />
         </button>
       </header>
 
@@ -140,12 +140,14 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount } from "vue";
+import { PhX } from "@phosphor-icons/vue";
 
 interface UserSettings {
   enabledTgChannels: string[];
   enabledPlugins: string[];
   concurrency: number;
   pluginTimeoutMs: number;
+  filterAdultContent: boolean;
 }
 const props = defineProps<{
   modelValue: UserSettings;
@@ -163,12 +165,13 @@ const emit = defineEmits([
 const inner = ref<UserSettings>({
   enabledTgChannels: [],
   enabledPlugins: [],
-  concurrency: 4,
-  pluginTimeoutMs: 5000,
+  concurrency: 6,
+  pluginTimeoutMs: 4000,
+  filterAdultContent: false,
 });
 
-const DEFAULT_CONCURRENCY = 4;
-const DEFAULT_PLUGIN_TIMEOUT = 5000;
+const DEFAULT_CONCURRENCY = 6;
+const DEFAULT_PLUGIN_TIMEOUT = 4000;
 const drawerMainRef = ref<HTMLElement | null>(null);
 const activeSection = ref<"plugins" | "channels" | "performance">("plugins");
 
@@ -192,8 +195,17 @@ watch(
 
 function saveTemp() {
   // 运行时 clamp：HTML max 属性不阻止手动输入超出范围的值
-  inner.value.concurrency = Math.min(16, Math.max(1, Math.round(inner.value.concurrency) || 3));
-  inner.value.pluginTimeoutMs = Math.min(60000, Math.max(1000, Math.round(inner.value.pluginTimeoutMs) || 10000));
+  inner.value.concurrency = Math.min(
+    16,
+    Math.max(1, Math.round(inner.value.concurrency) || DEFAULT_CONCURRENCY)
+  );
+  inner.value.pluginTimeoutMs = Math.min(
+    60000,
+    Math.max(
+      1000,
+      Math.round(inner.value.pluginTimeoutMs) || DEFAULT_PLUGIN_TIMEOUT
+    )
+  );
   emit("update:modelValue", inner.value);
   emit("save");
 }
@@ -283,8 +295,8 @@ onBeforeUnmount(() => {
 
 .drawer {
   width: min(460px, 92vw);
-  height: 100vh;
-  background: var(--bg-glass-strong);
+  height: 100dvh;
+  background: var(--bg-surface);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.2);
@@ -354,9 +366,9 @@ onBeforeUnmount(() => {
 }
 
 .nav-link.active {
-  border-color: rgba(15, 118, 110, 0.45);
-  background: rgba(15, 118, 110, 0.14);
-  color: var(--primary-dark);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
 }
 
 .drawer-main {
@@ -513,7 +525,12 @@ onBeforeUnmount(() => {
 }
 
 .btn--close {
-  min-width: 56px;
+  display: inline-grid;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+  place-items: center;
 }
 
 .btn--subtle {

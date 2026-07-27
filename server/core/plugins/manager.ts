@@ -10,6 +10,8 @@ export interface AsyncSearchPlugin {
   setMainCacheKey(key: string): void;
   setCurrentKeyword(keyword: string): void;
   skipServiceFilter(): boolean;
+  timeoutMs?(): number;
+  useKeywordVariants?(): boolean;
 }
 
 export class BaseAsyncPlugin implements AsyncSearchPlugin {
@@ -37,6 +39,9 @@ export class BaseAsyncPlugin implements AsyncSearchPlugin {
   }
   skipServiceFilter(): boolean {
     return false;
+  }
+  useKeywordVariants(): boolean {
+    return true;
   }
 
   async search(

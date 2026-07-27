@@ -64,6 +64,11 @@
 </template>
 
 <script setup lang="ts">
+useSeoMeta({
+  title: "iOS 兼容性测试",
+  robots: "noindex,nofollow",
+});
+
 const testKeyword = ref("");
 const testInput = ref<HTMLInputElement | null>(null);
 const eventLog = ref<Array<{ time: string; name: string; details: string }>>(

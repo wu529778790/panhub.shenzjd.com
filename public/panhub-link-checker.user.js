@@ -1,15 +1,16 @@
 // ==UserScript==
-// @name         PanHub 链接检测助手
-// @name:zh      PanHub 链接检测助手
-// @name:en      PanHub Link Checker
-// @namespace    https://panhub.shenzjd.com
-// @version      2.0.0
-// @description  自动检测 PanHub 搜索结果中的失效网盘链接，标记已过期/已删除的资源，避免浪费时间点击
-// @description:en  Detect expired cloud storage links in PanHub search results and mark them with a strikethrough
-// @author       shenzjd
-// @match        https://panhub.shenzjd.com/*
-// @match        http://panhub.shenzjd.com/*
+// @name         好搜库链接检测助手
+// @name:zh      好搜库链接检测助手
+// @name:en      HAOSOUKU Link Checker
+// @namespace    https://haosouku.com
+// @version      2.2.0
+// @description  自动检测好搜库搜索结果中的失效网盘链接，标记已过期或已删除的资源
+// @description:en  Detect expired cloud storage links in HAOSOUKU search results
+// @author       好搜库
+// @match        https://haosouku.com/*
+// @match        https://www.haosouku.com/*
 // @grant        GM_xmlhttpRequest
+// @grant        GM.xmlHttpRequest
 // @grant        unsafeWindow
 // @connect      pan.quark.cn
 // @connect      drive-h.quark.cn
@@ -35,9 +36,9 @@
 // @compatible   firefox Greasemonkey 4+ / Tampermonkey
 // @compatible   edge Tampermonkey / Violentmonkey
 // @run-at       document-idle
-// @icon         https://panhub.shenzjd.com/favicon.ico
-// @downloadURL  https://panhub.shenzjd.com/panhub-link-checker.user.js
-// @updateURL    https://panhub.shenzjd.com/panhub-link-checker.user.js
+// @icon         https://haosouku.com/favicon.ico
+// @downloadURL  https://haosouku.com/panhub-link-checker.user.js
+// @updateURL    https://haosouku.com/panhub-link-checker.user.js
 // ==/UserScript==
 
 (function () {
@@ -51,6 +52,8 @@
   const TIMEOUT_MS = 10000;
   /** 同一链接缓存时间（毫秒） */
   const CACHE_TTL_MS = 30 * 60 * 1000; // 30 分钟
+  /** 检测结果批量回传延迟（毫秒） */
+  const REPORT_DELAY_MS = 600;
 
   // ========== 工具函数 ==========
 
@@ -85,7 +88,17 @@
   function gmRequest(options) {
     return new Promise((resolve) => {
       try {
-        GM_xmlhttpRequest({
+        const request =
+          typeof GM_xmlhttpRequest === "function"
+            ? GM_xmlhttpRequest
+            : typeof GM !== "undefined" && typeof GM.xmlHttpRequest === "function"
+              ? GM.xmlHttpRequest.bind(GM)
+              : null;
+        if (!request) {
+          resolve({ ok: false, status: 0, body: "" });
+          return;
+        }
+        request({
           ...options,
           timeout: TIMEOUT_MS,
           onload: function (response) {
@@ -356,6 +369,8 @@
   // ========== 缓存 ==========
 
   const resultCache = new Map(); // url → { state, timestamp }
+  const pendingHealthReports = new Map();
+  let reportTimer;
 
   function getCached(url) {
     const entry = resultCache.get(url);
@@ -371,43 +386,91 @@
     resultCache.set(url, { state, timestamp: Date.now() });
   }
 
+  function reportStatus(state) {
+    if (state === -1) return "dead";
+    if (state === 1) return "alive";
+    if (state === 2) return "password";
+    return null;
+  }
+
+  function queueHealthReport(url, state) {
+    const status = reportStatus(state);
+    if (!status) return;
+    pendingHealthReports.set(url, { url, status });
+    if (reportTimer) clearTimeout(reportTimer);
+    reportTimer = setTimeout(flushHealthReports, REPORT_DELAY_MS);
+  }
+
+  async function flushHealthReports() {
+    reportTimer = undefined;
+    const reports = Array.from(pendingHealthReports.values()).slice(0, 100);
+    reports.forEach((report) => pendingHealthReports.delete(report.url));
+    if (reports.length === 0) return;
+
+    const pageWindow = typeof unsafeWindow !== "undefined" ? unsafeWindow : window;
+    try {
+      const response = await pageWindow.fetch.call(pageWindow, "/api/link-health/report", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reports }),
+      });
+      if (!response.ok) return;
+      const payload = await response.json();
+      const items = payload && payload.data && Array.isArray(payload.data.items)
+        ? payload.data.items
+        : [];
+      pageWindow.postMessage(
+        { type: "haosouku:link-health", items },
+        pageWindow.location.origin
+      );
+    } catch {}
+
+    if (pendingHealthReports.size > 0 && !reportTimer) {
+      reportTimer = setTimeout(flushHealthReports, REPORT_DELAY_MS);
+    }
+  }
+
   // ========== UI 操作 ==========
 
   const CHECKED_ATTR = "data-link-checked";
+  const LINK_SELECTOR = ".resource-link, .resource-row__title";
+  const UNCHECKED_LINK_SELECTOR =
+    `.resource-link:not([${CHECKED_ATTR}]), .resource-row__title:not([${CHECKED_ATTR}])`;
 
   /** 标记链接为失效 */
   function markExpired(linkEl) {
+    linkEl.setAttribute("data-link-status", "expired");
     linkEl.style.textDecoration = "line-through";
-    linkEl.style.opacity = "0.5";
-    linkEl.setAttribute("title", "⚠️ 该链接可能已失效（系统自动检测），点击可自行验证");
+    linkEl.style.color = "var(--text-tertiary, #6b7280)";
+    linkEl.setAttribute("title", "该链接可能已失效（系统自动检测），点击可自行验证");
 
     const badge = document.createElement("span");
     badge.textContent = "可能失效";
     badge.style.cssText =
-      "display:inline-block;margin-left:6px;padding:1px 6px;font-size:11px;font-weight:600;color:#fff;background:#ef4444;border-radius:4px;vertical-align:middle;line-height:1.4;";
+      "display:inline-block;flex:0 0 auto;align-self:center;margin-left:6px;padding:1px 6px;font-size:11px;font-weight:600;color:#fff;background:#ef4444;border-radius:4px;vertical-align:middle;line-height:1.4;white-space:nowrap;text-decoration:none;";
     linkEl.appendChild(badge);
   }
 
   /** 标记链接为需要密码 */
   function markNeedsPassword(linkEl) {
+    linkEl.setAttribute("data-link-status", "password");
     const badge = document.createElement("span");
     badge.textContent = "需要密码";
     badge.style.cssText =
-      "display:inline-block;margin-left:6px;padding:1px 6px;font-size:11px;font-weight:600;color:#fff;background:#f59e0b;border-radius:4px;vertical-align:middle;line-height:1.4;";
+      "display:inline-block;flex:0 0 auto;align-self:center;margin-left:6px;padding:1px 6px;font-size:11px;font-weight:600;color:#fff;background:#f59e0b;border-radius:4px;vertical-align:middle;line-height:1.4;white-space:nowrap;text-decoration:none;";
     linkEl.appendChild(badge);
   }
 
   /** 标记链接为有效 */
   function markAlive(linkEl) {
-    // 有效链接不做额外标记
+    linkEl.setAttribute("data-link-status", "alive");
   }
 
   // ========== 核心逻辑 ==========
 
   async function processLinks() {
-    const linkEls = document.querySelectorAll(
-      ".resource-link:not([" + CHECKED_ATTR + "])"
-    );
+    const linkEls = document.querySelectorAll(UNCHECKED_LINK_SELECTOR);
     if (linkEls.length === 0) return;
 
     // 标记为已处理（防止重复检测）
@@ -423,6 +486,7 @@
         const cached = getCached(url);
         if (cached) {
           applyState(linkEl, cached.state);
+          queueHealthReport(url, cached.state);
           return;
         }
 
@@ -437,6 +501,7 @@
         const state = await checker.check(shareId, url);
         setCache(url, state);
         applyState(linkEl, state);
+        queueHealthReport(url, state);
       })
     );
 
@@ -458,8 +523,8 @@
       for (const node of mutation.addedNodes) {
         if (node.nodeType !== 1) continue;
         if (
-          node.classList?.contains("resource-link") ||
-          node.querySelector?.(".resource-link")
+          node.matches?.(LINK_SELECTOR) ||
+          node.querySelector?.(LINK_SELECTOR)
         ) {
           hasNewLinks = true;
           break;
@@ -486,10 +551,10 @@
     });
   }
 
-  // 暴露给 PanHub 页面（供未来集成使用）
+  // 暴露给好搜库页面
   if (typeof unsafeWindow !== "undefined") {
     unsafeWindow.__panhub_linkCheckerReady = true;
-    unsafeWindow.__panhub_linkCheckerVersion = "2.0.0";
+    unsafeWindow.__panhub_linkCheckerVersion = "2.2.0";
     unsafeWindow.__panhub_checkLink = async function (url) {
       const checker = PLATFORM_CHECKERS.find((c) => c.match(url));
       if (!checker) return { state: 0, platform: "unknown" };
@@ -500,5 +565,5 @@
     };
   }
 
-  console.log("[PanHub Link Checker] ✅ 链接检测助手 v2.0.0 已加载（API 模式）");
+  console.log("[HAOSOUKU Link Checker] 链接检测助手 v2.2.0 已加载");
 })();

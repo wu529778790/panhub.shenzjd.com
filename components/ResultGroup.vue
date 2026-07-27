@@ -1,97 +1,83 @@
 <template>
-  <div class="result-card" data-theme-part="result-card">
-    <!-- 卡片头部 -->
-    <div class="card-header" data-theme-part="card-header">
-      <div class="platform-badge" :style="{ background: color }">
-        <img class="platform-icon" :src="icon" :alt="title" />
+  <section class="result-group" :aria-labelledby="`platform-${safeId}`">
+    <header class="group-header">
+      <div class="platform-identity">
+        <span class="platform-mark" :style="{ '--platform-color': color }">
+          <img :src="icon" alt="" aria-hidden="true" />
+        </span>
+        <div>
+          <h2 :id="`platform-${safeId}`">{{ title }}</h2>
+          <span>{{ items.length }} 条资源</span>
+        </div>
       </div>
-      <div class="header-info">
-        <h3 class="platform-title">{{ title }}</h3>
-        <span class="resource-count">{{ items.length }} 个资源</span>
-      </div>
+
       <button
         v-if="canToggleCollapse && !expanded && items.length > initialVisible"
-        class="expand-btn"
+        class="quiet-button"
+        type="button"
         @click="$emit('toggle')">
         展开
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"></path>
-        </svg>
+        <PhCaretDown :size="14" aria-hidden="true" />
       </button>
-    </div>
+    </header>
 
-    <!-- 资源列表 -->
     <ul class="resource-list">
       <li v-for="r in visibleItems" :key="r.url" class="resource-item">
-        <div class="resource-content">
-          <a
-            class="resource-link"
-            :href="r.url"
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            :title="r.note || r.url">
-            <span class="link-text">{{ r.note || r.url }}</span>
-            <svg class="external-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
+        <a
+          class="resource-link"
+          :href="r.url"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          :title="r.note || r.url">
+          <span>{{ r.note || r.url }}</span>
+          <PhArrowUpRight :size="16" aria-hidden="true" />
+        </a>
 
-          <div class="resource-meta">
-            <div class="meta-tags">
-              <span class="meta-tag date">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                {{ formatDate(r.datetime) || "时间未知" }}
-              </span>
-
-              <span v-if="r.password" class="meta-tag password">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <circle cx="12" cy="16" r="1"></circle>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                提取码: {{ r.password }}
-              </span>
-            </div>
-
-            <button
-              class="copy-btn"
-              :class="{ 'copy-btn--copied': copiedUrl === r.url }"
-              @click.prevent="handleCopy(r.url)"
-              :title="copiedUrl === r.url ? '已复制' : '复制链接'">
-              <svg v-if="copiedUrl !== r.url" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              {{ copiedUrl === r.url ? '已复制' : '复制' }}
-            </button>
-          </div>
+        <div class="resource-meta">
+          <span v-if="formatDate(r.datetime)" class="meta-item">
+            <PhCalendarBlank :size="14" aria-hidden="true" />
+            {{ formatDate(r.datetime) }}
+          </span>
+          <span v-if="r.password" class="meta-item meta-item--password">
+            <PhKey :size="14" aria-hidden="true" />
+            提取码 {{ r.password }}
+          </span>
+          <button
+            class="copy-button"
+            :class="{ copied: copiedUrl === r.url }"
+            type="button"
+            :aria-label="copiedUrl === r.url ? '链接已复制' : '复制资源链接'"
+            @click.prevent="handleCopy(r.url)">
+            <PhCheck v-if="copiedUrl === r.url" :size="15" weight="bold" aria-hidden="true" />
+            <PhCopy v-else :size="15" aria-hidden="true" />
+            {{ copiedUrl === r.url ? "已复制" : "复制" }}
+          </button>
         </div>
       </li>
     </ul>
 
-    <!-- 底部展开按钮 -->
-    <div v-if="!expanded && items.length > initialVisible" class="card-footer" data-theme-part="card-footer">
-      <button class="load-more-btn" @click="$emit('toggle')">
-        显示更多 ({{ items.length - initialVisible }})
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 5v14M5 12l7 7 7-7"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
+    <button
+      v-if="!expanded && items.length > initialVisible"
+      class="more-button"
+      type="button"
+      @click="$emit('toggle')">
+      查看其余 {{ items.length - initialVisible }} 条
+      <PhArrowRight :size="15" aria-hidden="true" />
+    </button>
+  </section>
 </template>
 
 <script setup lang="ts">
+import {
+  PhArrowRight,
+  PhArrowUpRight,
+  PhCalendarBlank,
+  PhCaretDown,
+  PhCheck,
+  PhCopy,
+  PhKey,
+} from "@phosphor-icons/vue";
+
 const props = defineProps<{
   title: string;
   color: string;
@@ -101,453 +87,237 @@ const props = defineProps<{
   initialVisible: number;
   canToggleCollapse?: boolean;
 }>();
-const emit = defineEmits(["toggle", "copy"]);
 
+const emit = defineEmits(["toggle", "copy"]);
 const copiedUrl = ref("");
 let copyTimer: ReturnType<typeof setTimeout> | null = null;
+
+const safeId = computed(() => props.title.replace(/[^\w\u4e00-\u9fa5-]/g, "-"));
+const visibleItems = computed(() =>
+  props.expanded ? props.items : props.items.slice(0, props.initialVisible)
+);
 
 function handleCopy(url: string) {
   emit("copy", url);
   copiedUrl.value = url;
   if (copyTimer) clearTimeout(copyTimer);
-  copyTimer = setTimeout(() => { copiedUrl.value = ""; }, 1500);
+  copyTimer = setTimeout(() => {
+    copiedUrl.value = "";
+  }, 1500);
 }
 
-const visibleItems = computed(() =>
-  props.expanded ? props.items : props.items.slice(0, props.initialVisible)
-);
-
-function formatDate(d?: string) {
-  if (!d) return "";
-  const dt = new Date(d);
-  if (isNaN(dt.getTime())) return "";
-  const now = Date.now();
-  const diff = now - dt.getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days === 0) return "今天";
+function formatDate(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const days = Math.floor((Date.now() - date.getTime()) / 86400000);
+  if (days <= 0) return "今天";
   if (days === 1) return "昨天";
-  if (days < 7) return `${days}天前`;
-  if (days < 365) return `${Math.floor(days / 30)}个月前`;
-  return dt.toLocaleDateString("zh-CN");
+  if (days < 7) return `${days} 天前`;
+  if (days < 365) return `${Math.max(1, Math.floor(days / 30))} 个月前`;
+  return date.toLocaleDateString("zh-CN", { year: "numeric", month: "short", day: "numeric" });
 }
+
+onBeforeUnmount(() => {
+  if (copyTimer) clearTimeout(copyTimer);
+});
 </script>
 
 <style scoped>
-/* 结果卡片主体 - 玻璃拟态设计 */
-.result-card {
-  background: var(--bg-surface);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--border-light);
-  border-radius: 16px;
-  box-shadow: 0 8px 22px rgba(17, 24, 39, 0.06);
+.result-group {
+  min-width: 0;
   overflow: hidden;
-  transition: box-shadow var(--transition-normal), transform var(--transition-normal),
-    border-color var(--transition-normal);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
 }
 
-.result-card:hover {
-  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.1);
-  transform: translateY(-3px);
-}
-
-/* 卡片头部 */
-.card-header {
+.group-header {
   display: flex;
+  min-height: 78px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.platform-identity {
+  display: flex;
+  min-width: 0;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
-  background: var(--bg-surface-elevated);
-  border-bottom: 1px solid var(--border-light);
-  position: relative;
 }
 
-.card-header::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-  right: 16px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--primary), transparent 70%);
-  opacity: 0.25;
-}
-
-/* 平台徽章 */
-.platform-badge {
-  width: 36px;
-  height: 36px;
+.platform-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  box-shadow: 0 5px 10px rgba(17, 24, 39, 0.2);
-  flex-shrink: 0;
+  background: color-mix(in srgb, var(--platform-color) 14%, var(--bg-surface));
 }
 
-.platform-icon {
-  width: 22px;
-  height: 22px;
+.platform-mark img {
+  width: 24px;
+  height: 24px;
   object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
-/* 头部信息 */
-.header-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.platform-title {
-  font-size: 16px;
-  font-weight: 700;
+.platform-identity h2 {
+  margin: 0 0 3px;
   color: var(--text-primary);
-  margin: 0;
-  line-height: 1.2;
+  font-size: 16px;
+  font-weight: 760;
+  letter-spacing: -0.02em;
 }
 
-.resource-count {
-  font-size: 12px;
+.platform-identity span span,
+.platform-identity div > span {
   color: var(--text-tertiary);
-  font-weight: 500;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* 展开按钮 */
-.expand-btn {
-  display: flex;
+.quiet-button {
+  display: inline-flex;
+  min-height: 34px;
   align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
-  background: transparent;
+  gap: 5px;
+  padding: 0 10px;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border-radius: 9px;
+  background: transparent;
   color: var(--text-secondary);
   font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast),
-    color var(--transition-fast), transform var(--transition-fast);
-  white-space: nowrap;
 }
 
-.expand-btn:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-medium);
-  color: var(--text-primary);
-  transform: translateY(-1px);
-}
-
-.expand-btn svg {
-  stroke: currentColor;
-}
-
-/* 资源列表 */
 .resource-list {
-  list-style: none;
-  padding: 0;
   margin: 0;
-  max-height: 600px;
-  overflow-y: auto;
+  padding: 0;
+  list-style: none;
 }
 
-/* 自定义滚动条 */
-.resource-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.resource-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.resource-list::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border-radius: 3px;
-}
-
-.resource-list::-webkit-scrollbar-thumb:hover {
-  background: var(--border-medium);
-}
-
-/* 单个资源项 */
 .resource-item {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-light);
+  padding: 16px 18px 14px;
   transition: background var(--transition-fast);
 }
 
-.resource-item:last-child {
-  border-bottom: none;
+.resource-item + .resource-item {
+  border-top: 1px solid var(--border-light);
 }
 
 .resource-item:hover {
   background: var(--bg-hover);
 }
 
-.resource-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* 资源链接 */
 .resource-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none;
-  color: var(--primary);
-  font-weight: 600;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  color: var(--text-primary);
   font-size: 14px;
-  line-height: 1.4;
-  transition: color var(--transition-fast), gap var(--transition-fast);
-  word-break: break-word;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.resource-link span {
+  display: -webkit-box;
+  overflow: hidden;
   overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.resource-link:hover {
-  color: var(--primary-dark);
-  gap: 8px;
+.resource-link svg {
+  margin-top: 3px;
+  color: var(--text-tertiary);
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
-.link-text {
-  flex: 1;
-  min-width: 0;
+.resource-link:hover svg {
+  color: var(--primary-strong);
+  transform: translate(2px, -2px);
 }
 
-.external-icon {
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.resource-link:hover .external-icon {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.external-icon {
-  stroke: currentColor;
-}
-
-/* 资源元数据 */
 .resource-meta {
   display: flex;
+  margin-top: 10px;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 6px 14px;
 }
 
-.meta-tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-/* 元数据标签 */
-.meta-tag {
+.meta-item,
+.copy-button {
   display: inline-flex;
+  min-height: 26px;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: 999px;
+  gap: 5px;
+  color: var(--text-tertiary);
   font-size: 11px;
+}
+
+.meta-item--password {
   color: var(--text-secondary);
-  font-weight: 500;
 }
 
-.meta-tag svg {
-  stroke: currentColor;
-  opacity: 0.7;
+.copy-button {
+  margin-left: auto;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
-.meta-tag.date {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.15);
-  color: var(--primary);
+.copy-button:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
-.meta-tag.password {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.2);
+.copy-button.copied {
   color: var(--success);
 }
 
-/* 复制按钮 */
-.copy-btn {
-  display: inline-flex;
+.more-button {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
   align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-surface-subtle);
   color: var(--text-secondary);
   font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast),
-    color var(--transition-fast), transform var(--transition-fast);
-  white-space: nowrap;
+  font-weight: 650;
 }
 
-.copy-btn:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-medium);
-  color: var(--text-primary);
-  transform: translateY(-1px);
+.more-button:hover {
+  color: var(--primary-strong);
 }
 
-.copy-btn:active {
-  transform: translateY(0);
-  background: var(--border-light);
-}
-
-.copy-btn svg {
-  stroke: currentColor;
-}
-
-.copy-btn--copied {
-  color: var(--success);
-  border-color: var(--success);
-}
-
-/* 卡片底部 */
-.card-footer {
-  padding: 12px 16px;
-  background: var(--bg-surface-subtle);
-  border-top: 1px solid var(--border-light);
-  text-align: center;
-}
-
-.load-more-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, var(--primary), #14b8a6);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
-}
-
-.load-more-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.4);
-}
-
-.load-more-btn:active {
-  transform: translateY(0);
-}
-
-.load-more-btn svg {
-  stroke: currentColor;
-}
-
-/* 移动端优化 */
-@media (max-width: 640px) {
-  .card-header {
-    padding: 12px;
-    gap: 10px;
+@media (max-width: 520px) {
+  .group-header {
+    min-height: 70px;
+    padding: 12px 14px;
   }
 
-  .platform-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-  .platform-title {
-    font-size: 15px;
+  .platform-mark {
+    width: 38px;
+    height: 38px;
   }
 
   .resource-item {
-    padding: 12px;
+    padding: 14px;
   }
 
   .resource-link {
     font-size: 13px;
-  }
-
-  .meta-tag {
-    padding: 3px 6px;
-    font-size: 10px;
-  }
-
-  .copy-btn {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
-
-  .expand-btn {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
-
-  .load-more-btn {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-}
-
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .result-card {
-    border-width: 2px;
-  }
-
-  .platform-badge {
-    border: 2px solid white;
-  }
-
-  .meta-tag {
-    border-width: 2px;
-  }
-
-  .copy-btn,
-  .expand-btn,
-  .load-more-btn {
-    border-width: 2px;
-  }
-}
-
-/* 减少动画模式支持 */
-@media (prefers-reduced-motion: reduce) {
-  .result-card,
-  .resource-item,
-  .resource-link,
-  .expand-btn,
-  .copy-btn,
-  .load-more-btn {
-    transition: none;
-  }
-
-  .result-card:hover,
-  .resource-link:hover,
-  .expand-btn:hover,
-  .copy-btn:hover,
-  .load-more-btn:hover {
-    transform: none;
-  }
-
-  .external-icon {
-    transition: none;
   }
 }
 </style>

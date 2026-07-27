@@ -1,0 +1,46 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "haosouku-resource-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "triggers": {
+    "crons": [
+      "*/10 * * * *",
+      "17 */2 * * *",
+      "13 */6 * * *",
+      "7,22,37,52 * * * *",
+      "43 2 * * *",
+      "29 */2 * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "RESOURCE_DB",
+      "database_name": "haosouku-data",
+      "database_id": "c047a6d8-13f5-4859-bbfd-301b02610b0d",
+      "migrations_dir": "../../migrations"
+    }
+  ],
+  "vars": {
+    "SEO_SITE_URL": "https://haosouku.com",
+    "INDEXNOW_KEY": "354ab0e4f5b524289a256cffd8618500",
+    "GEO_TEXT_MODEL": "@cf/qwen/qwen3-30b-a3b-fp8",
+    "GEO_EMBED_MODEL": "@cf/baai/bge-m3"
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "vectorize": [
+    {
+      "binding": "GEO_VECTOR",
+      "index_name": "haosouku-geo-knowledge"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
+}

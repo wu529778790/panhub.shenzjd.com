@@ -1,8 +1,20 @@
+import type {
+  SearchResultEvaluation,
+  TorrentMetadata,
+} from "../../../types/search";
+
+export type {
+  SearchResultEvaluation,
+  TorrentMetadata,
+} from "../../../types/search";
+
 export interface Link {
   type: string;
   url: string;
   password: string;
 }
+
+export type SearchMatchMode = "fuzzy" | "exact";
 
 export interface SearchResult {
   message_id: string;
@@ -14,6 +26,8 @@ export interface SearchResult {
   links: Link[];
   tags?: string[];
   images?: string[];
+  source?: string;
+  metadata?: TorrentMetadata;
 }
 
 export interface MergedLink {
@@ -23,6 +37,13 @@ export interface MergedLink {
   datetime: string; // ISO string
   source?: string; // e.g. "tg:channel" or "plugin:name"
   images?: string[];
+  metadata?: TorrentMetadata;
+  category?: string;
+  sources?: string[];
+  support_count?: number;
+  health_status?: "unknown" | "alive" | "dead" | "password" | "suspect";
+  relevance_score?: number;
+  evaluation?: SearchResultEvaluation;
 }
 
 export type MergedLinks = Record<string, MergedLink[]>;
@@ -31,6 +52,7 @@ export interface SearchResponse {
   total: number;
   results?: SearchResult[];
   merged_by_type?: MergedLinks;
+  filtered_dead_count?: number;
 }
 
 export interface GenericResponse<T> {
@@ -41,6 +63,7 @@ export interface GenericResponse<T> {
 
 export interface SearchRequest {
   kw: string;
+  match?: SearchMatchMode;
   channels?: string[];
   conc?: number;
   refresh?: boolean;

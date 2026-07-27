@@ -1,7 +1,7 @@
 {
-  "name": "panhub.shenzjd.com",
+  "name": "haosouku",
   "version": "1.0.0",
-  "description": "PanHub · 全网最全的网盘搜索工具",
+  "description": "好搜库 · 简洁快速的网盘资源搜索工具",
   "type": "module",
   "private": true,
   "author": {
@@ -26,27 +26,35 @@
     "test:watch": "vitest watch",
     "test:api": "node ./test/api.test.mjs",
     "test:coverage": "vitest run --coverage",
-    "deploy:cf": "wrangler deploy"
+    "benchmark:d1": "node ./scripts/benchmark-d1.mjs",
+    "seo:submit": "node ./scripts/submit-indexnow.mjs",
+    "seo:promotion-kit": "node ./scripts/generate-promotion-kit.mjs",
+    "seo:keywords": "node ./scripts/research-seo-keywords.mjs",
+    "deploy:cf": "nuxt build && wrangler deploy",
+    "deploy:cf:sources": "wrangler deploy --config cloudflare/resource-sync/wrangler.jsonc",
+    "migrate:cf": "wrangler d1 migrations apply haosouku-data --remote"
   },
   "dependencies": {
+    "@cloudflare/containers": "^0.3.7",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@phosphor-icons/vue": "^2.2.1",
     "cheerio": "^1.0.0",
     "nuxt": "^4.0.3",
     "ofetch": "^1.4.1",
     "p-limit": "^7.2.0",
     "sql.js": "^1.14.1",
-    "TagCloud": "^2.5.0",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1",
-    "wx-auth-sdk": "^1.2.8"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@types/sql.js": "^1.4.11",
     "@vitest/coverage-v8": "^2.1.0",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "wrangler": "^4.113.0"
   },
   "license": "MIT",
   "keywords": [
-    "panhub",
+    "haosouku",
     "网盘搜索",
     "阿里云盘",
     "夸克",

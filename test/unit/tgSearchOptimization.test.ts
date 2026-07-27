@@ -6,6 +6,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { SearchService } from "../../server/core/services/searchService";
 import { PluginManager } from "../../server/core/plugins/manager";
+import { fetchTgChannelPosts } from "../../server/core/services/tg";
 
 // Mock TG 搜索模块
 vi.mock("../../server/core/services/tg", () => ({
@@ -14,7 +15,7 @@ vi.mock("../../server/core/services/tg", () => ({
     const delay = channel.includes("priority") ? 50 : 100;
     await new Promise((resolve) => setTimeout(resolve, delay));
 
-    return [
+    return keyword === "missing" ? [] : [
       {
         message_id: `${channel}-1`,
         unique_id: `tg-${channel}-1`,
@@ -66,6 +67,22 @@ describe("TG 搜索优化", () => {
     expect(results.some((r: any) => r.channel === "priority2")).toBe(true);
     expect(results.some((r: any) => r.channel === "normal1")).toBe(true);
     expect(results.some((r: any) => r.channel === "normal2")).toBe(true);
+  });
+
+  it("优先频道抓 40 条，普通频道只抓 20 条", async () => {
+    await (searchService as any).searchTG(
+      "test",
+      ["priority1", "normal1"],
+      false,
+      undefined,
+      {}
+    );
+
+    const calls = vi.mocked(fetchTgChannelPosts).mock.calls;
+    const priorityCall = calls.find(([channel]) => channel === "priority1");
+    const normalCall = calls.find(([channel]) => channel === "normal1");
+    expect(priorityCall?.[2]).toMatchObject({ limitPerChannel: 40 });
+    expect(normalCall?.[2]).toMatchObject({ limitPerChannel: 20 });
   });
 
   it("应该使用更高并发处理优先级频道", async () => {
@@ -151,5 +168,55 @@ describe("TG 搜索优化", () => {
     );
 
     expect(results.length).toBe(3);
+  });
+
+  it("无结果时每个频道也只请求一次", async () => {
+    await (searchService as any).searchTG(
+      "missing",
+      ["priority1", "normal1"],
+      false,
+      undefined,
+      {}
+    );
+
+    expect(vi.mocked(fetchTgChannelPosts)).toHaveBeenCalledTimes(2);
+  });
+
+  it("同一 infohash 的磁力链接只保留一条", () => {
+    const hash = "582fc386d0087dcefe998b70d0bc6794c361e603";
+    const merged = (searchService as any).mergeResultsByType(
+      [
+        {
+          title: "来源一",
+          source: "Nyaa",
+          metadata: { seeders: 4, sources: ["Nyaa"] },
+          links: [
+            {
+              type: "magnet",
+              url: `magnet:?xt=urn:btih:${hash}&tr=https%3A%2F%2Ftracker.one`,
+            },
+          ],
+        },
+        {
+          title: "来源二",
+          source: "BitSearch",
+          metadata: { seeders: 26, sizeBytes: 3_200_000_000, sources: ["BitSearch"] },
+          links: [
+            {
+              type: "magnet",
+              url: "magnet:?dn=movie&xt=urn:btih:LAX4HBWQBB6457UZRNYNBPDHSTBWDZQD&tr=udp%3A%2F%2Ftracker.two",
+            },
+          ],
+        },
+      ],
+      "电影"
+    );
+
+    expect(merged.magnet).toHaveLength(1);
+    expect(merged.magnet[0].metadata).toMatchObject({
+      seeders: 26,
+      sizeBytes: 3_200_000_000,
+      sources: ["Nyaa", "BitSearch"],
+    });
   });
 });

@@ -54,9 +54,8 @@ npm deploy:cf            # Deploy to Cloudflare Workers
 - **`app.vue`**: Single-page app with header, search box, results, hot searches, Douban section, settings drawer.
 - **`composables/useSearch.ts`**: Search state machine (loading → deepLoading → done), with pause/resume.
 - **`composables/useSettings.ts`**: User settings (enabled plugins, TG channels, concurrency, timeout).
-- **`composables/useAuth.ts`**: Password gate — calls `/api/auth/status` and `/api/auth/unlock`.
 - **`utils/extractMergedFromResponse.ts`** + **`utils/mergeMergedByType.ts`**: Client-side result merging helpers.
-- **Components**: `SearchBox`, `ResultGroup`, `ResultHeader`, `PasswordGate`, `HotSearchSection`, `DoubanHotSection`, `SettingsDrawer`.
+- **Components**: `SearchBox`, `ResultGroup`, `ResultHeader`, `HotSearchSection`, `DoubanHotSection`, `SettingsDrawer`.
 
 ### Configuration (`config/`)
 
@@ -65,15 +64,11 @@ npm deploy:cf            # Deploy to Cloudflare Workers
 - **`doubanHot.ts`**: Douban API configuration.
 - **`data/`**: SQLite database for hot search persistence (Docker/local only, not in git).
 
-### Authentication
-
-Optional password gate controlled by `SEARCH_PASSWORD` env var. When set, `/api/auth/status` returns `locked: true`, and users must POST to `/api/auth/unlock` with the password to receive a cookie. The cookie is checked on `/api/search` routes.
-
 ## API Routes (`server/api/`)
 
 All routes use the `name.method.ts` convention (e.g., `search.get.ts`, `hot-searches.post.ts`).
 
-Key routes: `search.get.ts`/`search.post.ts`, `hot-searches.get.ts`/`hot-searches.post.ts`, `auth/status.get.ts`/`auth/unlock.post.ts`, `douban-hot.get.ts`, `img.get.ts` (image proxy), `health.get.ts`, `plugin-health.get.ts`.
+Key routes: `search.get.ts`/`search.post.ts`, `hot-searches.get.ts`/`hot-searches.post.ts`, `douban-hot.get.ts`, `img.get.ts` (image proxy), `health.get.ts`, `plugin-health.get.ts`.
 
 Route rules in `nuxt.config.ts` disable caching for all API routes (SWR 3600 only on `/**` catch-all).
 
@@ -98,7 +93,7 @@ Route rules in `nuxt.config.ts` disable caching for all API routes (SWR 3600 onl
 
 ## Conventions
 
-- Vue composables: `use` prefix (`useSearch`, `useSettings`, `useAuth`).
+- Vue composables: `use` prefix (`useSearch`, `useSettings`, `useDarkMode`).
 - Server routes: `name.get.ts` / `name.post.ts` under `server/api/`.
 - Unit tests: `test/unit/*.test.ts`.
 - Integration tests: `test/*.mjs`.
@@ -107,7 +102,6 @@ Route rules in `nuxt.config.ts` disable caching for all API routes (SWR 3600 onl
 
 ## Environment Variables
 
-- `SEARCH_PASSWORD`: Optional password for search access. Empty = no password gate.
 - `LOG_LEVEL`: Logging level (default: `info`).
 - `NITRO_PRESET`: Deployment preset (auto-detect if unset).
 - `PORT`: Server port (default: `4000`).

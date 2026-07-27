@@ -75,15 +75,14 @@ server/core/
 composables/
 ├── useSearch.ts     # 搜索状态机（loading → deepLoading → done），支持暂停/恢复
 ├── useSettings.ts   # 用户设置（插件开关、并发数、超时）
-└── useAuth.ts       # 密码门（Cookie 鉴权）
+└── useDarkMode.ts   # 深色模式状态
 
 components/
 ├── SearchBox.vue          # 搜索输入框
 ├── ResultGroup.vue        # 搜索结果分组展示
 ├── HotSearchSection.vue   # 热搜排行榜
 ├── DoubanHotSection.vue   # 豆瓣热门推荐
-├── SettingsDrawer.vue     # 设置面板（插件/频道/参数）
-└── PasswordGate.vue       # 密码验证组件
+└── SettingsDrawer.vue     # 设置面板（插件/频道/参数）
 ```
 
 ---
