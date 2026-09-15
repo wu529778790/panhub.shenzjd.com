@@ -5,7 +5,7 @@ import "./styles/dark-mode.css";
 import { initAuth } from "./api/auth";
 import { API_BASE } from "./config";
 
-// 启动即初始化登录 SDK（静默校验本域 Cookie，有效则后续搜索零打扰）
+// 启动应用（微信认证已移除）
 initAuth();
 
 createApp(App).mount("#app");
