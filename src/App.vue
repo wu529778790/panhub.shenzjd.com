@@ -7,13 +7,6 @@
       <div class="blob blob-3"></div>
     </div>
 
-    <!--
-      顶部导航：外部 Web Component（站点导航 + 头像登录）。
-      登录态与本页共用同一个 wx-auth 单例，登录成功会同步到 isVerified，
-      因此搜索前的认证校验不会重复弹窗。
-    -->
-    <site-navbar></site-navbar>
-
     <!-- 公告条 -->
     <div v-if="announcementVisible" class="announce-bar" role="status">
       <span class="announce-bar__icon" aria-hidden="true">📢</span>
@@ -166,7 +159,7 @@
         <span>{{ error }}</span>
       </section>
 
-      <!-- 豆瓣新片榜（搜索时隐藏，用 v-show 保留已加载数据） -->
+      <!-- 豆瓣新��榜（搜索时隐藏，用 v-show 保留已加载数据） -->
       <section v-show="!searched" class="douban-hot-section">
         <DoubanHot @search="quickSearch" />
       </section>
@@ -195,7 +188,7 @@ import { useSearch } from "./composables/useSearch";
 import { useAnnouncement } from "./composables/useAnnouncement";
 import { useToast } from "./composables/useToast";
 import { platformInfo } from "./config/platforms";
-import { checkSearchAuth, forceVerify } from "./api/auth";
+import { checkSearchAuth } from "./api/auth";
 import type { MergedLink } from "./types";
 
 // ===== 状态 =====
@@ -238,22 +231,6 @@ const currentAnnouncement = computed(
 
 // ===== 搜索 =====
 
-/** 服务端 401：登录态失效 → 强制重新认证后重试 */
-let authRetrying = false;
-async function handleAuthRequired() {
-  if (authRetrying) return;
-  authRetrying = true;
-  try {
-    const ok = await forceVerify();
-    if (ok) {
-      resetSearch();
-      await doSearch();
-    }
-  } finally {
-    authRetrying = false;
-  }
-}
-
 async function doSearch() {
   const keyword = kw.value.trim();
   if (!keyword || loading.value) return;
@@ -261,7 +238,6 @@ async function doSearch() {
   await performSearch({
     keyword,
     cat: searchCat.value || undefined,
-    onAuthRequired: handleAuthRequired,
   });
 }
 
@@ -278,9 +254,7 @@ async function onSearch() {
   if (!kw.value.trim()) return;
   if (paused.value) resetSearch();
   if (loading.value) return;
-  // 强制登录：未登录先完成验证，成功后再继续搜索
-  const authed = await checkSearchAuth();
-  if (!authed) return;
+  await checkSearchAuth(); // 保留接口兼容性，但已无实际作用
   await doSearch();
 }
 
@@ -294,7 +268,6 @@ async function handleContinueSearch() {
   await continueSearch({
     keyword: kw.value.trim(),
     cat: searchCat.value || undefined,
-    onAuthRequired: handleAuthRequired,
   });
 }
 
@@ -508,7 +481,7 @@ onBeforeUnmount(() => {
   inset: 0;
   pointer-events: none;
   opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves[...]");
   mix-blend-mode: overlay;
   z-index: 0;
 }

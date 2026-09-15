@@ -25,26 +25,6 @@
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
 
-    <!--
-      wx-auth 公共登录组件（全局单例 window.WxAuth）。
-      defer 保证不阻塞首屏解析，且在下方 module 脚本之前执行；
-      即使加载失败，应用内也有动态补插兜底。
-    -->
-    <script
-      defer
-      src="https://unpkg.com/wx-auth-sdk/dist/wx-auth.umd.js"
-    ></script>
-
-    <!--
-      顶部导航 Web Component（站点导航 + 头像登录）。
-      必须在 wx-auth-sdk 之后加载：site-navbar 检测到 window.WxAuth 已存在时
-      会直接复用而不重新 init，从而不会覆盖我们配置的认证回调。
-    -->
-    <script
-      defer
-      src="https://unpkg.com/@wu529778790/site-navbar@latest/dist/site-navbar.wc.js"
-    ></script>
-
     <script>
       // 首屏即时应用系统深色模式（避免闪白）
       (function () {
